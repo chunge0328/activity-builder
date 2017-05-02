@@ -1,4 +1,5 @@
 import { highlight, unHighlight, getInstanceRect, setDoc, isFixedNode, unFixedNode, setHighlightColor } from './highlighter';
+import ActivityComponentCleanPlugin from '../../plugins/activity-component-clean-plugin/index';
 import { stringify, classify, camelize } from './util';
 const webpack = nodeRequire("webpack");
 const WebpackDevServer = nodeRequire("webpack-dev-server");
@@ -31,7 +32,7 @@ function _initServer(callback) {
 	      loaders: [
 	        {
 	          test: /\.vue$/,
-	          loader: 'mzgamecomp!vue'
+	          loader: 'vue'
 	        },
 	        {
 	          test: /\.js$/,
@@ -59,6 +60,7 @@ function _initServer(callback) {
 	    	modules: ['node_modules', 'components']
 	    },
 	    plugins: [
+          new ActivityComponentCleanPlugin(),
 	        new webpack.HotModuleReplacementPlugin()
 	    ],
 	    target: "web"

@@ -20,12 +20,12 @@
 			content: {
 				type: String,
 				default: '取消',
-				validator: urlValidator,
 				$rule: {
 					name: '取消按钮文本',
 					placeholder: 'http://|https://',
 					$error: '请输入URL'
-				}
+				},
+				validator: urlValidator
 			},
 			awardImgs: {
 				type: Array,

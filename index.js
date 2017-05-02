@@ -147,7 +147,7 @@ function compileResource() {
         }),
         new ExtractTextPlugin("[name].[hash:8].css")
       ],
-      target: 'electron'
+      target: 'atom'
   });
   require('shelljs/global');
   rm('-rf', RELEEASE_PATH);
