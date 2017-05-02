@@ -11,13 +11,12 @@ var captureCount = 0;
 var filter = '';
 var instanceMap = new Map();
 var consoleBoundInstances = Array(5);
-var inited = false;
-var DB = null;
+var db = null;
 var compiler = null;
 
 function _initDB() {
-  DB = new Datastore({ filename: process.cwd() + '/src/data/data.db' });
-  DB.loadDatabase();
+  db = new Datastore({ filename: process.cwd() + '/src/data/data.db' });
+  db.loadDatabase();
 }
 
 function _initServer(callback) {
@@ -60,7 +59,7 @@ function _initServer(callback) {
 	    	modules: ['node_modules', 'components']
 	    },
 	    plugins: [
-          new ActivityComponentCleanPlugin(),
+          // new ActivityComponentCleanPlugin(),
 	        new webpack.HotModuleReplacementPlugin()
 	    ],
 	    target: "web"
@@ -88,15 +87,6 @@ function _initServer(callback) {
 	server.listen(8092, "0.0.0.0", function() {
     callback();
   });
-}
-
-function _init(callback) {
-  if(inited) { 
-    callback();
-    return;
-  }
-  _initDB();
-  _initServer(callback); 
 }
 
 function _flushFile(data, configStorage) {
@@ -170,7 +160,7 @@ function _getInstance(instance) {
 }
 
 function _getDB() {
-  return DB;
+  return db;
 }
 
 function _getCompiler() {
@@ -438,7 +428,8 @@ function bindToConsole (instance) {
 }
 
 
-exports.init = _init;
+exports.initDB = _initDB;
+exports.initServer = _initServer;
 exports.flushFile = _flushFile;
 exports.getAllInstances = _getAllInstances;
 exports.highlight = _highlight;

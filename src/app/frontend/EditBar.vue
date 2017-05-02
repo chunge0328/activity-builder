@@ -35,7 +35,7 @@
 </style>
 <template>
 	<div class="edit-bar">
-		<el-form label-width="80px">
+		<el-form label-width="80px" label-position="top">
 		  	<template v-for="(p, index) in props">
 				<el-form-item v-if="p.prop.$rule.clazz === 'String'" :label="p.prop.$rule.name + '：'">
 			    	<el-input :placeholder="p.prop.$rule.placeholder || ''"  v-model="node[p.key]"></el-input>

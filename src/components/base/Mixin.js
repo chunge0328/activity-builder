@@ -3,12 +3,13 @@ import util from '../common/util';
 export default {
 	beforeCreate() {
 		let ufp = this._updateFromParent;
-        this.$newChildren = [];
-        if(this.$parent) {
+        this.$newChildren = [];   
+        //let location = util.locate(this);
+		this.$location = this.$parent ? this.$parent.$location + '.' + this.$parent.$newChildren.length : '0';
+		if(this.$parent) {
         	this.$parent.$newChildren.push(this);
         }
-        let location = util.locate(this);
-        let config = __STORAGE__[location] || {};
+        let config = __STORAGE__[this.$location] || {};
 		this._updateFromParent = function(propsData, listeners, parentVnode, renderChildren) {
 			//propsData
 			propsData = Vue.util.extend(propsData || {}, config.propsData || {});

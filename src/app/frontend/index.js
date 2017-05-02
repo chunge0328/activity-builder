@@ -4,30 +4,30 @@ import Workspace from './Workspace.vue';
 import TplLib from './TplLib.vue';
 import store from './store';
 import VueRouter from 'vue-router';
-import Backend from '../backend';
+import backend from '../backend';
 import './style/font-awesome.css';
 import 'element-ui/lib/theme-default/index.css';
 import ElementUI from 'element-ui';
 
-Backend.init(function() {
-	Vue.use(ElementUI);
-	Vue.use(VueRouter);
-	const router = new VueRouter({
-		routes: [
-			{ 
-				path: '/', 
-				component: Workspace
-			},
-			{
-				path: '/tplLib',
-				component: TplLib
-			}
-		]
-	});
-	new Vue({
-		store,
-		router,
-		el: '#app',
-		render: h => h(App)
-	});
+backend.initDB();
+Vue.use(ElementUI);
+Vue.use(VueRouter);
+const router = new VueRouter({
+	routes: [
+		{ 
+			path: '/', 
+			component: Workspace
+		},
+		{
+			path: '/tplLib',
+			component: TplLib
+		}
+	]
 });
+new Vue({
+	store,
+	router,
+	el: '#app',
+	render: h => h(App)
+});
+

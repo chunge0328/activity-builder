@@ -10172,13 +10172,12 @@ var captureCount = 0;
 var filter = '';
 var instanceMap = new _map2.default();
 var consoleBoundInstances = Array(5);
-var inited = false;
-var DB = null;
+var db = null;
 var compiler = null;
 
 function _initDB() {
-  DB = new Datastore({ filename: process.cwd() + '/src/data/data.db' });
-  DB.loadDatabase();
+  db = new Datastore({ filename: process.cwd() + '/src/data/data.db' });
+  db.loadDatabase();
 }
 
 function _initServer(callback) {
@@ -10215,7 +10214,9 @@ function _initServer(callback) {
     resolve: {
       modules: ['node_modules', 'components']
     },
-    plugins: [new _index2.default(), new webpack.HotModuleReplacementPlugin()],
+    plugins: [
+    // new ActivityComponentCleanPlugin(),
+    new webpack.HotModuleReplacementPlugin()],
     target: "web"
   });
   var server = new WebpackDevServer(compiler, {
@@ -10239,15 +10240,6 @@ function _initServer(callback) {
   server.listen(8092, "0.0.0.0", function () {
     callback();
   });
-}
-
-function _init(callback) {
-  if (inited) {
-    callback();
-    return;
-  }
-  _initDB();
-  _initServer(callback);
 }
 
 function _flushFile(data, configStorage) {
@@ -10299,7 +10291,7 @@ function _getInstance(instance) {
 }
 
 function _getDB() {
-  return DB;
+  return db;
 }
 
 function _getCompiler() {
@@ -10554,7 +10546,8 @@ function bindToConsole(instance) {
   window.$vm = instance;
 }
 
-exports.init = _init;
+exports.initDB = _initDB;
+exports.initServer = _initServer;
 exports.flushFile = _flushFile;
 exports.getAllInstances = _getAllInstances;
 exports.highlight = _highlight;
@@ -40387,7 +40380,7 @@ var Component = __webpack_require__(17)(
   /* cssModules */
   null
 )
-Component.options.__file = "E:\\GitHub\\activity-builder\\src\\app\\frontend\\App.vue"
+Component.options.__file = "/Users/paul/git-source/activity-builder/src/app/frontend/App.vue"
 if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key !== "__esModule"})) {console.error("named exports are not supported in *.vue files.")}
 if (Component.options.functional) {console.error("[vue-loader] App.vue: functional components are not supported with templates, they should use render functions.")}
 
@@ -40425,7 +40418,7 @@ var Component = __webpack_require__(17)(
   /* cssModules */
   null
 )
-Component.options.__file = "E:\\GitHub\\activity-builder\\src\\app\\frontend\\TplLib.vue"
+Component.options.__file = "/Users/paul/git-source/activity-builder/src/app/frontend/TplLib.vue"
 if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key !== "__esModule"})) {console.error("named exports are not supported in *.vue files.")}
 if (Component.options.functional) {console.error("[vue-loader] TplLib.vue: functional components are not supported with templates, they should use render functions.")}
 
@@ -40463,7 +40456,7 @@ var Component = __webpack_require__(17)(
   /* cssModules */
   null
 )
-Component.options.__file = "E:\\GitHub\\activity-builder\\src\\app\\frontend\\Workspace.vue"
+Component.options.__file = "/Users/paul/git-source/activity-builder/src/app/frontend/Workspace.vue"
 if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key !== "__esModule"})) {console.error("named exports are not supported in *.vue files.")}
 if (Component.options.functional) {console.error("[vue-loader] Workspace.vue: functional components are not supported with templates, they should use render functions.")}
 
@@ -44421,11 +44414,16 @@ exports.default = {
     },
     mounted: function mounted() {
         var self = this;
-        _backend2.default.getCompiler().plugin('done', function () {
-            if (self.needReload) {
-                self.reload();
-            }
+        //http://127.0.0.1:8092/index.html
+        _backend2.default.initServer(function () {
+            self.$refs.design.src = 'http://127.0.0.1:8092/index.html';
+            _backend2.default.getCompiler().plugin('done', function () {
+                if (self.needReload) {
+                    self.reload();
+                }
+            });
         });
+
         _remote2.default.on(_enum2.default.EVENTS.SAVE, function () {
             self.save();
         });
@@ -45601,6 +45599,7 @@ var ActvityComponentCleanPlugin = function () {
                     files.forEach(function (file) {
                         var asset = compilation.assets[file];
                         var result = babel.transform(asset.source(), {
+                            compact: false,
                             plugins: [['transform-remove-props', { regex: /^(\$rule)$/ }]]
                         });
                         asset.source = function () {
@@ -54941,7 +54940,7 @@ var Component = __webpack_require__(17)(
   /* cssModules */
   null
 )
-Component.options.__file = "E:\\GitHub\\activity-builder\\src\\app\\frontend\\ButtonGroup.vue"
+Component.options.__file = "/Users/paul/git-source/activity-builder/src/app/frontend/ButtonGroup.vue"
 if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key !== "__esModule"})) {console.error("named exports are not supported in *.vue files.")}
 if (Component.options.functional) {console.error("[vue-loader] ButtonGroup.vue: functional components are not supported with templates, they should use render functions.")}
 
@@ -54979,7 +54978,7 @@ var Component = __webpack_require__(17)(
   /* cssModules */
   null
 )
-Component.options.__file = "E:\\GitHub\\activity-builder\\src\\app\\frontend\\CompsBar.vue"
+Component.options.__file = "/Users/paul/git-source/activity-builder/src/app/frontend/CompsBar.vue"
 if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key !== "__esModule"})) {console.error("named exports are not supported in *.vue files.")}
 if (Component.options.functional) {console.error("[vue-loader] CompsBar.vue: functional components are not supported with templates, they should use render functions.")}
 
@@ -55017,7 +55016,7 @@ var Component = __webpack_require__(17)(
   /* cssModules */
   null
 )
-Component.options.__file = "E:\\GitHub\\activity-builder\\src\\app\\frontend\\EditBar.vue"
+Component.options.__file = "/Users/paul/git-source/activity-builder/src/app/frontend/EditBar.vue"
 if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key !== "__esModule"})) {console.error("named exports are not supported in *.vue files.")}
 if (Component.options.functional) {console.error("[vue-loader] EditBar.vue: functional components are not supported with templates, they should use render functions.")}
 
@@ -55134,7 +55133,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     ref: "design",
     staticClass: "design",
     attrs: {
-      "src": "http://127.0.0.1:8092/index.html"
+      "src": ""
     }
   }), _c('div', {
     staticClass: "tools-bar"
@@ -55351,7 +55350,8 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     staticClass: "edit-bar"
   }, [_c('el-form', {
     attrs: {
-      "label-width": "80px"
+      "label-width": "80px",
+      "label-position": "top"
     }
   }, [_vm._l((_vm.props), function(p, index) {
     return [(p.prop.$rule.clazz === 'String') ? _c('el-form-item', {
@@ -56287,26 +56287,25 @@ var _elementUi2 = _interopRequireDefault(_elementUi);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-_backend2.default.init(function () {
-	_vue2.default.use(_elementUi2.default);
-	_vue2.default.use(_vueRouter2.default);
-	var router = new _vueRouter2.default({
-		routes: [{
-			path: '/',
-			component: _Workspace2.default
-		}, {
-			path: '/tplLib',
-			component: _TplLib2.default
-		}]
-	});
-	new _vue2.default({
-		store: _store2.default,
-		router: router,
-		el: '#app',
-		render: function render(h) {
-			return h(_App2.default);
-		}
-	});
+_backend2.default.initDB();
+_vue2.default.use(_elementUi2.default);
+_vue2.default.use(_vueRouter2.default);
+var router = new _vueRouter2.default({
+	routes: [{
+		path: '/',
+		component: _Workspace2.default
+	}, {
+		path: '/tplLib',
+		component: _TplLib2.default
+	}]
+});
+new _vue2.default({
+	store: _store2.default,
+	router: router,
+	el: '#app',
+	render: function render(h) {
+		return h(_App2.default);
+	}
 });
 
 /***/ }

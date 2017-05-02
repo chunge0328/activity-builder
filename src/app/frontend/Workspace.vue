@@ -140,7 +140,7 @@
                         </template>
         			</ul>
         		</div>
-        		<iframe ref="design" class="design" src="http://127.0.0.1:8092/index.html"></iframe>
+        		<iframe ref="design" class="design" src=""></iframe>
                 <div class="tools-bar">
                     <ul class="tool-list">
                         <li class="tool-item" v-bind:class="{activated: isInspectingNode}" @click="inspectNode($event)"><i class="fa fa-search"></i></li>
@@ -190,11 +190,16 @@
         },
         mounted: function() {
             var self = this
-            backend.getCompiler().plugin('done', function() {
-                if(self.needReload) {
-                    self.reload();
-                }
+            //http://127.0.0.1:8092/index.html
+            backend.initServer(function() {
+                self.$refs.design.src = 'http://127.0.0.1:8092/index.html';
+                backend.getCompiler().plugin('done', function() {
+                    if(self.needReload) {
+                        self.reload();
+                    }
+                });
             });
+            
             remote.on(Enum.EVENTS.SAVE, function() {
                 self.save();
             });
@@ -229,8 +234,7 @@
                 setTimeout(function() {
                     self.needReload = false;
                 }, 300);       
-            };
-           
+            };      
 		},	
         deactivated: function() {
             this.needReload = true;

@@ -13,6 +13,7 @@ class ActvityComponentCleanPlugin {
                 files.forEach((file) => {
                     let asset = compilation.assets[file];
                     let result = babel.transform(asset.source(), {
+                        compact: false,
                         plugins: [
                             ['transform-remove-props', {regex: /^(\$rule)$/}]
                         ]
@@ -23,7 +24,7 @@ class ActvityComponentCleanPlugin {
                 callback();
             });
         });
-    }
+    }   
 }
 
 export default ActvityComponentCleanPlugin;
