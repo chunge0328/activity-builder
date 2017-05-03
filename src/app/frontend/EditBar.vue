@@ -42,7 +42,6 @@
 		<el-form label-width="80px" label-position="top">
 		  	<template v-for="(p, index) in props">
 				<el-form-item v-if="p.prop.$rule.clazz === 'Select'" :label="p.prop.$rule.name + '：'">
-				    <!--<el-switch on-text="是" off-text="否" v-model="node[p.key]" @input="$forceUpdate()"></el-switch>-->
 					<el-select style="width:100%" v-model="node[p.key]" placeholder="请选择" @handleOptionClick="$forceUpdate()">
 						<el-option
 							v-for="item in p.prop.$rule.options"
@@ -66,6 +65,17 @@
 					<el-col :span="4">
 						<el-color-picker v-model="node[p.key]" show-alpha @change="$forceUpdate()"></el-color-picker>
 					</el-col>					
+				</el-form-item>
+				<el-form-item v-else-if="p.prop.$rule.clazz === 'Image'" :label="p.prop.$rule.name + '：'">
+					<el-upload
+						list-type="picture-card"
+						:httpRequest="handleFileRequest"
+						:multiple="false"
+						:ref="'upload-' + p.key"
+						:on-change="handleFileListChange('upload-' + p.key, 1)"
+						:on-remove="handleFileRemove('upload-' + p.key)">
+						<i class="el-icon-plus"></i>
+					</el-upload>
 				</el-form-item>
 				<!-- <div v-else-if="p.prop.type === inspectedContext['Image']" class="form-group">
 					上传图片
@@ -140,6 +150,27 @@
 					});
 				});
 				this.node._recorded = true;
+			},
+			handleFileRequest: function(opts) {
+				return Promise.resolve();
+			},
+			handleFileRemove: function(refKey) {
+				function _handleFileRemove(refKey, file, fileList) {
+					let $vm = this.$refs[refKey][0].$refs['upload-inner'];
+					setTimeout(function() {
+						$vm.$el.style.display = '';
+					}, 500)
+				}
+				return _handleFileRemove.bind(this, refKey);
+			},
+			handleFileListChange: function(refKey, max, file, fileList) {
+				function _handleFileListChange(refKey, max, file, fileList) {
+					let $vm = this.$refs[refKey][0].$refs['upload-inner'];
+					if(fileList.length >= max) {
+						$vm.$el.style.display = 'none';
+					}
+				}
+				return _handleFileListChange.bind(this, refKey, max)
 			}
 		}
 	}

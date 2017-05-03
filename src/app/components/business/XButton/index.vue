@@ -73,6 +73,14 @@
                 $rule: {
                     name: '加粗'
                 }
+            },
+            bgImg: {
+                type: String,
+                default: '',
+                $rule: {
+                    name: '背景图片',
+                    clazz: 'Image'
+                }
             }
 		}
 	}
