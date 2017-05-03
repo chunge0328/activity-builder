@@ -1,7 +1,7 @@
 import Backend from '../../backend'
 const fs = nodeRequire('fs')
 const path = nodeRequire('path')
-const componentsDirctory = path.join(process.cwd(), 'src/components/business')
+const componentsDirctory = path.join(process.cwd(), 'src/app/components/business')
 
 export default {
 	fetchComponents({commit, state}) {

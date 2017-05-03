@@ -56,7 +56,7 @@ function _initServer(callback) {
 	      root: path.join(process.cwd(), "node_modules") 
 	    },
 	    resolve: {
-	    	modules: ['node_modules', 'components']
+	    	modules: ['node_modules', 'app/components']
 	    },
 	    plugins: [
           // new ActivityComponentCleanPlugin(),
