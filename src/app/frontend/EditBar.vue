@@ -52,14 +52,14 @@
 					</el-select>
 				</el-form-item>
 				<el-form-item v-else-if="p.prop.$rule.clazz === 'String'" :label="p.prop.$rule.name + '：'">
-			    	<el-input :placeholder="p.prop.$rule.placeholder || ''"  v-model="node[p.key]"  @input="$forceUpdate()"></el-input>
+			    	<el-input :placeholder="p.prop.$rule.placeholder || '请输入内容'"  v-model="node[p.key]"  @input="$forceUpdate()"></el-input>
 			  	</el-form-item>
 			  	<el-form-item v-else-if="p.prop.$rule.clazz === 'Boolean'" :label="p.prop.$rule.name + '：'">
 				    <el-switch on-text="是" off-text="否" v-model="node[p.key]" @input="$forceUpdate()"></el-switch>
 				</el-form-item>
 				<el-form-item style="line-height: 0" v-else-if="p.prop.$rule.clazz === 'Color'" :label="p.prop.$rule.name + '：'">
 					<el-col :span="19">
-						<el-input :placeholder="p.prop.$rule.placeholder || ''"  v-model="node[p.key]"  @input="$forceUpdate()"></el-input>
+						<el-input :placeholder="p.prop.$rule.placeholder || 'eg: #e5e5e5'"  v-model="node[p.key]"  @input="$forceUpdate()"></el-input>
 					</el-col>
 					<el-col :span="1">&nbsp;</el-col>
 					<el-col :span="4">
@@ -73,9 +73,43 @@
 						:multiple="false"
 						:ref="'upload-' + p.key"
 						:on-change="handleFileListChange('upload-' + p.key, 1)"
+						:on-success="handleFileSuccess"
 						:on-remove="handleFileRemove('upload-' + p.key)">
 						<i class="el-icon-plus"></i>
 					</el-upload>
+				</el-form-item>
+				<el-form-item v-else-if="p.prop.$rule.clazz === 'FontSize'" :label="p.prop.$rule.name + '：'">
+					<el-autocomplete
+						popper-class="my-autocomplete"
+						v-model="node[p.key]"
+						:fetch-suggestions="loadFontSizeSuggestions"
+						custom-item="fontsize-item"
+						@select="$forceUpdate()"
+						:placeholder="p.prop.$rule.placeholder || 'eg: 16px'"
+						style="width: 100%"
+						></el-autocomplete>
+				</el-form-item>
+				<el-form-item v-else-if="p.prop.$rule.clazz === 'Date'" :label="p.prop.$rule.name + '：'">
+					<el-date-picker
+						v-model="node[p.key]"
+						type="date"
+						:placeholder="p.prop.$rule.placeholder || '选择日期'"
+						@input="$forceUpdate()"
+						:editable="false"
+						format="yyyy-MM-dd"
+						style="width: 100%">
+					</el-date-picker>
+				</el-form-item>
+				<el-form-item v-else-if="p.prop.$rule.clazz === 'DateTime'" :label="p.prop.$rule.name + '：'">
+					<el-date-picker
+						v-model="node[p.key]"
+						type="datetime"
+						:editable="false"
+						@input="$forceUpdate()"
+						format="yyyy-MM-dd HH:mm:ss"
+						:placeholder="p.prop.$rule.placeholder || '选择日期时间'"
+						style="width: 100%">
+					</el-date-picker>
 				</el-form-item>
 				<!-- <div v-else-if="p.prop.type === inspectedContext['Image']" class="form-group">
 					上传图片
@@ -91,6 +125,20 @@
 <script>
 	import Vue from 'vue';
 	import util from './common/util';
+	const fs = nodeRequire('fs');
+	const path = nodeRequire('path');
+	Vue.component('fontsize-item', {
+		functional: true,
+		render: function (h, ctx) {
+			var item = ctx.props.item;
+			return h('li', ctx.data, [
+				h('div', { attrs: {} }, [`${item.name}(${item.value})`]),
+			]);
+		},
+		props: {
+			item: { type: Object, required: true }
+		}
+	});
 	export default {
 		name: 'EditBar',
 		props: {
@@ -139,8 +187,9 @@
 		methods: {
 			watchConfig: function(props) {
 				if(this.node._recorded) return;
-				var self = this;
-				var location = util.locate(this.node);
+				let self = this;
+				//let location = util.locate(this.node);
+				let location = this.node.$location;
 				if(!this.storage[location]) {
 					util.initConfig(this.storage, location);
 				}
@@ -152,7 +201,21 @@
 				this.node._recorded = true;
 			},
 			handleFileRequest: function(opts) {
-				return Promise.resolve();
+				let p = new Promise(function(resolve, reject) {
+					let rs = fs.createReadStream(opts.file.path);
+					let ws = fs.createWriteStream(path.join(process.cwd(), `src/app/activity/assets/images/${opts.file.name}`));
+					rs.pipe(ws);
+					ws.on('finish', function() {
+						resolve();
+					});
+					ws.on('error', function() {
+						reject();
+					});
+					rs.on('error', function() {
+						reject();
+					});
+				});
+				return p;
 			},
 			handleFileRemove: function(refKey) {
 				function _handleFileRemove(refKey, file, fileList) {
@@ -171,6 +234,17 @@
 					}
 				}
 				return _handleFileListChange.bind(this, refKey, max)
+			},
+			loadFontSizeSuggestions: function(queryString, cb) {
+				cb([
+					{value: '12px', name: '超小号字'},
+					{value: '14px', name: '小号字'},
+					{value: '16px', name: '中号字'},
+					{value: '18px', name: '大号字'},
+					{value: '20px', name: '超大号字'},
+					{value: '22px', name: '超超大号字'},
+					{value: '24px', name: '超超超大号字'}
+				]);
 			}
 		}
 	}

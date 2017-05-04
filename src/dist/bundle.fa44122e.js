@@ -40495,7 +40495,7 @@ var Component = __webpack_require__(18)(
   /* cssModules */
   null
 )
-Component.options.__file = "/Users/paul/git-source/activity-builder/src/app/frontend/App.vue"
+Component.options.__file = "E:\\GitHub\\activity-builder\\src\\app\\frontend\\App.vue"
 if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key !== "__esModule"})) {console.error("named exports are not supported in *.vue files.")}
 if (Component.options.functional) {console.error("[vue-loader] App.vue: functional components are not supported with templates, they should use render functions.")}
 
@@ -40533,7 +40533,7 @@ var Component = __webpack_require__(18)(
   /* cssModules */
   null
 )
-Component.options.__file = "/Users/paul/git-source/activity-builder/src/app/frontend/TplLib.vue"
+Component.options.__file = "E:\\GitHub\\activity-builder\\src\\app\\frontend\\TplLib.vue"
 if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key !== "__esModule"})) {console.error("named exports are not supported in *.vue files.")}
 if (Component.options.functional) {console.error("[vue-loader] TplLib.vue: functional components are not supported with templates, they should use render functions.")}
 
@@ -40571,7 +40571,7 @@ var Component = __webpack_require__(18)(
   /* cssModules */
   null
 )
-Component.options.__file = "/Users/paul/git-source/activity-builder/src/app/frontend/Workspace.vue"
+Component.options.__file = "E:\\GitHub\\activity-builder\\src\\app\\frontend\\Workspace.vue"
 if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key !== "__esModule"})) {console.error("named exports are not supported in *.vue files.")}
 if (Component.options.functional) {console.error("[vue-loader] Workspace.vue: functional components are not supported with templates, they should use render functions.")}
 
@@ -44297,7 +44297,53 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
+var fs = nodeRequire('fs');
+var path = nodeRequire('path');
+_vue2.default.component('fontsize-item', {
+	functional: true,
+	render: function render(h, ctx) {
+		var item = ctx.props.item;
+		return h('li', ctx.data, [h('div', { attrs: {} }, [item.name + '(' + item.value + ')'])]);
+	},
+	props: {
+		item: { type: Object, required: true }
+	}
+});
 exports.default = {
 	name: 'EditBar',
 	props: {
@@ -44347,7 +44393,8 @@ exports.default = {
 		watchConfig: function watchConfig(props) {
 			if (this.node._recorded) return;
 			var self = this;
-			var location = _util2.default.locate(this.node);
+			//let location = util.locate(this.node);
+			var location = this.node.$location;
 			if (!this.storage[location]) {
 				_util2.default.initConfig(this.storage, location);
 			}
@@ -44359,7 +44406,21 @@ exports.default = {
 			this.node._recorded = true;
 		},
 		handleFileRequest: function handleFileRequest(opts) {
-			return _promise2.default.resolve();
+			var p = new _promise2.default(function (resolve, reject) {
+				var rs = fs.createReadStream(opts.file.path);
+				var ws = fs.createWriteStream(path.join(process.cwd(), 'src/app/activity/assets/images/' + opts.file.name));
+				rs.pipe(ws);
+				ws.on('finish', function () {
+					resolve();
+				});
+				ws.on('error', function () {
+					reject();
+				});
+				rs.on('error', function () {
+					reject();
+				});
+			});
+			return p;
 		},
 		handleFileRemove: function handleFileRemove(refKey) {
 			function _handleFileRemove(refKey, file, fileList) {
@@ -44378,6 +44439,9 @@ exports.default = {
 				}
 			}
 			return _handleFileListChange.bind(this, refKey, max);
+		},
+		loadFontSizeSuggestions: function loadFontSizeSuggestions(queryString, cb) {
+			cb([{ value: '12px', name: '超小号字' }, { value: '14px', name: '小号字' }, { value: '16px', name: '中号字' }, { value: '18px', name: '大号字' }, { value: '20px', name: '超大号字' }, { value: '22px', name: '超超大号字' }, { value: '24px', name: '超超超大号字' }]);
 		}
 	}
 };
@@ -55533,7 +55597,7 @@ var Component = __webpack_require__(18)(
   /* cssModules */
   null
 )
-Component.options.__file = "/Users/paul/git-source/activity-builder/src/app/frontend/ButtonGroup.vue"
+Component.options.__file = "E:\\GitHub\\activity-builder\\src\\app\\frontend\\ButtonGroup.vue"
 if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key !== "__esModule"})) {console.error("named exports are not supported in *.vue files.")}
 if (Component.options.functional) {console.error("[vue-loader] ButtonGroup.vue: functional components are not supported with templates, they should use render functions.")}
 
@@ -55571,7 +55635,7 @@ var Component = __webpack_require__(18)(
   /* cssModules */
   null
 )
-Component.options.__file = "/Users/paul/git-source/activity-builder/src/app/frontend/CompsBar.vue"
+Component.options.__file = "E:\\GitHub\\activity-builder\\src\\app\\frontend\\CompsBar.vue"
 if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key !== "__esModule"})) {console.error("named exports are not supported in *.vue files.")}
 if (Component.options.functional) {console.error("[vue-loader] CompsBar.vue: functional components are not supported with templates, they should use render functions.")}
 
@@ -55609,7 +55673,7 @@ var Component = __webpack_require__(18)(
   /* cssModules */
   null
 )
-Component.options.__file = "/Users/paul/git-source/activity-builder/src/app/frontend/EditBar.vue"
+Component.options.__file = "E:\\GitHub\\activity-builder\\src\\app\\frontend\\EditBar.vue"
 if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key !== "__esModule"})) {console.error("named exports are not supported in *.vue files.")}
 if (Component.options.functional) {console.error("[vue-loader] EditBar.vue: functional components are not supported with templates, they should use render functions.")}
 
@@ -56001,7 +56065,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
         expression: "node[p.key]"
       }],
       attrs: {
-        "placeholder": p.prop.$rule.placeholder || ''
+        "placeholder": p.prop.$rule.placeholder || '请输入内容'
       },
       domProps: {
         "value": (_vm.node[p.key])
@@ -56069,7 +56133,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
         expression: "node[p.key]"
       }],
       attrs: {
-        "placeholder": p.prop.$rule.placeholder || ''
+        "placeholder": p.prop.$rule.placeholder || 'eg: #e5e5e5'
       },
       domProps: {
         "value": (_vm.node[p.key])
@@ -56134,11 +56198,121 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
         "httpRequest": _vm.handleFileRequest,
         "multiple": false,
         "on-change": _vm.handleFileListChange('upload-' + p.key, 1),
+        "on-success": _vm.handleFileSuccess,
         "on-remove": _vm.handleFileRemove('upload-' + p.key)
       }
     }, [_c('i', {
       staticClass: "el-icon-plus"
-    })])], 1) : _vm._e()]
+    })])], 1) : (p.prop.$rule.clazz === 'FontSize') ? _c('el-form-item', {
+      attrs: {
+        "label": p.prop.$rule.name + '：'
+      }
+    }, [_c('el-autocomplete', {
+      directives: [{
+        name: "model",
+        rawName: "v-model",
+        value: (_vm.node[p.key]),
+        expression: "node[p.key]"
+      }],
+      staticStyle: {
+        "width": "100%"
+      },
+      attrs: {
+        "popper-class": "my-autocomplete",
+        "fetch-suggestions": _vm.loadFontSizeSuggestions,
+        "custom-item": "fontsize-item",
+        "placeholder": p.prop.$rule.placeholder || 'eg: 16px'
+      },
+      domProps: {
+        "value": (_vm.node[p.key])
+      },
+      on: {
+        "select": function($event) {
+          _vm.$forceUpdate()
+        },
+        "input": function($event) {
+          var $$exp = _vm.node,
+            $$idx = p.key;
+          if (!Array.isArray($$exp)) {
+            _vm.node[p.key] = $event
+          } else {
+            $$exp.splice($$idx, 1, $event)
+          }
+        }
+      }
+    })], 1) : (p.prop.$rule.clazz === 'Date') ? _c('el-form-item', {
+      attrs: {
+        "label": p.prop.$rule.name + '：'
+      }
+    }, [_c('el-date-picker', {
+      directives: [{
+        name: "model",
+        rawName: "v-model",
+        value: (_vm.node[p.key]),
+        expression: "node[p.key]"
+      }],
+      staticStyle: {
+        "width": "100%"
+      },
+      attrs: {
+        "type": "date",
+        "placeholder": p.prop.$rule.placeholder || '选择日期',
+        "editable": false,
+        "format": "yyyy-MM-dd"
+      },
+      domProps: {
+        "value": (_vm.node[p.key])
+      },
+      on: {
+        "input": [function($event) {
+          var $$exp = _vm.node,
+            $$idx = p.key;
+          if (!Array.isArray($$exp)) {
+            _vm.node[p.key] = $event
+          } else {
+            $$exp.splice($$idx, 1, $event)
+          }
+        }, function($event) {
+          _vm.$forceUpdate()
+        }]
+      }
+    })], 1) : (p.prop.$rule.clazz === 'DateTime') ? _c('el-form-item', {
+      attrs: {
+        "label": p.prop.$rule.name + '：'
+      }
+    }, [_c('el-date-picker', {
+      directives: [{
+        name: "model",
+        rawName: "v-model",
+        value: (_vm.node[p.key]),
+        expression: "node[p.key]"
+      }],
+      staticStyle: {
+        "width": "100%"
+      },
+      attrs: {
+        "type": "datetime",
+        "editable": false,
+        "format": "yyyy-MM-dd HH:mm:ss",
+        "placeholder": p.prop.$rule.placeholder || '选择日期时间'
+      },
+      domProps: {
+        "value": (_vm.node[p.key])
+      },
+      on: {
+        "input": [function($event) {
+          var $$exp = _vm.node,
+            $$idx = p.key;
+          if (!Array.isArray($$exp)) {
+            _vm.node[p.key] = $event
+          } else {
+            $$exp.splice($$idx, 1, $event)
+          }
+        }, function($event) {
+          _vm.$forceUpdate()
+        }]
+      }
+    })], 1) : _vm._e()]
   })], 2)], 1)
 },staticRenderFns: []}
 module.exports.render._withStripped = true

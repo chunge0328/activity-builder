@@ -18,7 +18,7 @@
 </style>
 <template>
 	<button class="xbtn" v-bind:class="{'xbtn--round': shape == 'ROUND', 'xbtn--oval': shape == 'OVAL', 'xbtn--bold': bold}"
-        v-bind:style="{'background-color': bgColor, 'color': fontColor}">{{ txt }}</div>
+        v-bind:style="{'background-color': bgColor, 'color': fontColor, 'font-size': fontSize}">{{ txt }}</div>
 </template>
 <script>
 	export default {
@@ -80,6 +80,27 @@
                 $rule: {
                     name: '背景图片',
                     clazz: 'Image'
+                }
+            },
+            fontSize: {
+                type: String,
+                $rule: {
+                    name: '字体大小',
+                    clazz: 'FontSize'
+                }
+            },
+            date: {
+                type: String,
+                $rule: {
+                    name: '日期',
+                    clazz: 'Date'
+                }
+            },
+            dateTime: {
+                type: String,
+                $rule: {
+                    name: '时间',
+                    clazz: 'DateTime'
                 }
             }
 		}
