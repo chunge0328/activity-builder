@@ -86,7 +86,7 @@ function compileResource() {
   const ExtractTextPlugin = require('extract-text-webpack-plugin');
   const HtmlWebpackPlugin = require('html-webpack-plugin');
   const RELEEASE_PATH = path.join(process.cwd(), "/src/dist");
-  const CONTEXT_PATH = path.join(process.cwd(), '/src/app/frontend');
+  const CONTEXT_PATH = path.join(process.cwd(), '/src/app/views');
   const webpack = require('webpack');
   const compiler = webpack({
       context: CONTEXT_PATH,

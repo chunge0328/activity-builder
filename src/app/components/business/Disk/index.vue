@@ -25,8 +25,7 @@
 					name: '取消按钮文本',
 					placeholder: 'http://|https://',
 					$error: '请输入URL'
-				},
-				validator: urlValidator
+				}
 			},
 			name: {
 				type: String,

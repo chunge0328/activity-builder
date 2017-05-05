@@ -9,7 +9,7 @@ export default {
 		if(this.$parent) {
         	this.$parent.$newChildren.push(this);
         }
-        let config = __STORAGE__[this.$location] || {};
+        let config = this.__STORE__[this.$location] || {};
 		this._updateFromParent = function(propsData, listeners, parentVnode, renderChildren) {
 			//propsData
 			propsData = Vue.util.extend(propsData || {}, config.propsData || {});

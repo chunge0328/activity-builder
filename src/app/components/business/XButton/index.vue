@@ -4,6 +4,8 @@
 		display: inline-block;
 		padding: 5px 10px;
 		font-size: 0.444444rem;
+        background-size: 100% 100%;
+        background-repeat: no-repeat;
         .one-line();
 	}
     .xbtn--round {
@@ -18,7 +20,7 @@
 </style>
 <template>
 	<button class="xbtn" v-bind:class="{'xbtn--round': shape == 'ROUND', 'xbtn--oval': shape == 'OVAL', 'xbtn--bold': bold}"
-        v-bind:style="{'background-color': bgColor, 'color': fontColor, 'font-size': fontSize}">{{ txt }}</div>
+        v-bind:style="{'background-color': bgColor, 'color': fontColor, 'font-size': fontSize, 'background-image': realBgImg}">{{ txt }}</div>
 </template>
 <script>
 	export default {
@@ -82,6 +84,14 @@
                     clazz: 'Image'
                 }
             },
+            bgImg2: {
+                type: String,
+                default: '',
+                $rule: {
+                    name: '背景图片2',
+                    clazz: 'Image'
+                }
+            },
             fontSize: {
                 type: String,
                 $rule: {
@@ -103,6 +113,11 @@
                     clazz: 'DateTime'
                 }
             }
-		}
+		},
+        computed: {
+            realBgImg() {
+                return this.bgImg ? `url(${this.bgImg})` : '';
+            }
+        }
 	}
 </script>
