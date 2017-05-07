@@ -22,7 +22,7 @@ exports.registerAll = ()=> {
 			webContents.getAllWebContents()[0].send(Enum.EVENTS.RELOAD);
 		}
 	}));
-	Menu.setApplicationMenu(menu)
+	//Menu.setApplicationMenu(menu)
 };
 exports.unRegisterAll = ()=> {
 	globalShortcut.unregisterAll();

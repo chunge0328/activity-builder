@@ -11,7 +11,9 @@ const BOTTOM = 5;
 const LEFT_BOTTOM = 6;
 const LEFT = 7;
 const CENTER = 8;
-
+const POS = 'POS';
+const DIMENSION = 'DIMENSION';
+const CANVAS_ID = 'resizing-canvas';
 class Resizing {
 
     constructor(node, config) {
@@ -28,6 +30,7 @@ class Resizing {
             this.posData = {};
         }
         this.stopStateChange = false;
+        this._canvas = null;
     }
 
     _applyCursor(target, state) {
@@ -75,21 +78,80 @@ class Resizing {
         }
     }
 
-    _onElMouseDownHandler(event) {
-        var oldPosX = ~~event.clientX;
-        var oldPosY = ~~event.clientY;
+    _drawCanvas() {
+        this._canvas = this.el.ownerDocument.getElementById(CANVAS_ID);
+        if(!this._canvas) {
+            this._canvas = this.el.ownerDocument.createElement('canvas');
+            this._canvas.style = 'position:fixed;top:0;left:0;width:100%;height:100%;z-index:999;pointer-events:none;';
+            let {width, height} = this.el.ownerDocument.documentElement.getBoundingClientRect();
+            this._canvas.width = width;
+            this._canvas.height = height; 
+            this._canvas.id = CANVAS_ID;
+            this.el.ownerDocument.body.appendChild(this._canvas);
+        }
+        let ctx = this._canvas.getContext('2d');
+    
+        ctx.save();
+        ctx.clearRect(0, 0, this._canvas.width, this._canvas.height);
+        ctx.beginPath();
+
+        let {left, top, right, bottom, width, height} = this.el.getBoundingClientRect();
+        ctx.fillStyle = ctx.strokeStyle = '#FFA500';
+        ctx.font = '12px serif';
+        ctx.lineWidth = 1;
+
+        ctx.strokeRect(left - 1,top - 1, width + 2, height + 2);
+        ctx.fillText(`(${width}, ${height})`, right - ctx.measureText(`(${width}, ${height})`).width, top - 4);
+
+        ctx.save();
+        ctx.moveTo(left + width / 2, 0);
+        ctx.lineTo(left + width / 2, top);
+        ctx.stroke();
+        ctx.fillText(top, left + width / 2 + 2, top / 2);
+        ctx.restore();
+
+        ctx.save();
+        ctx.moveTo(0, top + height / 2);
+        ctx.lineTo(left, top + height / 2);
+        ctx.stroke();
+        ctx.fillText(left, left / 2 - ctx.measureText(left).width / 2, top + height / 2 - 2);
+        ctx.restore();
+
+        ctx.save();
+        ctx.moveTo(right, top + height / 2);
+        ctx.lineTo(this._canvas.width, top + height / 2);
+        ctx.stroke();
+        let rDistance = this._canvas.width - right;
+        ctx.fillText(rDistance, right + rDistance / 2 - ctx.measureText(rDistance).width / 2, top + height / 2 - 2);
+        ctx.restore();
+
+        ctx.save();
+        ctx.moveTo(left + width / 2, bottom);
+        ctx.lineTo(left + width / 2, this._canvas.height);
+        ctx.stroke();
+        let bDistance = this._canvas.height - bottom;
+        ctx.fillText(bDistance, left + width / 2 + 2,  bottom + bDistance / 2);
+        ctx.restore();
+
+        ctx.restore();
+    }
+
+   _onElMouseDownHandler(event) {
+        let oldPosX = ~~event.clientX;
+        let oldPosY = ~~event.clientY;
         if(this.el.dataset['x'] === undefined && this.posData['transform']) {
             this.el.dataset['x'] = this.posData['transform'].match(/-?\d+/g)[0];
         }
         if(this.el.dataset['y'] === undefined && this.posData['transform']) {
             this.el.dataset['y'] = this.posData['transform'].match(/-?\d+/g)[1];
         }
-        var oldDeltaX = this.el.dataset['x'] ? Number(this.el.dataset['x']) : 0;
-        var oldDeltaY = this.el.dataset['y'] ? Number(this.el.dataset['y']) : 0;
-        var offsetWidth = ~~this.el.offsetWidth;
-        var offsetHeight = ~~this.el.offsetHeight;
-        var self = this;
+        let oldDeltaX = this.el.dataset['x'] ? Number(this.el.dataset['x']) : 0;
+        let oldDeltaY = this.el.dataset['y'] ? Number(this.el.dataset['y']) : 0;
+        let offsetWidth = ~~this.el.offsetWidth;
+        let offsetHeight = ~~this.el.offsetHeight;
+        let self = this;
         this.stopStateChange = true;
+        this._drawCanvas();
         this.el.ownerDocument.onmouseup = function(event) {
             self.el.ownerDocument.onmouseup = null;
             self.el.ownerDocument.onmousemove = null;
@@ -161,6 +223,7 @@ class Resizing {
                     self.el.style.webkitTransform = self.posData['transform'] = self.posData['webkitTransform'] = 'translate(' + (oldDeltaX) + 'px,' + (oldDeltaY) + 'px)';
                     break;
             }
+            self._drawCanvas();
         }
     }
 
@@ -201,7 +264,7 @@ class Resizing {
     }
 
     _dispose() {
-
+        
     }
 
     setup() {
@@ -215,6 +278,9 @@ class Resizing {
             this.el.removeEventListener('mousedown', _onElMouseDownHandler);
             this.el.removeEventListener('mousemove', _onElMouseMoveHandler);
             this.el.removeEventListener('mouseleave', _onElMouseMoveHandler);
+            if(this._canvas) {
+                this._canvas.parentNode.removeChild(this._canvas);
+            }
         }   
     }
 

@@ -97,46 +97,55 @@ function compileResource() {
           //publicPath: Path.join('/src/dist/')
       },
       module: {
-        loaders: [
+        rules: [
           {
             test: /\.vue$/,
-            loader: 'vue'
+            loader: 'vue-loader',
+            options: {
+              preserveWhitespace: false,
+              loaders: {
+                css: ExtractTextPlugin.extract({
+                  use: 'css-loader',
+                  fallback: 'vue-style-loader'
+                }),
+                less: ExtractTextPlugin.extract({
+                  use: ['css-loader', 'less-loader'],
+                  fallback: 'vue-style-loader'
+                })
+              } 
+            }
           },
           {
             test: /\.css$/,
-            loader: ExtractTextPlugin.extract('css')
+            loader: ExtractTextPlugin.extract({
+              use: 'css-loader',
+              fallback: 'vue-style-loader'
+            })
           },
           {
             test: /\.js$/,
-            loader: 'babel',
+            loader: 'babel-loader',
             exclude: /node_modules/
           },
           {
-            test: /\.(png|jpg|gif|svg)$/,
-            loader: 'file',
-            query: {
+            test: /\.(png|jpg|gif|svg|jpeg)$/,
+            loader: 'file-loader',
+            options: {
               name: '[name].[ext]'
             }
           },
           {
             test: /\.(eot|svg|ttf|woff|woff2)(\?\S*)?$/,
             loader: 'file-loader',
-            query: {
+            options: {
               name: '[name].[ext]'
             }
           }
         ]
       },
-      resolveLoader: { 
-        root: 'node_modules'
-      },
-      vue: {
-        preserveWhitespace: false,
-        loaders: {
-          css: ExtractTextPlugin.extract('css'),
-          less: ExtractTextPlugin.extract('css!less')
-        } 
-      },
+      resolve: { 
+        modules: ['node_modules']
+      }, 
       plugins: [
         new webpack.DefinePlugin({
           'process.env': {NODE_ENV: '"production"'}

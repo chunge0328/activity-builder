@@ -26,45 +26,66 @@ function _initDB() {
 function _initServer(callback) {
 	compiler = webpack({
 	    context: path.join(process.cwd(), "/src"),
-	    entry: ["webpack/hot/dev-server", `webpack-dev-server/client?${config.INTERNAL_SERVER_HOST}`, "./app/activity/index"],
+	    entry: {
+        index: ["webpack/hot/dev-server", `webpack-dev-server/client?${config.INTERNAL_SERVER_HOST}`, "./app/activity/index"],
+        vendor: ["vue"]
+      },
 	    output: {
 	        path: config.ACTIVITY_BUILD_DIR,
 	        filename: "bundle.js"
 	    },
 	    module: {
-	      loaders: [
+	      rules: [
 	        {
 	          test: /\.vue$/,
-	          loader: 'vue'
-	        },
+	          loader: 'vue-loader'
+	        },{
+            test: /node_modules\/vue/,
+            loader: 'babel-loader',
+            options: {
+              compact: false,
+              plugins: [
+                  [{
+                    visitor: {
+                        BlockStatement(path) {
+                            if(t.isFunctionDeclaration(path.parent) && path.parent.id.name == 'updateChildComponent') {
+                                let buildExpression = 
+                                    template(`vm._updateFromParent&&vm._updateFromParent(propsData, listeners, parentVnode, renderChildren)`);
+                                let ast = buildExpression({});
+                                path.unshiftContainer('body', ast);
+                            }
+                        }
+                    }
+                  }]
+              ]
+            }
+          },
 	        {
 	          test: /\.js$/,
-	          loader: 'babel',
+	          loader: 'babel-loader',
 	          exclude: /node_modules/
 	        },
 	        {
 	          test: /\.css$/,
-	          loader: 'css',
+	          loader: 'css-loader',
 	          exclude: /node_modules/
 	        },
 	        {
-	          test: /\.(png|jpg|gif|svg)$/,
-	          loader: 'file',
-	          query: {
+	          test: /\.(png|jpg|gif|svg|jpeg)$/,
+	          loader: 'file-loader',
+	          options: {
 	            name: '[name].[ext]'
 	          }
 	        }
 	      ]
 	    },
-	    resolveLoader: { 
-	      root: path.join(process.cwd(), "node_modules") 
-	    },
 	    resolve: {
 	    	modules: ['node_modules', 'app/components', 'app/activity']
 	    },
 	    plugins: [
-          // new ActivityComponentCleanPlugin(),
-          // new ActivityResourceResolvePlugin(),
+          //new ActivityComponentCleanPlugin(),
+          //new Vue2HackPlugin(),
+          new webpack.optimize.CommonsChunkPlugin({name: "vendor", filename: "vendor.bundle.js"}),
 	        new webpack.HotModuleReplacementPlugin()
 	    ],
 	    target: "web"
@@ -102,7 +123,7 @@ function _resolveResource(source) {
       {
         visitor: {
           Literal(path) {
-            if(/^assets\//.test(path.node.value) && t.isObjectProperty(path.parent)) {
+            if(/^assets\//.test(path.node.value) && !t.isCallExpression(path.parent)) {
               let ast = buildRequire({
                 SOURCE: t.stringLiteral(path.node.value)
               });
@@ -118,7 +139,6 @@ function _resolveResource(source) {
 
 function _flushFile(data, configStorage) {
 	let appFile = path.join(process.cwd(), 'src/app/activity/App.vue');
-  // let storeFile = path.join(process.cwd(), 'src/app/activity/__store__.js');
 	let map = {};
 	let comps = [];
 	data.forEach(function(comp) {
@@ -127,15 +147,7 @@ function _flushFile(data, configStorage) {
 			comps.push(comp.componentName);
 		}
 	});
-//   let storeTpl =
-//   `let __STORE__ = ${JSON.stringify(configStorage)};
-// export default {
-//   install(Vue) {
-//       Vue.prototype.__STORE__ = __STORE__;
-//   }
-// }
-//   `;
-	let appTpl = 
+let appTpl = 
 `<template>
   <div class="app">
 `;

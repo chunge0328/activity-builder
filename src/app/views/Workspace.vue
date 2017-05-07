@@ -19,7 +19,10 @@
     	position: relative;
         width: 360px;
         height: 640px;
-        box-shadow: 0 0 3px 3px #ececec;
+        //box-shadow: 0 0 3px 3px #ececec;
+        border: 1px solid #e5e5e5;
+        box-sizing: content-box;
+        left: 40px;
     }
     .preview, .design {
     	width: 100%;
@@ -190,14 +193,13 @@
         },
         mounted: function() {
             var self = this
-            //http://127.0.0.1:8092/index.html
             support.initServer(function() {
                 self.$refs.design.src = 'http://127.0.0.1:8092/index.html';
-                support.getCompiler().plugin('done', function() {
-                    if(self.needReload) {
-                        self.reload();
-                    }
-                });
+                // support.getCompiler().plugin('done', function() {
+                //     if(self.needReload) {
+                //         self.reload();
+                //     }
+                // });
             });
             
             remote.on(Enum.EVENTS.SAVE, function() {
@@ -211,7 +213,7 @@
     		var self = this;
             function setUpListener() {
 	            self.$refs.design.contentWindow.addEventListener('message', function(e) {
-	            	if(e.data.indexOf('webpackHotUpdate') >= 0) {
+	            	if(e.data.type == 'webpackOk') {                       
 	            		setTimeout(function() {
 	            			self.save();
 	            		}, 300)
@@ -231,13 +233,19 @@
             this.$refs.design.onload = function() {
                 setUpListener();
                 self.$refs.design.contentWindow._STORAGE_ = self.configStorage;
-                setTimeout(function() {
-                    self.needReload = false;
-                }, 300);       
-            };      
+                // setTimeout(function() {
+                //     self.needReload = false;
+                // }, 300);       
+            }; 
+            this.clearInspectState();
+            this.clearResizeState();    
 		},	
-        deactivated: function() {
-            this.needReload = true;
+        // deactivated: function() {
+        //     this.needReload = true; 
+        // },
+        beforeRouteLeave: function(to, from, next) {
+            this.saveResizeState();
+            next();
         },
 		computed: {
 			tpl: function() {
@@ -270,6 +278,7 @@
                 let self = this;
                 let allInstances = support.getAllInstances(doc);
                 this.clearResizeState();
+                this.saveResizeState();
                 doc.documentElement.onmousemove = function(event) {
                     if(support.isFixedNode()) return;
                     var got = self._isInNode(event.clientX, event.clientY, allInstances);
@@ -400,8 +409,9 @@
 
             save: function() {
                 var self = this;
-                this.clearResizeState();
-                this.clearInspectState();
+                //this.clearResizeState();
+                //this.clearInspectState();
+                this.saveResizeState();
                 remote.capturePage(this._transformRect(this.$refs.design.getBoundingClientRect()), function(imageData) {
 	                let data = {
                         title: self.tpl.title, 
@@ -513,6 +523,7 @@
                 this.isSelectingResizeNode = !this.isSelectingResizeNode;
                 if(!this.isSelectingResizeNode || this.isResizingNode) {
                     this.clearResizeState();
+                    this.save();
                     return;
                 }
                 let self = this;
@@ -539,7 +550,10 @@
                 this.inspectedNode = null;
                 doc.documentElement.onmousemove = null;
                 this.isSelectingResizeNode = false;
-                this.isResizingNode = false;
+                this.isResizingNode = false;          
+            },
+
+            saveResizeState: function() {
                 var obj = Resizing.getTop();
                 if(obj) {
                     var location = util.locate(support.getInstance(obj._node));
@@ -548,7 +562,7 @@
                     }
                     Vue.set(this.configStorage[location], 'staticStyle', obj.posData);
                     Resizing.deactivateAll();
-                }          
+                }
             }
 		},
 		components: {

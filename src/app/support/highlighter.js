@@ -47,6 +47,7 @@ export function unHighlight () {
   if (overlay && overlay.parentNode) {
     doc.body.removeChild(overlay)
   }
+  overlay = null;
 }
 
 /**

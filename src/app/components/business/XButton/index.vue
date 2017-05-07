@@ -7,6 +7,7 @@
         background-size: 100% 100%;
         background-repeat: no-repeat;
         .one-line();
+        width: auto;
 	}
     .xbtn--round {
         border-radius: 50%;
@@ -20,12 +21,17 @@
 </style>
 <template>
 	<button class="xbtn" v-bind:class="{'xbtn--round': shape == 'ROUND', 'xbtn--oval': shape == 'OVAL', 'xbtn--bold': bold}"
-        v-bind:style="{'background-color': bgColor, 'color': fontColor, 'font-size': fontSize, 'background-image': realBgImg}">{{ txt }}</div>
+        v-bind:style="{'width': width, 'background-color': bgColor, 'color': fontColor, 'font-size': fontSize, 'background-image': realBgImg}">{{ txt }}</button>
 </template>
 <script>
+    import Enum from '../../common/enum';
 	export default {
 		name: 'XButton',
 		props: {
+            width: {
+              type: String, 
+              default: '200px'
+            },
 			txt: {
 				type: String,
 				default: '按钮',
@@ -50,7 +56,7 @@
                             label: '腰圆'
                         }
                     ],
-                    clazz: 'Select'
+                    clazz: Enum.CLAZZ.SELECT
                 }
             },
             bgColor: {
@@ -58,7 +64,7 @@
                 default: '#ececec',
                 $rule: {
                     name: '背景颜色',
-                    clazz: 'Color'
+                    clazz: Enum.CLAZZ.COLOR
                 }
             },
             fontColor: {
@@ -66,7 +72,7 @@
                 default: '#000000',
                 $rule: {
                     name: '字体颜色',
-                    clazz: 'Color'
+                    clazz: Enum.CLAZZ.COLOR
                 }
             },
             bold: {
@@ -77,46 +83,46 @@
                 }
             },
             bgImg: {
-                type: String,
-                default: '',
+                type: Object,
+                default: ()=> ({}),
                 $rule: {
                     name: '背景图片',
-                    clazz: 'Image'
+                    clazz: Enum.CLAZZ.IMAGE
                 }
             },
             bgImg2: {
-                type: String,
-                default: '',
+                type: Array,
+                default: ()=> [],
                 $rule: {
                     name: '背景图片2',
-                    clazz: 'Image'
+                    clazz: Enum.CLAZZ.IMAGE_ARRAY
                 }
             },
             fontSize: {
                 type: String,
                 $rule: {
                     name: '字体大小',
-                    clazz: 'FontSize'
+                    clazz: Enum.CLAZZ.FONT_SIZE
                 }
             },
             date: {
                 type: String,
                 $rule: {
                     name: '日期',
-                    clazz: 'Date'
+                    clazz: Enum.CLAZZ.DATE
                 }
             },
             dateTime: {
                 type: String,
                 $rule: {
                     name: '时间',
-                    clazz: 'DateTime'
+                    clazz: Enum.CLAZZ.DATE_TIME
                 }
             }
 		},
         computed: {
             realBgImg() {
-                return this.bgImg ? `url(${this.bgImg})` : '';
+                return this.bgImg && this.bgImg.url ? `url(${this.bgImg.url})` : '';
             }
         }
 	}

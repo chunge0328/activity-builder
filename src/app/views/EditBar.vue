@@ -24,7 +24,7 @@
     	padding-right: 10px;
     	line-height: 32px;
     	font-size: 14px;
-    	overflow: hidden;
+    	overflow: hidde;
     	text-overflow: ellipsis;
     	white-space: nowrap;
     }
@@ -46,7 +46,7 @@
 		<!--<div class="edit-bar-inner">-->
 			<el-form label-width="80px" label-position="top">
 				<template v-for="(p, index) in props">
-					<el-form-item v-if="p.prop.$rule.clazz === 'Select'" :label="p.prop.$rule.name + '：'">
+					<el-form-item v-if="p.prop.$rule.clazz === Enum.CLAZZ.SELECT" :label="p.prop.$rule.name + '：'">
 						<el-select style="width:100%" v-model="node[p.key]" placeholder="请选择" @handleOptionClick="$forceUpdate()">
 							<el-option
 								v-for="item in p.prop.$rule.options"
@@ -62,7 +62,7 @@
 					<el-form-item v-else-if="p.prop.$rule.clazz === 'Boolean'" :label="p.prop.$rule.name + '：'">
 						<el-switch on-text="是" off-text="否" v-model="node[p.key]" @input="$forceUpdate()"></el-switch>
 					</el-form-item>
-					<el-form-item style="line-height: 0" v-else-if="p.prop.$rule.clazz === 'Color'" :label="p.prop.$rule.name + '：'">
+					<el-form-item style="line-height: 0" v-else-if="p.prop.$rule.clazz === Enum.CLAZZ.COLOR" :label="p.prop.$rule.name + '：'">
 						<el-col :span="19">
 							<el-input :placeholder="p.prop.$rule.placeholder || 'eg: #e5e5e5'"  v-model="node[p.key]"  @input="$forceUpdate()"></el-input>
 						</el-col>
@@ -71,21 +71,35 @@
 							<el-color-picker v-model="node[p.key]" show-alpha @change="$forceUpdate()"></el-color-picker>
 						</el-col>					
 					</el-form-item>
-					<el-form-item v-else-if="p.prop.$rule.clazz === 'Image'" :label="p.prop.$rule.name + '：'">
+					<el-form-item v-else-if="p.prop.$rule.clazz === Enum.CLAZZ.IMAGE" :label="p.prop.$rule.name + '：'">
 						<el-upload
 							list-type="picture"
-							:httpRequest="handleFileRequest"
+							:http-request="handleFileRequest"
 							:multiple="false"
 							:ref="p.key"
-							:on-change="changeUploadView(p.key, 1)"
+							:disabled="node[p.key] && node[p.key].url"
 							:on-success="handleFileSuccess(p.key)"
 							:on-remove="handleFileRemove(p.key)"
-							:file-list="node[p.key] ? [{url: path.join(config.INTERNAL_SERVER_HOST, node[p.key])}] : []"
-							@hook:mounted="changeUploadView(p.key, 1)()">
+							:file-list="node[p.key].url ? [{url: path.join(config.INTERNAL_SERVER_HOST, node[p.key].url)}] : []"
+							>
 							<el-button>添加图片</el-button>
 						</el-upload>
 					</el-form-item>
-					<el-form-item v-else-if="p.prop.$rule.clazz === 'FontSize'" :label="p.prop.$rule.name + '：'">
+					<el-form-item v-else-if="p.prop.$rule.clazz === Enum.CLAZZ.IMAGE_ARRAY" :label="p.prop.$rule.name + '：'">
+						<el-upload
+							list-type="picture"
+							:http-request="handleFileRequest"
+							:multiple="false"
+							:ref="p.key"
+							:disabled="node[p.key].length >= (p.prop.$rule.max || 99)"
+							:on-success="handleFileSuccess(p.key)"
+							:on-remove="handleFileRemove(p.key)"
+							:file-list="node[p.key].map((img)=>({url: path.join(config.INTERNAL_SERVER_HOST, img.url)}))"
+							>
+							<el-button>添加图片</el-button>
+						</el-upload>
+					</el-form-item>
+					<el-form-item v-else-if="p.prop.$rule.clazz === Enum.CLAZZ.FONT_SIZE" :label="p.prop.$rule.name + '：'">
 						<el-autocomplete
 							popper-class="my-autocomplete"
 							v-model="node[p.key]"
@@ -96,7 +110,7 @@
 							style="width: 100%"
 							></el-autocomplete>
 					</el-form-item>
-					<el-form-item v-else-if="p.prop.$rule.clazz === 'Date'" :label="p.prop.$rule.name + '：'">
+					<el-form-item v-else-if="p.prop.$rule.clazz === Enum.CLAZZ.DATE" :label="p.prop.$rule.name + '：'">
 						<el-date-picker
 							v-model="node[p.key]"
 							type="date"
@@ -107,7 +121,7 @@
 							style="width: 100%">
 						</el-date-picker>
 					</el-form-item>
-					<el-form-item v-else-if="p.prop.$rule.clazz === 'DateTime'" :label="p.prop.$rule.name + '：'">
+					<el-form-item v-else-if="p.prop.$rule.clazz === Enum.CLAZZ.DATE_TIME" :label="p.prop.$rule.name + '：'">
 						<el-date-picker
 							v-model="node[p.key]"
 							type="datetime"
@@ -127,9 +141,12 @@
 	import Vue from 'vue';
 	import util from './common/util';
 	import config from '../config';
+	import Enum from '../components/common/enum';
 	const fs = nodeRequire('fs');
 	const path = nodeRequire('path');
 	const shortid = nodeRequire('shortid');
+	const mkdirp = nodeRequire('mkdirp');
+	const sizeOf = nodeRequire('image-size');
 	Vue.component('fontsize-item', {
 		functional: true,
 		render: function (h, ctx) {
@@ -158,7 +175,8 @@
 		data: function() {
 			return {
 				config,
-				path
+				path,
+				Enum
 			}
 		},
 		computed: {
@@ -211,33 +229,62 @@
 				let p = new Promise(function(resolve, reject) {
 					let rs = fs.createReadStream(opts.file.path);
 					let newName = shortid.generate() + path.extname(opts.file.name);
-					let ws = fs.createWriteStream(path.join(process.cwd(), `src/app/activity/assets/images/${newName}`));
-					rs.pipe(ws);
-					ws.on('finish', function() {
-						resolve({name: newName});
-					});
-					ws.on('error', function() {
-						reject();
-					});
-					rs.on('error', function() {
-						reject();
+					let dest = path.join(process.cwd(), `src/app/activity/assets/images/${newName}`);
+					let dimensions = sizeOf(opts.file.path);
+					mkdirp(path.dirname(dest), (err)=> {
+						if(err) {
+							reject();
+							return;
+						}
+						let ws = fs.createWriteStream(dest);
+						rs.pipe(ws);
+						ws.on('finish', function() {
+							resolve({
+								url: `assets/images/${newName}`,
+								width: dimensions.width,
+								height: dimensions.height
+							});
+						});
+						ws.on('error', function() {
+							reject();
+						});
+						rs.on('error', function() {
+							reject();
+						});
 					});
 				});
 				return p;
 			},
 			handleFileSuccess: function(key) {
 				function _handleFileSuccess(key, response, file, fileList) {
-					this.node[key] = `assets/images/${response.name}`;
+					if(!Array.isArray(this.node[key])) {
+						this.node[key] = response;
+					} else {
+						this.node[key].push(response);
+					}
+					this.$forceUpdate();
 				}
 				return _handleFileSuccess.bind(this, key);
 			},
-			handleFileRemove: function(refKey) {
+			handleFileRemove: function(key) {
 				let self = this;
-				function _handleFileRemove(refKey, file, fileList) {
-					self.node[refKey] = '';
-					this.$refs[refKey][0].disabled = false;
+				function _handleFileRemove(key, file, fileList) {
+					if(!Array.isArray(this.node[key])) {
+						self.node[key] = {};
+					} else {
+						let len = self.node[key].length;
+						// console.log(path.basename(file.url));
+						while(len) {
+							len--;
+							if(path.basename(self.node[key][len].url) == path.basename(file.url)) {
+								self.node[key].splice(len, 1);
+								break;
+							}
+						}
+					}
+					this.$forceUpdate();
 				}
-				return _handleFileRemove.bind(this, refKey);
+				return _handleFileRemove.bind(this, key);
 			},
 			// handleFileListChange: function(refKey, max, file, fileList) {
 			// 	function _handleFileListChange(refKey, max, file, fileList) {
@@ -258,15 +305,6 @@
 					{value: '22px', name: '超超大号字'},
 					{value: '24px', name: '超超超大号字'}
 				]);
-			},
-			changeUploadView: function(refKey, max) {
-				function _handleUploadMounted() {
-					if(this.$refs[refKey][0].uploadFiles.length >= max) {
-						this.$refs[refKey][0].disabled = true;
-						this.$forceUpdate();
-					}
-				}
-				return _handleUploadMounted.bind(this, refKey, max);
 			}
 		}
 	}
