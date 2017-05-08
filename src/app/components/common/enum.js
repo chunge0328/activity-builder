@@ -6,6 +6,7 @@ export default {
         SELECT: 'Select',
         FONT_SIZE: 'FontSize',
         DATE: 'Date',
-        DATE_TIME: 'DateTime'
+        DATE_TIME: 'DateTime',
+        RITCH_TEXT: 'RichText'
     }
 }

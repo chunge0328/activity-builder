@@ -12,6 +12,15 @@
 	.el-upload-list__item {
 		transition: none !important;
 	}
+	.ql-formats {
+		line-height: 24px;
+	}
+	.ql-tooltip {
+		left: 0 !important;
+	}
+	.ql-snow .ql-tooltip a.ql-preview {
+		vertical-align: middle;
+	}
     /*.form-group {
     	display: flex;
     	height: 32px;
@@ -132,6 +141,9 @@
 							style="width: 100%">
 						</el-date-picker>
 					</el-form-item>
+					<el-form-item v-else-if="p.prop.$rule.clazz === Enum.CLAZZ.RITCH_TEXT" :label="p.prop.$rule.name + '：'">
+						<quill-editor :options="editorOption" v-model="node[p.key]"></quill-editor>
+					</el-form-item>
 				</template>
 			</el-form>
 		<!--</div>	-->
@@ -176,7 +188,22 @@
 			return {
 				config,
 				path,
-				Enum
+				Enum,
+				editorOption: {
+					theme: 'snow',
+					modules: {
+						toolbar: [
+							[{ 'size': ['small', false, 'large'] }],
+							[{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+							[{ 'color': [] }, { 'background': [] }],
+							[{ 'direction': 'rtl' }],
+							[{ 'align': [] }],
+							['bold', 'italic', 'underline', 'strike'],
+							[{ 'list': 'ordered'}, { 'list': 'bullet' }],
+							['link', 'image']
+						]
+					}
+				}
 			}
 		},
 		computed: {

@@ -45,7 +45,7 @@
 			},
 
 			dragCompEnd: function($event) {
-
+				this.$emit('dragend', $event);
 			}
 		}
 	}

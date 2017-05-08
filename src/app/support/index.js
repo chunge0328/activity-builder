@@ -39,7 +39,9 @@ function _initServer(callback) {
 	        {
 	          test: /\.vue$/,
 	          loader: 'vue-loader'
-	        },{
+            
+	        },
+          {
             test: /node_modules\/vue/,
             loader: 'babel-loader',
             options: {
@@ -67,8 +69,7 @@ function _initServer(callback) {
 	        },
 	        {
 	          test: /\.css$/,
-	          loader: 'css-loader',
-	          exclude: /node_modules/
+	          loader: ['style-loader', 'css-loader']
 	        },
 	        {
 	          test: /\.(png|jpg|gif|svg|jpeg)$/,
@@ -163,6 +164,7 @@ let appTpl =
 	appTpl += 
 `<script>
   import vue from 'vue';
+  import 'quill/dist/quill.core.css';
   `;
 	comps.forEach(function(name) {
 		appTpl += 

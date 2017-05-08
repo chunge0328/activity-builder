@@ -5,6 +5,7 @@ import TplLib from './TplLib.vue';
 import store from './store';
 import VueRouter from 'vue-router';
 import support from '../support';
+import VueQuillEditor from 'vue-quill-editor';
 
 import 'element-ui/lib/theme-default/index.css';
 import './style/font-awesome.css';
@@ -12,6 +13,7 @@ import ElementUI from 'element-ui';
 
 support.initDB();
 Vue.use(ElementUI);
+Vue.use(VueQuillEditor)
 Vue.use(VueRouter);
 const router = new VueRouter({
 	routes: [

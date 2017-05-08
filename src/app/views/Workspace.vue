@@ -19,7 +19,7 @@
     	position: relative;
         width: 360px;
         height: 640px;
-        //box-shadow: 0 0 3px 3px #ececec;
+        /*box-shadow: 0 0 3px 3px #ececec;*/
         border: 1px solid #e5e5e5;
         box-sizing: content-box;
         left: 40px;
@@ -38,6 +38,10 @@
     	text-overflow: ellipsis;
         white-space: nowrap;
     	border-bottom: 1px solid #ececec;
+        transition: transform .3s ease;
+    }
+    .selected-comp-item.move {
+        transform: translate3d(0, 48px, 0);
     }
     .selected-comp-item {
     	position: relative;
@@ -129,7 +133,7 @@
 </style>
 <template>
 	<section class="workspace">
-        <comps-bar></comps-bar>
+        <comps-bar @dragend="dragUnSelectedCompEnd"></comps-bar>
         <div class="workspace-inner">
         	<div class="status-bar">
         		<input class="tpl-title" type="text" v-model="tpl.title" @blur="save()" placeholder="请输入模板名称..." />        	
@@ -139,7 +143,7 @@
         		<div class="selected-comps-bar">
         			<ul class="selected-comp-list" @dragover.self="allowDrop($event)" @drop.self="addComp($event)">
                         <template v-for="(comp, index) in selectedComponents">
-        				    <li class="selected-comp-item" draggable="true" @dragstart="dragSelectedCompStart(index, $event)" @dragover="dragSelectedCompOver($event)" @dragleave="dragLeaveSelectedComp($event)" @dragend="dragSelectedCompEnd($event)" @drop="replaceSelectedComp(index, $event)">{{ comp.name }}<button class="del-btn" @click="delSelectedComp(index)"><i class="fa fa-times"></i></button></li>
+        				    <li class="selected-comp-item" v-bind:class="{move: index >= _dragMoveFlag}" draggable="true" @dragstart="dragSelectedCompStart(index, $event)" @dragover="dragSelectedCompOver(index, $event)" @dragenter="dragEnterSelectedComp(index, $event)" @dragleave="dragLeaveSelectedComp(index, $event)" @dragend="dragSelectedCompEnd($event)" @drop="replaceSelectedComp(index, $event)">{{ comp.name }}<button class="del-btn" @click="delSelectedComp(index)"><i class="fa fa-times"></i></button></li>
                         </template>
         			</ul>
         		</div>
@@ -188,7 +192,8 @@
                 inspectedContext: null,
                 configStorage: {},
                 selectedComponents: [],
-                needReload: false
+                needReload: false,
+                _dragMoveFlag: -1
             }
         },
         mounted: function() {
@@ -201,7 +206,6 @@
                 //     }
                 // });
             });
-            
             remote.on(Enum.EVENTS.SAVE, function() {
                 self.save();
             });
@@ -255,6 +259,7 @@
 		watch: {
             tpl: function() {
                 this.selectedComponents = this.tpl.components ? JSON.parse(this.tpl.components) : [];
+                this._dragMoveFlag = this.selectedComponents.length;
                 this.configStorage = this.tpl.storage ? JSON.parse(this.tpl.storage) : {};
                 this.makeActivity();
             },
@@ -325,24 +330,32 @@
             },
 
             _relocateStorage: function(op, src, to) {
-                var srcLevels = [];
-                var toLevels = [];
-                var self = this;
+                let prefix = '0.0.';
+                let srcLevels = [];
+                let toLevels = [];
+                let self = this;
                 switch(op) {
+                    case 'INSERT':
+                        let len = this.selectedComponents.length - 1;
+                        while(len >= src) {
+                            this._relocateStorage('REPLACE', len, len + 1);
+                            len--;
+                        }
+                        break;
                     case 'REPLACE':
                         for(var p in this.configStorage) {
                             if(this.configStorage.hasOwnProperty(p)) {
-                                if(p.indexOf('0.0.' + src) >= 0) {
+                                if(p.indexOf(`${prefix}${src}`) >= 0) {
                                     srcLevels.push(p);
                                     continue;
                                 }
-                                if(p.indexOf('0.0.' + to) >= 0) {
+                                if(p.indexOf(`${prefix}${to}`) >= 0) {
                                     toLevels.push(p);
                                 }
                             }
                         }
                         srcLevels.forEach(function(l) {
-                            var _ = l.replace('0.0.' + src, '0.0.' + to);
+                            var _ = l.replace(`${prefix}${src}`, `${prefix}${to}`);
                             var tmp;
                             if(self.configStorage[_]) {
                                 tmp = self.configStorage[_];
@@ -354,7 +367,7 @@
                             }
                         });
                         toLevels.forEach(function(l) {
-                            var _ = l.replace('0.0.' + to, '0.0.' + src);
+                            var _ = l.replace(`${prefix}${to}`, `${prefix}${src}`);
                             if(self.configStorage[_]) {
                                 return;
                             } else {
@@ -366,7 +379,7 @@
                     case 'DEL':
                         for(var p in this.configStorage) {
                             if(this.configStorage.hasOwnProperty(p)) {
-                                if(p.indexOf('0.0.' + src) >= 0) {
+                                if(p.indexOf(`${prefix}${src}`) >= 0) {
                                     this.configStorage[p] = undefined;
                                     continue;
                                 }
@@ -380,7 +393,7 @@
                             return a.idx > b.idx;
                         });
                         srcLevels.forEach(function(level) {
-                            self.configStorage[level.l.replace('0.0.' + level.idx, '0.0.' + (level.idx - 1))] = self.configStorage[level.l];
+                            self.configStorage[level.l.replace(`${prefix}${level.idx}`, `${prefix}${level.idx - 1}`)] = self.configStorage[level.l];
                             delete self.configStorage[level.l];
                         });
                         break;
@@ -451,7 +464,7 @@
 				return true;
 			},
 
-            dragSelectedCompOver: function($event) {            
+            dragSelectedCompOver: function(index, $event) {            
                 if(this.isDragingSelectedComp) {
                     $event.target.classList.add('hightlight');
                 } else {
@@ -461,13 +474,28 @@
                 return true;
             },
 
-            dragLeaveSelectedComp: function($event) {
-                $event.target.classList.remove('hightlight');
+            dragEnterSelectedComp: function(index, $event) {
+                if(this.isDragingSelectedComp) return;
+                if($event.target.classList.contains('move')) {
+                    this._dragMoveFlag = index + 1;
+                } else {
+                    this._dragMoveFlag = index;
+                }
+                this.$forceUpdate();
+                $event.preventDefault();
+            },
+
+            dragLeaveSelectedComp: function(index, $event) {
+                if(this.isDragingSelectedComp) {
+                    event.target.classList.remove('hightlight');
+                }
             },
 
 			addComp: function($event) {
                 if(this.isDragingSelectedComp) return;
-                this.selectedComponents.push(JSON.parse($event.dataTransfer.getData('text')));
+                this.selectedComponents.splice(this._dragMoveFlag, 0, JSON.parse($event.dataTransfer.getData('text')));
+                this._relocateStorage('INSERT', this._dragMoveFlag);
+                this._dragMoveFlag = this.selectedComponents.length;
                 this.$forceUpdate();
                 this.makeActivity();
 			},
@@ -497,6 +525,13 @@
 
             dragSelectedCompEnd: function($event) {
                 this.isDragingSelectedComp = false;
+            },
+
+            dragUnSelectedCompEnd: function() {
+                Vue.nextTick(()=> {
+                    this._dragMoveFlag = this.selectedComponents.length;
+                    this.$forceUpdate();
+                });
             },
 
             reload: function() {

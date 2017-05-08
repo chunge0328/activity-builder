@@ -21,17 +21,13 @@
 </style>
 <template>
 	<button class="xbtn" v-bind:class="{'xbtn--round': shape == 'ROUND', 'xbtn--oval': shape == 'OVAL', 'xbtn--bold': bold}"
-        v-bind:style="{'width': width, 'background-color': bgColor, 'color': fontColor, 'font-size': fontSize, 'background-image': realBgImg}">{{ txt }}</button>
+        v-bind:style="{'background-color': bgColor, 'color': fontColor, 'font-size': fontSize, 'background-image': realBgImg}">{{ txt }}</button>
 </template>
 <script>
     import Enum from '../../common/enum';
 	export default {
 		name: 'XButton',
 		props: {
-            width: {
-              type: String, 
-              default: '200px'
-            },
 			txt: {
 				type: String,
 				default: '按钮',
@@ -117,6 +113,13 @@
                 $rule: {
                     name: '时间',
                     clazz: Enum.CLAZZ.DATE_TIME
+                }
+            },
+            richText: {
+                type: String,
+                $rule: {
+                    name: '富文本',
+                    clazz: Enum.CLAZZ.RITCH_TEXT
                 }
             }
 		},

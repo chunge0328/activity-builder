@@ -10,7 +10,7 @@ export default {
         	this.$parent.$newChildren.push(this);
         }
         let config = this.__STORE__[this.$location] || {};
-		this._updateFromParent = function(propsData, listeners, parentVnode, renderChildren) {
+		this._updateFromParent = function(propsData, listeners, parentVnode, renderChildren) { //vue2.4.5 hack
 			this.$parent.$newChildren.push(this); //添加新组件时候
 			//propsData
 			propsData = Vue.util.extend(propsData || {}, config.propsData || {});

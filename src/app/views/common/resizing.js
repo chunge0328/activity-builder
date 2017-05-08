@@ -237,21 +237,21 @@ class Resizing {
         let boundaryWidth = offsetWidth - BOUNDARY;
         if(offsetX >= BOUNDARY && offsetX <= boundaryWidth && offsetY >= BOUNDARY && offsetY <= boundaryHeight) {
             this.state = CENTER;
-        } else if(offsetX < BOUNDARY && offsetY < BOUNDARY) { //left top
+        } else if (offsetX < BOUNDARY && offsetY < BOUNDARY) { //left top
             this.state = LEFT_TOP;              
-        } else if(offsetX < BOUNDARY && offsetY >= BOUNDARY && offsetY <= boundaryHeight) { //left
+        } else if (offsetX < BOUNDARY && offsetY >= BOUNDARY && offsetY <= boundaryHeight) { //left
             this.state = LEFT;
-        } else if(offsetX < BOUNDARY && offsetY > boundaryHeight) { //left bottom
+        } else if (offsetX < BOUNDARY && offsetY > boundaryHeight) { //left bottom
             this.state = LEFT_BOTTOM;
-        } else if(offsetX >= BOUNDARY && offsetX <= boundaryWidth && offsetY < BOUNDARY) { //top
+        } else if (offsetX >= BOUNDARY && offsetX <= boundaryWidth && offsetY < BOUNDARY) { //top
             this.state = TOP;
-        } else if(offsetX > boundaryWidth && offsetY < BOUNDARY) { //right top
+        } else if (offsetX > boundaryWidth && offsetY < BOUNDARY) { //right top
             this.state = RIGHT_TOP;
-        } else if(offsetX > boundaryWidth && offsetY >= BOUNDARY && offsetY <= boundaryHeight) { //right
+        } else if (offsetX > boundaryWidth && offsetY >= BOUNDARY && offsetY <= boundaryHeight) { //right
             this.state = RIGHT;
-        } else if(offsetX > boundaryWidth && offsetY > boundaryHeight) { //right bottom
+        } else if (offsetX > boundaryWidth && offsetY > boundaryHeight) { //right bottom
             this.state = RIGHT_BOTTOM;
-        } else if(offsetX >= BOUNDARY && offsetX <= boundaryWidth && offsetY > boundaryHeight) { //bottom
+        } else if (offsetX >= BOUNDARY && offsetX <= boundaryWidth && offsetY > boundaryHeight) { //bottom
             this.state = BOTTOM;
         }
         this._applyCursor(event.target, this.state);
