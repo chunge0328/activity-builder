@@ -1,6 +1,6 @@
 <template>
   <div class="app">
-<Disk/><Flip/><LazyImage/><Flip/><LazyImage/><Flip/><GameBar/><Flip/><Disk/><GameBar/><Disk/><GameBar/><LazyImage/><Flip/><XText/>
+<Disk/><Flip/><Flip/><Disk/><GameBar/><Flip/>
   </div>
 </template>
 <script>
@@ -8,12 +8,10 @@
   import 'quill/dist/quill.core.css';
   import Disk from "business/Disk/index.vue";
   import Flip from "business/Flip/index.vue";
-  import LazyImage from "business/LazyImage/index.vue";
   import GameBar from "business/GameBar/index.vue";
-  import XText from "business/XText/index.vue";
   vue.use({
     install(vue) {
-      vue.prototype.__STORE__ = ({ "0.0": { "propsData": {}, "staticStyle": {} }, "0.0.9": { "propsData": {}, "staticStyle": {} }, "0.0.8": { "propsData": {}, "staticStyle": {} }, "0.0.6": { "propsData": {}, "staticStyle": {} }, "0.0.5": { "propsData": {}, "staticStyle": {} }, "0.0.0": { "propsData": {}, "staticStyle": {} }, "0.0.0.0": { "propsData": { "txt": "按钮sdfsdfdsafd", "bgImg": { "url": require("assets/images/HJNG0TpkZ.jpg"), "width": 1536, "height": 764 }, "shape": "OVAL" }, "staticStyle": { "transform": "translate(62px,-3px)", "webkitTransform": "translate(62px,-3px)" } }, "0.0.14": { "propsData": {}, "staticStyle": {} }, "0.0.13": { "propsData": {}, "staticStyle": {} }, "0.0.12": { "propsData": {}, "staticStyle": {} }, "0.0.11": { "propsData": {}, "staticStyle": {} }, "0.0.10": { "propsData": {}, "staticStyle": {} }, "0.0.2": { "propsData": {}, "staticStyle": {} }, "0.0.1": { "propsData": {}, "staticStyle": {} } });
+      vue.prototype.__STORE__ = ({ "0.0": { "propsData": {}, "staticStyle": {} }, "0.0.5": { "propsData": {}, "staticStyle": {} }, "0.0.4": { "propsData": {}, "staticStyle": { "height": "148px", "transform": "translate(0px,0px)", "webkitTransform": "translate(0px,0px)" } }, "0.0.3": { "propsData": {}, "staticStyle": {} }, "0.0.3.0": { "propsData": { "txt": "按钮sdfsdfdsafd", "bgImg": {}, "shape": "SQUARE", "bold": false }, "staticStyle": { "width": "215px", "height": "49px", "transform": "translate(122px,-10px)", "webkitTransform": "translate(122px,-10px)" } }, "0.0.2": { "propsData": {}, "staticStyle": {} }, "0.0.1": { "propsData": {}, "staticStyle": {} }, "0.0.0": { "propsData": {}, "staticStyle": {} }, "0.0.0.0": { "propsData": { "bgColor": "rgba(227, 62, 62, 1)" }, "staticStyle": {} } });
     }
   });
   export default {
@@ -21,7 +19,7 @@
       return {};
     }, 
     components: {
-      Disk,Flip,LazyImage,GameBar,XText
+      Disk,Flip,GameBar
     }
   }
 </script>

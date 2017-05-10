@@ -150,8 +150,9 @@
         		<iframe ref="design" class="design" src=""></iframe>
                 <div class="tools-bar">
                     <ul class="tool-list">
-                        <li class="tool-item" v-bind:class="{activated: isInspectingNode}" @click="inspectNode($event)"><i class="fa fa-search"></i></li>
+                        <li class="tool-item" v-bind:class="{activated: isInspectingNode}" @click="inspectNode($event)"><i class="fa fa-crosshairs"></i></li>
                         <li class="tool-item" v-bind:class="{activated: isSelectingResizeNode, working: isResizingNode}" @click="resize($event)"><i class="fa fa-arrows"></i></li>
+                        <li class="tool-item" @click="reload()"><i class="fa fa-crop"></i></li>
                         <li class="tool-item" @click="reload()"><i class="fa fa-repeat"></i></li>
                         <li class="tool-item" @click="create()"><i class="fa fa-plus"></i></li>
                         <li class="tool-item" @click="save()"><i class="fa fa-save"></i></li>

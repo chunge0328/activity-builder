@@ -361,6 +361,14 @@ body {
 .ql-snow .ql-tooltip a.ql-preview {
   vertical-align: middle;
 }
+.el-form-item {
+  padding: 11px 0;
+  border-bottom: 1px dashed #e5e5e5;
+  margin-bottom: 0 !important;
+}
+.el-form-item:last-of-type {
+  border-bottom: none;
+}
 /*.form-group {
     	display: flex;
     	height: 32px;

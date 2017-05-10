@@ -86,14 +86,14 @@
                     clazz: Enum.CLAZZ.IMAGE
                 }
             },
-            bgImg2: {
-                type: Array,
-                default: ()=> [],
-                $rule: {
-                    name: '背景图片2',
-                    clazz: Enum.CLAZZ.IMAGE_ARRAY
-                }
-            },
+            // bgImg2: {
+            //     type: Array,
+            //     default: ()=> [],
+            //     $rule: {
+            //         name: '背景图片2',
+            //         clazz: Enum.CLAZZ.IMAGE_ARRAY
+            //     }
+            // },
             fontSize: {
                 type: String,
                 $rule: {
@@ -120,6 +120,16 @@
                 $rule: {
                     name: '富文本',
                     clazz: Enum.CLAZZ.RITCH_TEXT
+                }
+            },
+            action: {
+                type: Object,
+                default: ()=> {
+                    return {motion: 'OPEN_URL', params: ['http://www.baidu.com']}
+                },
+                $rule: {
+                    name: '点击响应动作',
+                    clazz: Enum.CLAZZ.MOTION
                 }
             }
 		},

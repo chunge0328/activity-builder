@@ -21,6 +21,14 @@
 	.ql-snow .ql-tooltip a.ql-preview {
 		vertical-align: middle;
 	}
+	.el-form-item {
+		padding: 11px 0;
+    	border-bottom: 1px dashed #e5e5e5;
+		margin-bottom: 0 !important;
+	}
+	.el-form-item:last-of-type {
+		border-bottom: none;
+	}
     /*.form-group {
     	display: flex;
     	height: 32px;
@@ -144,6 +152,10 @@
 					<el-form-item v-else-if="p.prop.$rule.clazz === Enum.CLAZZ.RITCH_TEXT" :label="p.prop.$rule.name + '：'">
 						<quill-editor :options="editorOption" v-model="node[p.key]"></quill-editor>
 					</el-form-item>
+					<el-form-item v-else-if="p.prop.$rule.clazz === Enum.CLAZZ.MOTION" :label="p.prop.$rule.name + '：'">
+						<el-select style="width:100%" v-model="node[p.key]" placeholder="请选择" @handleOptionClick="$forceUpdate()">
+						</el-select>
+					</el-form-item>
 				</template>
 			</el-form>
 		<!--</div>	-->
@@ -228,7 +240,7 @@
 						props.push({key: key, prop: p});
 					}
 				}
-				props.sort(function(a, b) {
+				props = props.sort(function(a, b) {
 					return a.key > b.key;
 				});
 				this.watchConfig(props);

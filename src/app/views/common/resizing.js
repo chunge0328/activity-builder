@@ -96,6 +96,8 @@ class Resizing {
         ctx.beginPath();
 
         let {left, top, right, bottom, width, height} = this.el.getBoundingClientRect();
+        width = parseInt(width);
+        height = parseInt(height);
         ctx.fillStyle = ctx.strokeStyle = '#FFA500';
         ctx.font = '12px serif';
         ctx.lineWidth = 1;

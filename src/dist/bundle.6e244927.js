@@ -58204,6 +58204,18 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 var fs = nodeRequire('fs');
 var path = nodeRequire('path');
@@ -58268,7 +58280,7 @@ exports.default = {
 					props.push({ key: key, prop: p });
 				}
 			}
-			props.sort(function (a, b) {
+			props = props.sort(function (a, b) {
 				return a.key > b.key;
 			});
 			this.watchConfig(props);
@@ -59146,6 +59158,7 @@ exports.default = {
 //
 //
 //
+//
 
 /***/ }),
 /* 134 */
@@ -59159,14 +59172,18 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = {
     CLAZZ: {
-        IMAGE: 'Image',
-        IMAGE_ARRAY: 'ImageArray',
-        COLOR: 'Color',
-        SELECT: 'Select',
-        FONT_SIZE: 'FontSize',
-        DATE: 'Date',
-        DATE_TIME: 'DateTime',
-        RITCH_TEXT: 'RichText'
+        IMAGE: 'Image', //图片
+        IMAGE_ARRAY: 'ImageArray', //图片数组
+        COLOR: 'Color', //颜色
+        SELECT: 'Select', //下拉
+        FONT_SIZE: 'FontSize', //字体大小
+        DATE: 'Date', //日期
+        DATE_TIME: 'DateTime', //日期时间
+        RITCH_TEXT: 'RichText', //富文本
+        MOTION: 'Motion' //动作
+    },
+    MOTION: {
+        OPEN_URL: 'OpenUrl'
     }
 };
 
@@ -59538,6 +59555,8 @@ var Resizing = function () {
                 width = _el$getBoundingClient.width,
                 height = _el$getBoundingClient.height;
 
+            width = parseInt(width);
+            height = parseInt(height);
             ctx.fillStyle = ctx.strokeStyle = '#FFA500';
             ctx.font = '12px serif';
             ctx.lineWidth = 1;
@@ -70604,6 +70623,35 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
         },
         expression: "node[p.key]"
       }
+    })], 1) : (p.prop.$rule.clazz === _vm.Enum.CLAZZ.MOTION) ? _c('el-form-item', {
+      attrs: {
+        "label": p.prop.$rule.name + '：'
+      }
+    }, [_c('el-select', {
+      staticStyle: {
+        "width": "100%"
+      },
+      attrs: {
+        "placeholder": "请选择"
+      },
+      on: {
+        "handleOptionClick": function($event) {
+          _vm.$forceUpdate()
+        }
+      },
+      model: {
+        value: (_vm.node[p.key]),
+        callback: function($$v) {
+          var $$exp = _vm.node,
+            $$idx = p.key;
+          if (!Array.isArray($$exp)) {
+            _vm.node[p.key] = $$v
+          } else {
+            $$exp.splice($$idx, 1, $$v)
+          }
+        },
+        expression: "node[p.key]"
+      }
     })], 1) : _vm._e()]
   })], 2)], 1)
 },staticRenderFns: []}
@@ -70739,7 +70787,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       }
     }
   }, [_c('i', {
-    staticClass: "fa fa-search"
+    staticClass: "fa fa-crosshairs"
   })]), _c('li', {
     staticClass: "tool-item",
     class: {
@@ -70752,6 +70800,15 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     }
   }, [_c('i', {
     staticClass: "fa fa-arrows"
+  })]), _c('li', {
+    staticClass: "tool-item",
+    on: {
+      "click": function($event) {
+        _vm.reload()
+      }
+    }
+  }, [_c('i', {
+    staticClass: "fa fa-crop"
   })]), _c('li', {
     staticClass: "tool-item",
     on: {
