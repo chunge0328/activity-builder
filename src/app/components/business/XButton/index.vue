@@ -122,7 +122,7 @@
                     clazz: Enum.CLAZZ.RITCH_TEXT
                 }
             },
-            action: {
+            motion: {
                 type: Object,
                 default: ()=> {
                     return {motion: 'OPEN_URL', params: ['http://www.baidu.com']}
