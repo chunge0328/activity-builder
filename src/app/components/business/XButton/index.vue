@@ -20,7 +20,7 @@
     }
 </style>
 <template>
-	<button class="xbtn" v-bind:class="{'xbtn--round': shape == 'ROUND', 'xbtn--oval': shape == 'OVAL', 'xbtn--bold': bold}"
+	<button class="xbtn" @click="$doMotion(motion)" v-bind:class="{'xbtn--round': shape == 'ROUND', 'xbtn--oval': shape == 'OVAL', 'xbtn--bold': bold}"
         v-bind:style="{'background-color': bgColor, 'color': fontColor, 'font-size': fontSize, 'background-image': realBgImg}">{{ txt }}</button>
 </template>
 <script>
@@ -125,7 +125,7 @@
             motion: {
                 type: Object,
                 default: ()=> {
-                    return {motion: 'OPEN_URL', params: ['http://www.baidu.com']}
+                    return {motion: Enum.MOTION.OPEN_URL, params: ['http://www.baidu.com']}
                 },
                 $rule: {
                     name: '点击响应动作',

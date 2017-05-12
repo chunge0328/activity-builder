@@ -4,3 +4,26 @@
     overflow: hidden;
     white-space: nowrap;
 }
+
+.max-line(@line) {
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: @line;
+	overflow: hidden
+}
+
+.font-dpr(@fontSize){
+    font-size: @fontSize;
+
+    [data-dpr="2"] & {
+        font-size: @fontSize * 2;
+    }
+
+    [data-dpr="3"] & {
+        font-size: @fontSize * 3;
+    }
+
+    [data-dpr="4"] & {
+        font-size: @fontSize * 4;
+    }
+}

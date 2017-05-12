@@ -23,7 +23,7 @@
 </style>
 <template>
 	<!-- <div class="popup-container" v-bind:style="{'z-index': zIndex}" ref="container" @click="handleOuterClick"> -->
-		<transition @name="transition" @after-leave="afterLeave" type="transition" appear>
+		<transition :name="transition" @after-leave="afterLeave" type="transition" appear>
 			<div class="popup-list" v-show="open" v-bind:style="{'z-index': zIndex, top: top, left: left}" @click.stop>
 				<template v-for="(data, $index) in datas">
 					<div class="popup-item">

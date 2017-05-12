@@ -11,6 +11,7 @@ export default {
         MOTION: 'Motion' //动作
     },
     MOTION: {
-        OPEN_URL: 'OpenUrl'
+        OPEN_URL: 'OpenUrl',
+        SHOW_DIALOG: 'ShowDailog'
     }
 }

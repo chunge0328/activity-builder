@@ -5,6 +5,7 @@
 </template>
 <script>
   import vue from 'vue';
+  import 'style/common.less';
   import 'quill/dist/quill.core.css';
   import Disk from "business/Disk/index.vue";
   import Flip from "business/Flip/index.vue";

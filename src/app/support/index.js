@@ -67,6 +67,10 @@ function _initServer(callback) {
 	          loader: 'babel-loader',
 	          exclude: /node_modules/
 	        },
+          {
+	          test: /\.less$/,
+	          loader: ['style-loader', 'css-loader', 'less-loader']
+	        },
 	        {
 	          test: /\.css$/,
 	          loader: ['style-loader', 'css-loader']
@@ -164,6 +168,7 @@ let appTpl =
 	appTpl += 
 `<script>
   import vue from 'vue';
+  import 'style/common.less';
   import 'quill/dist/quill.core.css';
   `;
 	comps.forEach(function(name) {

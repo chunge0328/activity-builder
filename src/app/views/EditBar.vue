@@ -22,13 +22,11 @@
 		vertical-align: middle;
 	}
 	.el-form-item {
-		padding: 11px 0;
-    	border-bottom: 1px dashed #e5e5e5;
-		margin-bottom: 0 !important;
+		 margin: 11px 0;
 	}
-	.el-form-item:last-of-type {
+	/*.el-form-item:last-of-type {
 		border-bottom: none;
-	}
+	}*/
     /*.form-group {
     	display: flex;
     	height: 32px;
@@ -153,8 +151,23 @@
 						<quill-editor :options="editorOption" v-model="node[p.key]"></quill-editor>
 					</el-form-item>
 					<el-form-item v-else-if="p.prop.$rule.clazz === Enum.CLAZZ.MOTION" :label="p.prop.$rule.name + '：'">
-						<el-select style="width:100%" v-model="node[p.key]" placeholder="请选择" @handleOptionClick="$forceUpdate()">
+						<el-select style="width:100%" v-model="node[p.key].motion" placeholder="请选择" @handleOptionClick="$forceUpdate()">
+							<el-option
+								v-for="item in motions"
+								:key="item.value"
+								:label="item.label"
+								:value="item.value">
+							</el-option>
 						</el-select>
+						<template v-if="node.__MOTIONS__[node[p.key].motion] && node.__MOTIONS__[node[p.key].motion].params.length">
+							<el-form>
+								<template v-for="(param, index) in node.__MOTIONS__[node[p.key].motion].params">
+									<el-form-item>
+										<el-input :placeholder="param.$rule.name || param.$rule.placeholder" v-model="node[p.key].params[index]"  @input="$forceUpdate()"></el-input>
+									</el-form-item>
+								</template>
+							</el-form>
+						</template>
 					</el-form-item>
 				</template>
 			</el-form>
@@ -245,11 +258,23 @@
 				});
 				this.watchConfig(props);
 				return props;
+			},
+			motions: function() {
+				if(!this.node) return;
+				let motions = [];
+				Object.keys(this.node.__MOTIONS__).forEach((key) =>{
+					let motion = this.node.__MOTIONS__[key];
+					motions.push({
+						value: key,
+						label: motion.name
+					});
+				});
+				return motions;
 			}
 		},
 		methods: {
 			watchConfig: function(props) {
-				if(this.node._recorded) return;
+				if(this.node._recorded_) return;
 				let self = this;
 				//let location = util.locate(this.node);
 				let location = this.node.$location;
@@ -262,7 +287,7 @@
 						Vue.set(self.storage[location]['propsData'], p.key, newVal);
 					});
 				});
-				this.node._recorded = true;
+				this.node._recorded_ = true;
 			},
 			handleFileRequest: function(opts) {
 				let p = new Promise(function(resolve, reject) {

@@ -69,7 +69,7 @@
 </style>
 <template>
 	<!-- <div class="dialog-container" @click="handleOuterClick"> -->
-		<transition @name="transition" @after-leave="afterLeave" appear>
+		<transition :name="transition" @after-leave="afterLeave" appear>
 			<div class="dialog" v-show="open" @click.stop v-bind:style="{'z-index': zIndex}">
 				<div class="dialog-header">
 					<component v-if="!!title.cid" v-bind:is="title"></component>

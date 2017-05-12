@@ -2,16 +2,17 @@ import Dialog from './Dialog.vue';
 import Builder from './Builder';
 import Vue from 'vue';
 import ModalManager from './ModalManager';
+import util from 'common/util';
 class DialogBuilder extends Builder {
 	constructor(ctx) {
 		super(ctx, Dialog);
 	}
 	confirm(title, content, onConfirm, onCancel, opts) {
-		if(Vue.util.isObject(onCancel)) {
+		if(util.isObject(onCancel)) {
 			opts = onCancel;
 			onCancel = undefined;
 		}
-		if(Vue.util.isObject(onConfirm)) {
+		if(util.isObject(onConfirm)) {
 			opts = onConfirm;
 			onConfirm = undefined;
 		}
@@ -19,20 +20,6 @@ class DialogBuilder extends Builder {
 			onConfirm = content;
 			content = '';
 		}
-		// if(typeof content != 'String') {
-		// 	onConfirm = content;
-		// 	content = '';
-		// }
-
-		// if(Vue.util.isObject(onConfirm)) {
-		// 	opts = onConfirm;
-		// 	onConfirm = undefined;
-		// }
-		
-		// if(Vue.util.isObject(onCancel)) {
-		// 	opts = onCancel;
-		// 	onCancel = undefined;
-		// }
 		opts = opts || {};
 		opts.title = title;
 		opts.content = content;
