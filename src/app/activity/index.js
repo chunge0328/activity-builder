@@ -1,9 +1,9 @@
 import Vue from 'vue';
 import App from './App.vue';
 import Mixin from '../components/base/Mixin';
-import Aux from '../components/base/Aux';
+import Assit from '../components/base/Assit';
 import  '../components/common/defines';
-Vue.use(Aux);
+Vue.use(Assit);
 Vue.mixin(Mixin);
 new Vue({
   el: '#app',

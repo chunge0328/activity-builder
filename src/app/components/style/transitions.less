@@ -1,0 +1,31 @@
+.zoom-enter-active, .zoom-leave-active {
+	transition: all .3s ease;
+}
+
+.zoom-enter, .zoom-leave-active {
+	transform: translate3d(-50%, -50%, 0) scale(0.95, 0.95) !important;
+	opacity: 0 !important;
+}
+
+.slide-enter-active, .slide-leave-active {
+	transition: transform 0.2s ease, opacity 0.2s linear;
+	transform: transform3d(0, 0, 0);
+	opacity: 1;
+}
+
+.slide-enter, .slide-leave-active {
+	transform: translate3d(0, -20%, 0);
+	opacity: 0.5;
+}
+
+.slide-leave-active {
+	opacity: 0;
+}
+
+.fade-enter-active, .fade-leave-active {
+	transition: opacity .4s ease-in;
+}
+
+.fade-enter, .fade-leave-active {
+	opacity: 0 !important;
+}	
