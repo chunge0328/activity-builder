@@ -151,7 +151,7 @@
 						<quill-editor :options="editorOption" v-model="node[p.key]"></quill-editor>
 					</el-form-item>
 					<el-form-item v-else-if="p.prop.$rule.clazz === Enum.CLAZZ.MOTION" :label="p.prop.$rule.name + '：'">
-						<el-select style="width:100%" v-model="node[p.key].motion" placeholder="请选择" @handleOptionClick="$forceUpdate()">
+						<el-select style="width:100%" v-model="node[p.key].motion" placeholder="请选择" @input="handleMotionUpdate(p.key)($event)">
 							<el-option
 								v-for="item in motions"
 								:key="item.value"
@@ -163,7 +163,7 @@
 							<el-form>
 								<template v-for="(param, index) in node.__MOTIONS__[node[p.key].motion].params">
 									<el-form-item>
-										<el-input :placeholder="param.$rule.name || param.$rule.placeholder" v-model="node[p.key].params[index]"  @input="$forceUpdate()"></el-input>
+										<el-input :placeholder="param.$rule.name || param.$rule.placeholder" v-model="node[p.key].params[index]"  @input="handleMotionParamsUpdate(p.key, paramIndex)($event)"></el-input>
 									</el-form-item>
 								</template>
 							</el-form>
@@ -337,7 +337,6 @@
 						self.node[key] = {};
 					} else {
 						let len = self.node[key].length;
-						// console.log(path.basename(file.url));
 						while(len) {
 							len--;
 							if(path.basename(self.node[key][len].url) == path.basename(file.url)) {
@@ -369,6 +368,30 @@
 					{value: '22px', name: '超超大号字'},
 					{value: '24px', name: '超超超大号字'}
 				]);
+			},
+
+			handleMotionUpdate: function(key) {
+				let self = this;
+				function _handleMotionUpdate(key, value) {
+					if(!self.node[key]) {
+						Vue.set(self.node, key, {});					
+					}
+					//if(!self.node[key]['params']) {
+					Vue.set(self.node[key], 'params', []);
+					//}
+					Vue.set(self.node[key], 'motion', value);
+					self.$forceUpdate();
+				}
+				return _handleMotionUpdate.bind(this, key);
+			},
+
+			handleMotionParamsUpdate: function(key, index) {
+				let self = this;
+				function _handleMotionParamsUpdate($event) {
+					Vue.set(self.node[key].params, index, $event);
+					self.$forceUpdate();
+				}
+				return _handleMotionParamsUpdate.bind(this, key, index)
 			}
 		}
 	}

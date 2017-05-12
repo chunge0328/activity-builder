@@ -227,6 +227,7 @@ class Resizing {
             }
             self._drawCanvas();
         }
+        event.stopPropagation();
     }
 
     _onElMouseMoveHandler(event) {
@@ -257,12 +258,18 @@ class Resizing {
             this.state = BOTTOM;
         }
         this._applyCursor(event.target, this.state);
+        event.stopPropagation();
     }
 
     _onElMouseLeaveHandler(event) {
         if(this.stopStateChange) return;
         this.state = DEFAULT;
         this._applyCursor(event.target, this.state);
+        event.stopPropagation();
+    }
+
+    _onDocumentClickHandler(event) {
+        event.stopPropagation();
     }
 
     _dispose() {
@@ -273,13 +280,16 @@ class Resizing {
         let _onElMouseDownHandler = this._onElMouseDownHandler.bind(this);
         let _onElMouseLeaveHandler = this._onElMouseLeaveHandler.bind(this);
         let _onElMouseMoveHandler = this._onElMouseMoveHandler.bind(this);
-        this.el.addEventListener('mousedown', _onElMouseDownHandler);
-        this.el.addEventListener('mousemove', _onElMouseMoveHandler);
-        this.el.addEventListener('mouseleave', _onElMouseLeaveHandler);
+        let _onDocumentClickHandler = this._onDocumentClickHandler.bind(this);
+        this.el.addEventListener('mousedown', _onElMouseDownHandler, true);
+        this.el.addEventListener('mousemove', _onElMouseMoveHandler, true);
+        this.el.addEventListener('mouseleave', _onElMouseLeaveHandler, true);
+        this.el.ownerDocument.addEventListener('click', _onDocumentClickHandler, true);
         this._dispose = function() {
-            this.el.removeEventListener('mousedown', _onElMouseDownHandler);
-            this.el.removeEventListener('mousemove', _onElMouseMoveHandler);
-            this.el.removeEventListener('mouseleave', _onElMouseMoveHandler);
+            this.el.removeEventListener('mousedown', _onElMouseDownHandler, true);
+            this.el.removeEventListener('mousemove', _onElMouseMoveHandler, true);
+            this.el.removeEventListener('mouseleave', _onElMouseMoveHandler, true);
+            this.el.ownerDocument.removeEventListener('click', _onDocumentClickHandler, true);
             if(this._canvas) {
                 this._canvas.parentNode.removeChild(this._canvas);
             }
