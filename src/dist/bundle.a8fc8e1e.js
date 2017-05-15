@@ -54189,7 +54189,7 @@ var Component = __webpack_require__(16)(
   /* moduleIdentifier (server only) */
   null
 )
-Component.options.__file = "E:\\GitHub\\activity-builder\\src\\app\\views\\App.vue"
+Component.options.__file = "/Users/paul/git-source/activity-builder/src/app/views/App.vue"
 if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key.substr(0, 2) !== "__"})) {console.error("named exports are not supported in *.vue files.")}
 if (Component.options.functional) {console.error("[vue-loader] App.vue: functional components are not supported with templates, they should use render functions.")}
 
@@ -54233,7 +54233,7 @@ var Component = __webpack_require__(16)(
   /* moduleIdentifier (server only) */
   null
 )
-Component.options.__file = "E:\\GitHub\\activity-builder\\src\\app\\views\\TplLib.vue"
+Component.options.__file = "/Users/paul/git-source/activity-builder/src/app/views/TplLib.vue"
 if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key.substr(0, 2) !== "__"})) {console.error("named exports are not supported in *.vue files.")}
 if (Component.options.functional) {console.error("[vue-loader] TplLib.vue: functional components are not supported with templates, they should use render functions.")}
 
@@ -54277,7 +54277,7 @@ var Component = __webpack_require__(16)(
   /* moduleIdentifier (server only) */
   null
 )
-Component.options.__file = "E:\\GitHub\\activity-builder\\src\\app\\views\\Workspace.vue"
+Component.options.__file = "/Users/paul/git-source/activity-builder/src/app/views/Workspace.vue"
 if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key.substr(0, 2) !== "__"})) {console.error("named exports are not supported in *.vue files.")}
 if (Component.options.functional) {console.error("[vue-loader] Workspace.vue: functional components are not supported with templates, they should use render functions.")}
 
@@ -57753,6 +57753,7 @@ exports.default = {
   props: {
     content: String,
     value: String,
+    disabled: Boolean,
     options: {
       type: Object,
       required: false,
@@ -57777,10 +57778,9 @@ exports.default = {
         self.options.theme = self.options.theme || 'snow';
         self.options.boundary = self.options.boundary || document.body;
         self.options.modules = self.options.modules || self.defaultModules;
-        self.options.modules.toolbar = self.options.modules.toolbar || self.defaultModules.toolbar;
+        self.options.modules.toolbar = self.options.modules.toolbar !== undefined ? self.options.modules.toolbar : self.defaultModules.toolbar;
         self.options.placeholder = self.options.placeholder || 'Insert text here ...';
         self.options.readOnly = self.options.readOnly !== undefined ? self.options.readOnly : false;
-        self.options.modules.toolbar = self.options.modules.toolbar || defaultOptions.modules.toolbar;
         self.quill = new Quill(self.$refs.editor, self.options);
 
         // set editor content
@@ -57835,6 +57835,11 @@ exports.default = {
         } else if (!newVal) {
           this.quill.setText('');
         }
+      }
+    },
+    'disabled': function disabled(newVal, oldVal) {
+      if (this.quill) {
+        this.quill.enable(!newVal);
       }
     }
   }
@@ -70322,7 +70327,7 @@ var Component = __webpack_require__(16)(
   /* moduleIdentifier (server only) */
   null
 )
-Component.options.__file = "E:\\GitHub\\activity-builder\\node_modules\\vue-quill-editor\\src\\editor.vue"
+Component.options.__file = "/Users/paul/git-source/activity-builder/node_modules/vue-quill-editor/src/editor.vue"
 if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key.substr(0, 2) !== "__"})) {console.error("named exports are not supported in *.vue files.")}
 if (Component.options.functional) {console.error("[vue-loader] editor.vue: functional components are not supported with templates, they should use render functions.")}
 
@@ -70366,7 +70371,7 @@ var Component = __webpack_require__(16)(
   /* moduleIdentifier (server only) */
   null
 )
-Component.options.__file = "E:\\GitHub\\activity-builder\\src\\app\\views\\ButtonGroup.vue"
+Component.options.__file = "/Users/paul/git-source/activity-builder/src/app/views/ButtonGroup.vue"
 if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key.substr(0, 2) !== "__"})) {console.error("named exports are not supported in *.vue files.")}
 if (Component.options.functional) {console.error("[vue-loader] ButtonGroup.vue: functional components are not supported with templates, they should use render functions.")}
 
@@ -70410,7 +70415,7 @@ var Component = __webpack_require__(16)(
   /* moduleIdentifier (server only) */
   null
 )
-Component.options.__file = "E:\\GitHub\\activity-builder\\src\\app\\views\\CompsBar.vue"
+Component.options.__file = "/Users/paul/git-source/activity-builder/src/app/views/CompsBar.vue"
 if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key.substr(0, 2) !== "__"})) {console.error("named exports are not supported in *.vue files.")}
 if (Component.options.functional) {console.error("[vue-loader] CompsBar.vue: functional components are not supported with templates, they should use render functions.")}
 
@@ -70454,7 +70459,7 @@ var Component = __webpack_require__(16)(
   /* moduleIdentifier (server only) */
   null
 )
-Component.options.__file = "E:\\GitHub\\activity-builder\\src\\app\\views\\EditBar.vue"
+Component.options.__file = "/Users/paul/git-source/activity-builder/src/app/views/EditBar.vue"
 if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key.substr(0, 2) !== "__"})) {console.error("named exports are not supported in *.vue files.")}
 if (Component.options.functional) {console.error("[vue-loader] EditBar.vue: functional components are not supported with templates, they should use render functions.")}
 
@@ -71058,7 +71063,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     return [_c('li', {
       staticClass: "workspace__selected-comp-item",
       class: {
-        'workspace__selected-comp-item--move': index >= _vm.dragMoveFlag
+        'workspace__selected-comp-item--moving': index >= _vm.dragMoveFlag
       },
       attrs: {
         "draggable": "true"

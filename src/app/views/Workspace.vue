@@ -194,7 +194,7 @@
         		<div class="workspace__selected-comps-bar">
         			<ul class="workspace__selected-comp-list" @dragover.self="allowDrop($event)" @drop.self="addComp($event)">
                         <template v-for="(comp, index) in selectedComponents">
-        				    <li class="workspace__selected-comp-item" v-bind:class="{'workspace__selected-comp-item--move': index >= dragMoveFlag}" draggable="true" @dragstart="dragSelectedCompStart(index, $event)" @dragover="dragSelectedCompOver(index, $event)" @dragenter="dragEnterSelectedComp(index, $event)" @dragleave="dragLeaveSelectedComp(index, $event)" @dragend="dragSelectedCompEnd($event)" @drop="replaceSelectedComp(index, $event)">{{ comp.name }}<button class="workspace__del-btn" @click="delSelectedComp(index)"><i class="fa fa-times"></i></button></li>
+        				    <li class="workspace__selected-comp-item" v-bind:class="{'workspace__selected-comp-item--moving': index >= dragMoveFlag}" draggable="true" @dragstart="dragSelectedCompStart(index, $event)" @dragover="dragSelectedCompOver(index, $event)" @dragenter="dragEnterSelectedComp(index, $event)" @dragleave="dragLeaveSelectedComp(index, $event)" @dragend="dragSelectedCompEnd($event)" @drop="replaceSelectedComp(index, $event)">{{ comp.name }}<button class="workspace__del-btn" @click="delSelectedComp(index)"><i class="fa fa-times"></i></button></li>
                         </template>
         			</ul>
         		</div>

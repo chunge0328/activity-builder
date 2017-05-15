@@ -22,12 +22,11 @@ export default {
 			this.$parent.$newChildren.push(this);
 		}
 
-		if(this.$options.$global) {
+		if(!this.$options.$global) {
 			this.$config = this.__STORE__[this.$location] || {};
 		} else {
 			this.$config = this.__STORE__[this.$options.name] || {};
 		}
-		
 		this._updateFromParent = function(propsData, listeners, parentVnode, renderChildren) { //vue2.3.0 hack
 			//propsData
 			Vue.util.extend(propsData, this.$config.propsData || {});
