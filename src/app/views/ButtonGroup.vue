@@ -2,19 +2,21 @@
 	@import "./style/common.less";
 	.btn-group {
 		display: inline-block;
-	}
-	.btn-group .btn+.btn {
-		border-left-style: none;
-	}
-	.btn-group .selected {
-		background: #ef8c34;
-		color: #fff;
+
+		&__btn + &__btn {
+			border-left-style: none;
+		}
+
+		&__btn--selected {
+			background: #ef8c34 !important;
+			color: #fff !important;
+		}
 	}
 </style>
 <template>
 	<div class="btn-group">
 		<template v-for="btn in btns">
-			<button class="btn" v-bind:class="{ selected: btn.selected }" @click="onHandleSelect(btn.id, $event)">{{ btn.name }}</button>
+			<button class="btn-group__btn btn" v-bind:class="{'btn-group__btn--selected': btn.selected}" @click="onHandleSelect(btn.id, $event)">{{ btn.name }}</button>
 		</template>
 	</div>
 </template>

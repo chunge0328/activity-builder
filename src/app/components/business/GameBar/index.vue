@@ -1,7 +1,7 @@
 <style lange="less">
 	.gamebar { 
 		height: 0.555556rem;
-		background: red;
+		background: darkcyan;
 	}
 </style>
 <template>

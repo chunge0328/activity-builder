@@ -15,24 +15,31 @@ export default {
 	beforeCreate() {
 		//let ufp = this._updateFromParent;
     this.$newChildren = [];   
-        //let location = util.locate(this);
+    //let location = util.locate(this);
 		this.$location = this.$parent ? this.$parent.$location + '.' + this.$parent.$newChildren.length : '0';
+
 		if(this.$parent) {
-        	this.$parent.$newChildren.push(this);
-        }
-        let config = this.__STORE__[this.$location] || {};
-		this._updateFromParent = function(propsData, listeners, parentVnode, renderChildren) { //vue2.4.5 hack
-			this.$parent.$newChildren.push(this); //添加新组件时候
-			//propsData
-			propsData = Vue.util.extend(propsData || {}, config.propsData || {});
-			//staticStyle
-			parentVnode.data.staticStyle = Vue.util.extend(parentVnode.data.staticStyle || {}, config.staticStyle || {});
 			this.$parent.$newChildren.push(this);
+		}
+
+		if(this.$options.$global) {
+			this.$config = this.__STORE__[this.$location] || {};
+		} else {
+			this.$config = this.__STORE__[this.$options.name] || {};
+		}
+		
+		this._updateFromParent = function(propsData, listeners, parentVnode, renderChildren) { //vue2.3.0 hack
+			//propsData
+			Vue.util.extend(propsData, this.$config.propsData || {});
+			//staticStyle
+			parentVnode.data.staticStyle = Vue.util.extend(parentVnode.data.staticStyle || {}, this.$config.staticStyle || {});
+			this.$parent.$newChildren.push(this); //添加新组件时候
 			//ufp.apply(this, [propsData, listeners, parentVnode, renderChildren]);
 		};
-		this.$options.propsData = Vue.util.extend(this.$options.propsData || {}, config.propsData || {});
+
+		this.$options.propsData = Vue.util.extend(this.$options.propsData || {}, this.$config.propsData || {});
 		if(this.$options._parentVnode) {
-			this.$options._parentVnode.data.staticStyle = config.staticStyle;
+			this.$options._parentVnode.data.staticStyle = this.$config.staticStyle;
 		}
 	},
 	beforeUpdate: function() {

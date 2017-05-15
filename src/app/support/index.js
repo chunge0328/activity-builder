@@ -36,13 +36,8 @@ function _initServer(callback) {
 	    },
 	    module: {
 	      rules: [
-	        {
-	          test: /\.vue$/,
-	          loader: 'vue-loader'
-            
-	        },
           {
-            test: /node_modules\/vue/,
+            test: /vue/,
             loader: 'babel-loader',
             options: {
               compact: false,
@@ -50,7 +45,7 @@ function _initServer(callback) {
                   [{
                     visitor: {
                         BlockStatement(path) {
-                            if(t.isFunctionDeclaration(path.parent) && path.parent.id.name == 'updateChildComponent') {
+                            if(t.isFunctionDeclaration(path.parent) && path.parent.id.name == 'updateChildComponent') {                           
                                 let buildExpression = 
                                     template(`vm._updateFromParent&&vm._updateFromParent(propsData, listeners, parentVnode, renderChildren)`);
                                 let ast = buildExpression({});
@@ -62,6 +57,11 @@ function _initServer(callback) {
               ]
             }
           },
+	        {
+	          test: /\.vue$/,
+	          loader: 'vue-loader'
+            
+	        }, 
 	        {
 	          test: /\.js$/,
 	          loader: 'babel-loader',
@@ -88,8 +88,10 @@ function _initServer(callback) {
 	    	modules: ['node_modules', 'app/components', 'app/activity']
 	    },
 	    plugins: [
-          //new ActivityComponentCleanPlugin(),
-          //new Vue2HackPlugin(),
+          // new ActivityComponentCleanPlugin(),
+          new webpack.DefinePlugin({
+            'process.env': {NODE_ENV: '"dev"'}
+          }),
           new webpack.optimize.CommonsChunkPlugin({name: "vendor", filename: "vendor.bundle.js"}),
 	        new webpack.HotModuleReplacementPlugin()
 	    ],
@@ -154,7 +156,7 @@ function _flushFile(data, configStorage) {
 	});
 let appTpl = 
 `<template>
-  <div class="app">
+  <div class="app" v-bind:style="{'background-color': appBgColor}">
 `;
 	data.forEach(function(comp) {
 		  appTpl += 
@@ -170,10 +172,11 @@ let appTpl =
   import vue from 'vue';
   import 'style/common.less';
   import 'quill/dist/quill.core.css';
+  import Enum from 'common/enum';
   `;
 	comps.forEach(function(name) {
 		appTpl += 
-  `import ${name} from "business/${name}/index.vue";
+  `import ${name} from 'business/${name}/index.vue';
   `;
 	});
 	appTpl += 
@@ -183,8 +186,27 @@ let appTpl =
     }
   });
   export default {
+    name: 'App',
+    $global: true,
+    props: {
+      psdWidth: {
+        type: Number,
+        default: 1080,
+        $rule: {
+          name: '设计图宽度'
+        }
+      },
+      appBgColor: {
+        type: String,
+        default: '#fff',
+        $rule: {
+          name: 'app背景颜色',
+          clazz: Enum.CLAZZ.COLOR
+        }
+      }
+    },
     data: function() {
-      return {};
+      return {}
     }, 
     components: {
       ${comps.join(",")}

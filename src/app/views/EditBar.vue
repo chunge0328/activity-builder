@@ -40,7 +40,7 @@
 							</el-option>
 						</el-select>
 					</el-form-item>
-					<el-form-item v-else-if="p.prop.$rule.clazz === 'String'" :label="p.prop.$rule.name + '：'">
+					<el-form-item v-else-if="p.prop.$rule.clazz === 'String' || p.prop.$rule.clazz === 'Number'" :label="p.prop.$rule.name + '：'">
 						<el-input :placeholder="p.prop.$rule.placeholder || '请输入内容'"  v-model="node[p.key]"  @input="$forceUpdate()"></el-input>
 					</el-form-item>
 					<el-form-item v-else-if="p.prop.$rule.clazz === 'Boolean'" :label="p.prop.$rule.name + '：'">

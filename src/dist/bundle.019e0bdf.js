@@ -7390,7 +7390,7 @@ if(typeof __e == 'number')__e = core; // eslint-disable-line no-undef
 /***/ (function(module, exports, __webpack_require__) {
 
 var store      = __webpack_require__(53)('wks')
-  , uid        = __webpack_require__(32)
+  , uid        = __webpack_require__(33)
   , Symbol     = __webpack_require__(5).Symbol
   , USE_SYMBOL = typeof Symbol == 'function';
 
@@ -7511,7 +7511,7 @@ module.exports = $export;
 /***/ (function(module, exports, __webpack_require__) {
 
 var dP         = __webpack_require__(7)
-  , createDesc = __webpack_require__(30);
+  , createDesc = __webpack_require__(31);
 module.exports = __webpack_require__(6) ? function(object, key, value){
   return dP.f(object, key, createDesc(1, value));
 } : function(object, key, value){
@@ -7564,7 +7564,7 @@ module.exports = function(it){
 
 // to indexed object, toObject with fallback for non-array-like ES3 strings
 var IObject = __webpack_require__(47)
-  , defined = __webpack_require__(25);
+  , defined = __webpack_require__(26);
 module.exports = function(it){
   return IObject(defined(it));
 };
@@ -10170,6 +10170,71 @@ var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*global setImme
 
 /***/ }),
 /* 25 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+
+var _vue = __webpack_require__(1);
+
+var _vue2 = _interopRequireDefault(_vue);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.default = {
+	locate: function locate(node) {
+		if (node.$parent) {
+			return this.locate(node.$parent) + '.' + node.$parent.$children.indexOf(node);
+		} else {
+			return '0';
+		}
+	},
+	initConfig: function initConfig(storage, location) {
+		_vue2.default.set(storage, location, {});
+		_vue2.default.set(storage[location], 'propsData', {});
+		_vue2.default.set(storage[location], 'staticStyle', {});
+	},
+	formatDate: function formatDate(date, format) {
+		var o = {
+			'M+': date.getMonth() + 1,
+			'd+': date.getDate(),
+			'h+': date.getHours(),
+			'm+': date.getMinutes(),
+			's+': date.getSeconds(),
+			'q+': Math.floor((date.getMonth() + 3) / 3),
+			'S': date.getMilliseconds()
+		};
+
+		if (/(y+)/.test(format)) {
+			format = format.replace(RegExp.$1, (date.getFullYear() + "").substr(4 - RegExp.$1.length));
+		}
+
+		for (var k in o) {
+			if (new RegExp("(" + k + ")").test(format)) {
+				format = format.replace(RegExp.$1, RegExp.$1.length == 1 ? o[k] : ("00" + o[k]).substr(("" + o[k]).length));
+			}
+		}
+		return format;
+	},
+
+	//matrix(1, 0, 0, 1, -138, -5724)
+	parseTrasfromValue: function parseTrasfromValue(val) {
+		if (val == 'none') {
+			return [0, 0, 0, 0, 0, 0];
+		} else {
+			return val.split('(')[1].split(')')[0].split(',').map(function (str) {
+				return Number(str.trim());
+			});
+		}
+	}
+};
+
+/***/ }),
+/* 26 */
 /***/ (function(module, exports) {
 
 // 7.2.1 RequireObjectCoercible(argument)
@@ -10179,7 +10244,7 @@ module.exports = function(it){
 };
 
 /***/ }),
-/* 26 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var ctx         = __webpack_require__(17)
@@ -10209,13 +10274,13 @@ exports.BREAK  = BREAK;
 exports.RETURN = RETURN;
 
 /***/ }),
-/* 27 */
+/* 28 */
 /***/ (function(module, exports) {
 
 module.exports = true;
 
 /***/ }),
-/* 28 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // 19.1.2.2 / 15.2.3.5 Object.create(O [, Properties])
@@ -10262,13 +10327,13 @@ module.exports = Object.create || function create(O, Properties){
 
 
 /***/ }),
-/* 29 */
+/* 30 */
 /***/ (function(module, exports) {
 
 exports.f = {}.propertyIsEnumerable;
 
 /***/ }),
-/* 30 */
+/* 31 */
 /***/ (function(module, exports) {
 
 module.exports = function(bitmap, value){
@@ -10281,17 +10346,17 @@ module.exports = function(bitmap, value){
 };
 
 /***/ }),
-/* 31 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // 7.1.13 ToObject(argument)
-var defined = __webpack_require__(25);
+var defined = __webpack_require__(26);
 module.exports = function(it){
   return Object(defined(it));
 };
 
 /***/ }),
-/* 32 */
+/* 33 */
 /***/ (function(module, exports) {
 
 var id = 0
@@ -10301,7 +10366,7 @@ module.exports = function(key){
 };
 
 /***/ }),
-/* 33 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10333,7 +10398,7 @@ function toObject(arr) {
 };
 
 /***/ }),
-/* 34 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /**
@@ -10343,7 +10408,7 @@ function toObject(arr) {
  * Querying, update
  */
 
-var util = __webpack_require__(36)
+var util = __webpack_require__(37)
   , _ = __webpack_require__(23)
   , modifierFunctions = {}
   , lastStepModifierFunctions = {}
@@ -11174,19 +11239,19 @@ module.exports.compareThings = compareThings;
 
 
 /***/ }),
-/* 35 */
+/* 36 */
 /***/ (function(module, exports) {
 
 module.exports = require("path");
 
 /***/ }),
-/* 36 */
+/* 37 */
 /***/ (function(module, exports) {
 
 module.exports = require("util");
 
 /***/ }),
-/* 37 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11210,7 +11275,7 @@ var _activityComponentCleanPlugin = __webpack_require__(142);
 
 var _activityComponentCleanPlugin2 = _interopRequireDefault(_activityComponentCleanPlugin);
 
-var _util = __webpack_require__(39);
+var _util = __webpack_require__(40);
 
 var _config = __webpack_require__(71);
 
@@ -11220,7 +11285,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var webpack = nodeRequire("webpack");
 var WebpackDevServer = nodeRequire("webpack-dev-server");
-var path = __webpack_require__(35);
+var path = __webpack_require__(36);
 var fs = __webpack_require__(69);
 var Datastore = __webpack_require__(228);
 var babel = nodeRequire('babel-core');
@@ -11252,11 +11317,7 @@ function _initServer(callback) {
     },
     module: {
       rules: [{
-        test: /\.vue$/,
-        loader: 'vue-loader'
-
-      }, {
-        test: /node_modules\/vue/,
+        test: /vue/,
         loader: 'babel-loader',
         options: {
           compact: false,
@@ -11272,6 +11333,10 @@ function _initServer(callback) {
             }
           }]]
         }
+      }, {
+        test: /\.vue$/,
+        loader: 'vue-loader'
+
       }, {
         test: /\.js$/,
         loader: 'babel-loader',
@@ -11294,9 +11359,10 @@ function _initServer(callback) {
       modules: ['node_modules', 'app/components', 'app/activity']
     },
     plugins: [
-    //new ActivityComponentCleanPlugin(),
-    //new Vue2HackPlugin(),
-    new webpack.optimize.CommonsChunkPlugin({ name: "vendor", filename: "vendor.bundle.js" }), new webpack.HotModuleReplacementPlugin()],
+    // new ActivityComponentCleanPlugin(),
+    new webpack.DefinePlugin({
+      'process.env': { NODE_ENV: '"dev"' }
+    }), new webpack.optimize.CommonsChunkPlugin({ name: "vendor", filename: "vendor.bundle.js" }), new webpack.HotModuleReplacementPlugin()],
     target: "web"
   });
 
@@ -11352,16 +11418,16 @@ function _flushFile(data, configStorage) {
       comps.push(comp.componentName);
     }
   });
-  var appTpl = '<template>\n  <div class="app">\n';
+  var appTpl = '<template>\n  <div class="app" v-bind:style="{\'background-color\': appBgColor}">\n';
   data.forEach(function (comp) {
     appTpl += '<' + comp.componentName + '/>';
   });
   appTpl += '\n  </div>\n</template>\n';
-  appTpl += '<script>\n  import vue from \'vue\';\n  import \'style/common.less\';\n  import \'quill/dist/quill.core.css\';\n  ';
+  appTpl += '<script>\n  import vue from \'vue\';\n  import \'style/common.less\';\n  import \'quill/dist/quill.core.css\';\n  import Enum from \'common/enum\';\n  ';
   comps.forEach(function (name) {
-    appTpl += 'import ' + name + ' from "business/' + name + '/index.vue";\n  ';
+    appTpl += 'import ' + name + ' from \'business/' + name + '/index.vue\';\n  ';
   });
-  appTpl += 'vue.use({\n    install(vue) {\n      vue.prototype.__STORE__ = ' + _resolveResource((0, _stringify2.default)(configStorage)) + '\n    }\n  });\n  export default {\n    data: function() {\n      return {};\n    }, \n    components: {\n      ' + comps.join(",") + '\n    }\n  }\n</script>';
+  appTpl += 'vue.use({\n    install(vue) {\n      vue.prototype.__STORE__ = ' + _resolveResource((0, _stringify2.default)(configStorage)) + '\n    }\n  });\n  export default {\n    name: \'App\',\n    $global: true,\n    props: {\n      psdWidth: {\n        type: Number,\n        default: 1080,\n        $rule: {\n          name: \'\u8BBE\u8BA1\u56FE\u5BBD\u5EA6\'\n        }\n      },\n      appBgColor: {\n        type: String,\n        default: \'#fff\',\n        $rule: {\n          name: \'app\u80CC\u666F\u989C\u8272\',\n          clazz: Enum.CLAZZ.COLOR\n        }\n      }\n    },\n    data: function() {\n      return {}\n    }, \n    components: {\n      ' + comps.join(",") + '\n    }\n  }\n</script>';
   fs.writeFileSync(appFile, appTpl);
 }
 
@@ -11663,7 +11729,7 @@ exports.setHighlightColor = _highlighter.setHighlightColor;
 exports.unFixedNode = _highlighter.unFixedNode;
 
 /***/ }),
-/* 38 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11701,7 +11767,7 @@ exports["default"] = type;
 module.exports = exports['default'];
 
 /***/ }),
-/* 39 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11821,60 +11887,6 @@ function isPrimitive(data) {
 }
 
 /***/ }),
-/* 40 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-	value: true
-});
-
-var _vue = __webpack_require__(1);
-
-var _vue2 = _interopRequireDefault(_vue);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-exports.default = {
-	locate: function locate(node) {
-		if (node.$parent) {
-			return this.locate(node.$parent) + '.' + node.$parent.$children.indexOf(node);
-		} else {
-			return '0';
-		}
-	},
-	initConfig: function initConfig(storage, location) {
-		_vue2.default.set(storage, location, {});
-		_vue2.default.set(storage[location], 'propsData', {});
-		_vue2.default.set(storage[location], 'staticStyle', {});
-	},
-	formatDate: function formatDate(date, format) {
-		var o = {
-			'M+': date.getMonth() + 1,
-			'd+': date.getDate(),
-			'h+': date.getHours(),
-			'm+': date.getMinutes(),
-			's+': date.getSeconds(),
-			'q+': Math.floor((date.getMonth() + 3) / 3),
-			'S': date.getMilliseconds()
-		};
-
-		if (/(y+)/.test(format)) {
-			format = format.replace(RegExp.$1, (date.getFullYear() + "").substr(4 - RegExp.$1.length));
-		}
-
-		for (var k in o) {
-			if (new RegExp("(" + k + ")").test(format)) {
-				format = format.replace(RegExp.$1, RegExp.$1.length == 1 ? o[k] : ("00" + o[k]).substr(("" + o[k]).length));
-			}
-		}
-		return format;
-	}
-};
-
-/***/ }),
 /* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -11964,7 +11976,7 @@ module.exports = Object('z').propertyIsEnumerable(0) ? Object : function(it){
 
 "use strict";
 
-var LIBRARY        = __webpack_require__(27)
+var LIBRARY        = __webpack_require__(28)
   , $export        = __webpack_require__(8)
   , redefine       = __webpack_require__(84)
   , hide           = __webpack_require__(9)
@@ -12038,7 +12050,7 @@ module.exports = function(Base, NAME, Constructor, next, DEFAULT, IS_SET, FORCED
 /* 49 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var META     = __webpack_require__(32)('meta')
+var META     = __webpack_require__(33)('meta')
   , isObject = __webpack_require__(13)
   , has      = __webpack_require__(12)
   , setDesc  = __webpack_require__(7).f
@@ -12115,7 +12127,7 @@ module.exports = function(target, src, safe){
 /***/ (function(module, exports, __webpack_require__) {
 
 var shared = __webpack_require__(53)('keys')
-  , uid    = __webpack_require__(32);
+  , uid    = __webpack_require__(33);
 module.exports = function(key){
   return shared[key] || (shared[key] = uid(key));
 };
@@ -12176,7 +12188,7 @@ module.exports = function(it, S){
 
 var global         = __webpack_require__(5)
   , core           = __webpack_require__(3)
-  , LIBRARY        = __webpack_require__(27)
+  , LIBRARY        = __webpack_require__(28)
   , wksExt         = __webpack_require__(58)
   , defineProperty = __webpack_require__(7).f;
 module.exports = function(name){
@@ -14521,7 +14533,7 @@ module.exports =
 /***/ 260:
 /***/ function(module, exports) {
 
-	module.exports = __webpack_require__(33);
+	module.exports = __webpack_require__(34);
 
 /***/ },
 
@@ -15325,7 +15337,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 exports.isVNode = isVNode;
 exports.getFirstComponentChild = getFirstComponentChild;
 
-var _util = __webpack_require__(33);
+var _util = __webpack_require__(34);
 
 function isVNode(node) {
   return (typeof node === 'undefined' ? 'undefined' : _typeof(node)) === 'object' && (0, _util.hasOwn)(node, 'componentOptions');
@@ -15370,9 +15382,9 @@ module.exports.uid = uid;
 /***/ (function(module, exports, __webpack_require__) {
 
 var BinarySearchTree = __webpack_require__(151).AVLTree
-  , model = __webpack_require__(34)
+  , model = __webpack_require__(35)
   , _ = __webpack_require__(23)
-  , util = __webpack_require__(36)
+  , util = __webpack_require__(37)
   ;
 
 /**
@@ -50724,7 +50736,7 @@ module.exports =
 /* 333 */
 /***/ function(module, exports) {
 
-	module.exports = __webpack_require__(33);
+	module.exports = __webpack_require__(34);
 
 /***/ },
 /* 334 */
@@ -54177,7 +54189,7 @@ var Component = __webpack_require__(16)(
   /* moduleIdentifier (server only) */
   null
 )
-Component.options.__file = "/Users/paul/git-source/activity-builder/src/app/views/App.vue"
+Component.options.__file = "E:\\GitHub\\activity-builder\\src\\app\\views\\App.vue"
 if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key.substr(0, 2) !== "__"})) {console.error("named exports are not supported in *.vue files.")}
 if (Component.options.functional) {console.error("[vue-loader] App.vue: functional components are not supported with templates, they should use render functions.")}
 
@@ -54221,7 +54233,7 @@ var Component = __webpack_require__(16)(
   /* moduleIdentifier (server only) */
   null
 )
-Component.options.__file = "/Users/paul/git-source/activity-builder/src/app/views/TplLib.vue"
+Component.options.__file = "E:\\GitHub\\activity-builder\\src\\app\\views\\TplLib.vue"
 if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key.substr(0, 2) !== "__"})) {console.error("named exports are not supported in *.vue files.")}
 if (Component.options.functional) {console.error("[vue-loader] TplLib.vue: functional components are not supported with templates, they should use render functions.")}
 
@@ -54265,7 +54277,7 @@ var Component = __webpack_require__(16)(
   /* moduleIdentifier (server only) */
   null
 )
-Component.options.__file = "/Users/paul/git-source/activity-builder/src/app/views/Workspace.vue"
+Component.options.__file = "E:\\GitHub\\activity-builder\\src\\app\\views\\Workspace.vue"
 if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key.substr(0, 2) !== "__"})) {console.error("named exports are not supported in *.vue files.")}
 if (Component.options.functional) {console.error("[vue-loader] Workspace.vue: functional components are not supported with templates, they should use render functions.")}
 
@@ -57272,10 +57284,10 @@ module.exports = {
   object: __webpack_require__(122),
   "enum": __webpack_require__(116),
   pattern: __webpack_require__(123),
-  email: __webpack_require__(38),
-  url: __webpack_require__(38),
+  email: __webpack_require__(39),
+  url: __webpack_require__(39),
   date: __webpack_require__(115),
-  hex: __webpack_require__(38),
+  hex: __webpack_require__(39),
   required: __webpack_require__(125)
 };
 
@@ -57741,7 +57753,6 @@ exports.default = {
   props: {
     content: String,
     value: String,
-    disabled: Boolean,
     options: {
       type: Object,
       required: false,
@@ -57766,9 +57777,10 @@ exports.default = {
         self.options.theme = self.options.theme || 'snow';
         self.options.boundary = self.options.boundary || document.body;
         self.options.modules = self.options.modules || self.defaultModules;
-        self.options.modules.toolbar = self.options.modules.toolbar !== undefined ? self.options.modules.toolbar : self.defaultModules.toolbar;
+        self.options.modules.toolbar = self.options.modules.toolbar || self.defaultModules.toolbar;
         self.options.placeholder = self.options.placeholder || 'Insert text here ...';
         self.options.readOnly = self.options.readOnly !== undefined ? self.options.readOnly : false;
+        self.options.modules.toolbar = self.options.modules.toolbar || defaultOptions.modules.toolbar;
         self.quill = new Quill(self.$refs.editor, self.options);
 
         // set editor content
@@ -57823,11 +57835,6 @@ exports.default = {
         } else if (!newVal) {
           this.quill.setText('');
         }
-      }
-    },
-    'disabled': function disabled(newVal, oldVal) {
-      if (this.quill) {
-        this.quill.enable(!newVal);
       }
     }
   }
@@ -57903,6 +57910,15 @@ exports.default = {
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /***/ }),
 /* 130 */
@@ -57914,6 +57930,8 @@ exports.default = {
 Object.defineProperty(exports, "__esModule", {
 	value: true
 });
+//
+//
 //
 //
 //
@@ -58011,6 +58029,9 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 //
 //
 //
+//
+//
+//
 
 exports.default = {
 	name: 'CompsBar',
@@ -58061,7 +58082,7 @@ var _vue = __webpack_require__(1);
 
 var _vue2 = _interopRequireDefault(_vue);
 
-var _util = __webpack_require__(40);
+var _util = __webpack_require__(25);
 
 var _util2 = _interopRequireDefault(_util);
 
@@ -58434,7 +58455,7 @@ Object.defineProperty(exports, "__esModule", {
 	value: true
 });
 
-var _util = __webpack_require__(40);
+var _util = __webpack_require__(25);
 
 var _util2 = _interopRequireDefault(_util);
 
@@ -58466,6 +58487,17 @@ exports.default = {
 		}
 	}
 }; //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -58593,7 +58625,7 @@ var _remote = __webpack_require__(136);
 
 var _remote2 = _interopRequireDefault(_remote);
 
-var _support = __webpack_require__(37);
+var _support = __webpack_require__(38);
 
 var _support2 = _interopRequireDefault(_support);
 
@@ -58601,7 +58633,7 @@ var _resizing = __webpack_require__(138);
 
 var _resizing2 = _interopRequireDefault(_resizing);
 
-var _util = __webpack_require__(40);
+var _util = __webpack_require__(25);
 
 var _util2 = _interopRequireDefault(_util);
 
@@ -58625,7 +58657,7 @@ exports.default = {
             configStorage: {},
             selectedComponents: [],
             needReload: false,
-            _dragMoveFlag: -1
+            dragMoveFlag: -1
         };
     },
     mounted: function mounted() {
@@ -58688,20 +58720,24 @@ exports.default = {
         }
     },
     watch: {
-        tpl: function tpl() {
-            this.selectedComponents = this.tpl.components ? JSON.parse(this.tpl.components) : [];
-            this._dragMoveFlag = this.selectedComponents.length;
-            this.configStorage = this.tpl.storage ? JSON.parse(this.tpl.storage) : {};
-            this.makeActivity();
-        },
-        configStorage: {
+        tpl: {
             handler: function handler() {
-                if (this.$refs.design.contentWindow) {
-                    this.$refs.design.contentWindow._STORAGE_ = this.configStorage;
-                }
+                this.selectedComponents = this.tpl.components ? JSON.parse(this.tpl.components) : [];
+                this.dragMoveFlag = this.selectedComponents.length;
+                this.configStorage = this.tpl.storage ? JSON.parse(this.tpl.storage) : { App: { propsData: { psdWidth: 1080, appBgColor: '#ffffff' } } };
+                this.makeActivity();
             },
-            deep: true
+            immediate: true
         }
+        // },
+        // configStorage: {
+        // 	handler: function() {
+        //         if(this.$refs.design.contentWindow) {
+        //             this.$refs.design.contentWindow._STORAGE_ = this.configStorage;
+        //         }
+        // 	},
+        // 	deep: true
+        // }
     },
     methods: {
         inspectNode: function inspectNode() {
@@ -58740,7 +58776,7 @@ exports.default = {
 
         _isInNode: function _isInNode(x, y, all) {
             function walk(instance) {
-                for (var i = 0; i < instance.children.length; i++) {
+                for (var i = instance.children.length - 1; i >= 0; i--) {
                     var c = instance.children[i];
                     var got = walk(c);
                     if (got) {
@@ -58753,7 +58789,7 @@ exports.default = {
                 }
                 return false;
             }
-            for (var j = 0; j < all.length; j++) {
+            for (var j = all.length - 1; j >= 0; j--) {
                 var got = walk(all[j]);
                 if (got) return got;
             }
@@ -58892,7 +58928,7 @@ exports.default = {
 
         dragSelectedCompOver: function dragSelectedCompOver(index, $event) {
             if (this.isDragingSelectedComp) {
-                $event.target.classList.add('hightlight');
+                $event.target.classList.add('workspace__selected-comp-item--hightlight');
             } else {
                 return false;
             }
@@ -58902,10 +58938,10 @@ exports.default = {
 
         dragEnterSelectedComp: function dragEnterSelectedComp(index, $event) {
             if (this.isDragingSelectedComp) return;
-            if ($event.target.classList.contains('move')) {
-                this._dragMoveFlag = index + 1;
+            if ($event.target.classList.contains('workspace__selected-comp-item--move')) {
+                this.dragMoveFlag = index + 1;
             } else {
-                this._dragMoveFlag = index;
+                this.dragMoveFlag = index;
             }
             this.$forceUpdate();
             $event.preventDefault();
@@ -58913,15 +58949,15 @@ exports.default = {
 
         dragLeaveSelectedComp: function dragLeaveSelectedComp(index, $event) {
             if (this.isDragingSelectedComp) {
-                event.target.classList.remove('hightlight');
+                event.target.classList.remove('workspace__selected-comp-item--hightlight');
             }
         },
 
         addComp: function addComp($event) {
             if (this.isDragingSelectedComp) return;
-            this.selectedComponents.splice(this._dragMoveFlag, 0, JSON.parse($event.dataTransfer.getData('text')));
-            this._relocateStorage('INSERT', this._dragMoveFlag);
-            this._dragMoveFlag = this.selectedComponents.length;
+            this.selectedComponents.splice(this.dragMoveFlag, 0, JSON.parse($event.dataTransfer.getData('text')));
+            this._relocateStorage('INSERT', this.dragMoveFlag);
+            this.dragMoveFlag = this.selectedComponents.length;
             this.$forceUpdate();
             this.makeActivity();
         },
@@ -58932,7 +58968,7 @@ exports.default = {
             _vue2.default.set(this.selectedComponents, src, this.selectedComponents[to]);
             _vue2.default.set(this.selectedComponents, to, tmp);
             this._relocateStorage('REPLACE', src, to);
-            $event.target.classList.remove('hightlight');
+            $event.target.classList.remove('workspace__selected-comp-item--hightlight');
             this.$forceUpdate();
             this.makeActivity();
         },
@@ -58957,7 +58993,7 @@ exports.default = {
             var _this = this;
 
             _vue2.default.nextTick(function () {
-                _this._dragMoveFlag = _this.selectedComponents.length;
+                _this.dragMoveFlag = _this.selectedComponents.length;
                 _this.$forceUpdate();
             });
         },
@@ -58999,7 +59035,7 @@ exports.default = {
                     _support2.default.setHighlightColor('rgba(24, 255, 255, 0.35)');
                     _support2.default.highlight(got, function () {
                         self.isResizingNode = true;
-                        new _resizing2.default(got, self.configStorage[_util2.default.locate(_support2.default.getInstance(got))]).activate();
+                        new _resizing2.default(got, self.configStorage[_support2.default.getInstance(got).$location]).activate();
                         _support2.default.unHighlight();
                     });
                 }
@@ -59019,7 +59055,7 @@ exports.default = {
         saveResizeState: function saveResizeState() {
             var obj = _resizing2.default.getTop();
             if (obj) {
-                var location = _util2.default.locate(_support2.default.getInstance(obj._node));
+                var location = _support2.default.getInstance(obj.node).$location;
                 if (!this.configStorage[location]) {
                     _util2.default.initConfig(this.configStorage, location);
                 }
@@ -59034,6 +59070,46 @@ exports.default = {
         EditBar: _EditBar2.default
     }
 }; //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -59296,7 +59372,7 @@ exports.highlight = highlight;
 exports.unHighlight = unHighlight;
 exports.getInstanceRect = getInstanceRect;
 
-var _util = __webpack_require__(39);
+var _util = __webpack_require__(40);
 
 var overlay;
 var doc = document;
@@ -59492,7 +59568,11 @@ var _createClass2 = __webpack_require__(75);
 
 var _createClass3 = _interopRequireDefault(_createClass2);
 
-var _util = __webpack_require__(39);
+var _util = __webpack_require__(40);
+
+var _util2 = __webpack_require__(25);
+
+var _util3 = _interopRequireDefault(_util2);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -59513,37 +59593,43 @@ var DIMENSION = 'DIMENSION';
 var CANVAS_ID = 'resizing-canvas';
 
 var Resizing = function () {
-    function Resizing(el, config, usePos) {
+    function Resizing(node, config) {
         (0, _classCallCheck3.default)(this, Resizing);
 
-        this.el = el;
+        this.node = node;
+        this.el = this.node.el;
         this.state = -1;
+        this.disposed = false;
+        var values = _util3.default.parseTrasfromValue(window.getComputedStyle(this.el).transform);
         if (config && config.staticStyle) {
-            if (!usePos) {
-                this.posData = {
-                    width: config.staticStyle.width,
-                    height: config.staticStyle.height,
-                    transform: config.staticStyle.transform
-                };
-            } else {
-                this.posData = {
-                    position: 'absolute',
-                    width: config.staticStyle.width,
-                    height: config.staticStyle.height,
-                    top: config.staticStyle.top || 0,
-                    left: config.staticStyle.left || 0
-                };
-            }
+            //if(!usePos) {
+            this.posData = {
+                width: config.staticStyle.width,
+                height: config.staticStyle.height,
+                transform: 'translate(' + ~~values[4] + 'px,\'' + ~~values[5] + 'px)'
+            };
+            // } else  {
+            //    this.posData = {
+            //        position: 'absolute',
+            //        width: config.staticStyle.width,
+            //        height: config.staticStyle.height,
+            //        top: config.staticStyle.top || 0,
+            //        left: config.staticStyle.left || 0
+            //    } 
+            // }
         } else {
-            if (!usePos) {
-                this.posData = {};
-            } else {
-                this.posData = {
-                    position: 'absolute',
-                    top: usePos.top || 0,
-                    left: usePos.left || 0
-                };
-            }
+            //if(!usePos) {
+
+            this.posData = {
+                transform: 'translate(' + ~~values[4] + 'px,\'' + ~~values[5] + 'px)'
+            };
+            // } else {
+            //     this.posData = {
+            //         position: 'absolute',
+            //         top: usePos.top || 0,
+            //         left: usePos.left || 0 
+            //     };
+            // }
         }
         this.stopStateChange = false;
         this._canvas = null;
@@ -59598,6 +59684,8 @@ var Resizing = function () {
     }, {
         key: '_drawCanvas',
         value: function _drawCanvas() {
+            var _this = this;
+
             this._canvas = this.el.ownerDocument.getElementById(CANVAS_ID);
             if (!this._canvas) {
                 this._canvas = this.el.ownerDocument.createElement('canvas');
@@ -59606,9 +59694,12 @@ var Resizing = function () {
                 var _el$ownerDocument$doc = this.el.ownerDocument.documentElement.getBoundingClientRect(),
                     _width = _el$ownerDocument$doc.width,
                     _height = _el$ownerDocument$doc.height;
+                //documentElment.getBoundingClientRect() 获取的宽度是包含滚动条的
+                //window.innerWidth 是会包含的
+
 
                 this._canvas.width = _width;
-                this._canvas.height = _height;
+                this._canvas.height = this.el.ownerDocument.defaultView.innerHeight;
                 this._canvas.id = CANVAS_ID;
                 this.el.ownerDocument.body.appendChild(this._canvas);
             }
@@ -59628,6 +59719,7 @@ var Resizing = function () {
 
             width = parseInt(width);
             height = parseInt(height);
+            //console.log(this._canvas.width, this._canvas.height, top);
             ctx.fillStyle = ctx.strokeStyle = '#FFA500';
             ctx.font = '12px serif';
             ctx.lineWidth = 1;
@@ -59666,6 +59758,10 @@ var Resizing = function () {
             ctx.restore();
 
             ctx.restore();
+            window.requestAnimationFrame(function () {
+                if (_this.disposed) return;
+                _this._drawCanvas();
+            });
         }
     }, {
         key: '_onElMouseDownHandler',
@@ -59674,24 +59770,27 @@ var Resizing = function () {
             var oldPosY = ~~event.clientY;
             if (this.el.dataset['x'] === undefined && this.posData['transform']) {
                 this.el.dataset['x'] = this.posData['transform'].match(/-?\d+/g)[0];
+                //this.el.dataset['x'] = values[4];
             }
             if (this.el.dataset['y'] === undefined && this.posData['transform']) {
                 this.el.dataset['y'] = this.posData['transform'].match(/-?\d+/g)[1];
+                //this.el.dataset['y'] = values[5];
             }
             var oldDeltaX = this.el.dataset['x'] ? Number(this.el.dataset['x']) : 0;
             var oldDeltaY = this.el.dataset['y'] ? Number(this.el.dataset['y']) : 0;
             var offsetWidth = ~~this.el.offsetWidth;
             var offsetHeight = ~~this.el.offsetHeight;
             var self = this;
+            var ownerDocument = event.target.ownerDocument;
             this.stopStateChange = true;
             this._drawCanvas();
-            this.el.ownerDocument.onmouseup = function (event) {
-                self.el.ownerDocument.onmouseup = null;
-                self.el.ownerDocument.onmousemove = null;
+            function onDocumentElMouseUp(event) {
+                ownerDocument.removeEventListener('mousemove', onDocumentElMouseMove, true);
+                ownerDocument.removeEventListener('mouseup', onDocumentElMouseUp, true);
                 self._applyCursor(self.el, DEFAULT);
                 self.stopStateChange = false;
             };
-            event.target.ownerDocument.onmousemove = function (event) {
+            function onDocumentElMouseMove(event) {
                 switch (self.state) {
                     case CENTER:
                         var deltaX = ~~event.clientX - oldPosX + oldDeltaX;
@@ -59756,8 +59855,10 @@ var Resizing = function () {
                         self.el.style.webkitTransform = self.posData['transform'] = self.posData['webkitTransform'] = 'translate(' + oldDeltaX + 'px,' + oldDeltaY + 'px)';
                         break;
                 }
-                self._drawCanvas();
-            };
+                //self._drawCanvas();
+            }
+            ownerDocument.addEventListener('mousemove', onDocumentElMouseMove, true);
+            ownerDocument.addEventListener('mouseup', onDocumentElMouseUp, true);
             event.stopPropagation();
         }
     }, {
@@ -59827,6 +59928,7 @@ var Resizing = function () {
             this.el.addEventListener('mousemove', _onElMouseMoveHandler, true);
             this.el.addEventListener('mouseleave', _onElMouseLeaveHandler, true);
             this.el.ownerDocument.addEventListener('click', _onDocumentClickHandler, true);
+            var oldDispose = this._dispose.bind(this);
             this._dispose = function () {
                 this.el.removeEventListener('mousedown', _onElMouseDownHandler, true);
                 this.el.removeEventListener('mousemove', _onElMouseMoveHandler, true);
@@ -59835,6 +59937,8 @@ var Resizing = function () {
                 if (this._canvas) {
                     this._canvas.parentNode.removeChild(this._canvas);
                 }
+                this.disposed = true;
+                oldDispose();
             };
         }
     }, {
@@ -59904,7 +60008,7 @@ var _vueRouter = __webpack_require__(105);
 
 var _vueRouter2 = _interopRequireDefault(_vueRouter);
 
-var _support = __webpack_require__(37);
+var _support = __webpack_require__(38);
 
 var _support2 = _interopRequireDefault(_support);
 
@@ -59955,7 +60059,7 @@ Object.defineProperty(exports, "__esModule", {
 	value: true
 });
 
-var _support = __webpack_require__(37);
+var _support = __webpack_require__(38);
 
 var _support2 = _interopRequireDefault(_support);
 
@@ -60191,7 +60295,7 @@ module.exports.AVLTree = __webpack_require__(152);
  */
 var BinarySearchTree = __webpack_require__(76)
   , customUtils = __webpack_require__(77)
-  , util = __webpack_require__(36)
+  , util = __webpack_require__(37)
   , _ = __webpack_require__(23)
   ;
 
@@ -60736,7 +60840,7 @@ module.exports = function(){ /* empty */ };
 /* 163 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var forOf = __webpack_require__(26);
+var forOf = __webpack_require__(27);
 
 module.exports = function(iter, ITERATOR){
   var result = [];
@@ -60784,7 +60888,7 @@ module.exports = function(IS_INCLUDES){
 // 6 -> Array#findIndex
 var ctx      = __webpack_require__(17)
   , IObject  = __webpack_require__(47)
-  , toObject = __webpack_require__(31)
+  , toObject = __webpack_require__(32)
   , toLength = __webpack_require__(55)
   , asc      = __webpack_require__(167);
 module.exports = function(TYPE, $create){
@@ -60859,12 +60963,12 @@ module.exports = function(original, length){
 "use strict";
 
 var dP          = __webpack_require__(7).f
-  , create      = __webpack_require__(28)
+  , create      = __webpack_require__(29)
   , redefineAll = __webpack_require__(51)
   , ctx         = __webpack_require__(17)
   , anInstance  = __webpack_require__(43)
-  , defined     = __webpack_require__(25)
-  , forOf       = __webpack_require__(26)
+  , defined     = __webpack_require__(26)
+  , forOf       = __webpack_require__(27)
   , $iterDefine = __webpack_require__(48)
   , step        = __webpack_require__(81)
   , setSpecies  = __webpack_require__(85)
@@ -61026,7 +61130,7 @@ var global         = __webpack_require__(5)
   , fails          = __webpack_require__(11)
   , hide           = __webpack_require__(9)
   , redefineAll    = __webpack_require__(51)
-  , forOf          = __webpack_require__(26)
+  , forOf          = __webpack_require__(27)
   , anInstance     = __webpack_require__(43)
   , isObject       = __webpack_require__(13)
   , setToStringTag = __webpack_require__(22)
@@ -61086,7 +61190,7 @@ module.exports = function(NAME, wrapper, methods, common, IS_MAP, IS_WEAK){
 // all enumerable object keys, includes symbols
 var getKeys = __webpack_require__(18)
   , gOPS    = __webpack_require__(50)
-  , pIE     = __webpack_require__(29);
+  , pIE     = __webpack_require__(30);
 module.exports = function(it){
   var result     = getKeys(it)
     , getSymbols = gOPS.f;
@@ -61156,8 +61260,8 @@ module.exports = function(iterator, fn, value, entries){
 
 "use strict";
 
-var create         = __webpack_require__(28)
-  , descriptor     = __webpack_require__(30)
+var create         = __webpack_require__(29)
+  , descriptor     = __webpack_require__(31)
   , setToStringTag = __webpack_require__(22)
   , IteratorPrototype = {};
 
@@ -61292,8 +61396,8 @@ module.exports = function(){
 // 19.1.2.1 Object.assign(target, source, ...)
 var getKeys  = __webpack_require__(18)
   , gOPS     = __webpack_require__(50)
-  , pIE      = __webpack_require__(29)
-  , toObject = __webpack_require__(31)
+  , pIE      = __webpack_require__(30)
+  , toObject = __webpack_require__(32)
   , IObject  = __webpack_require__(47)
   , $assign  = Object.assign;
 
@@ -61344,8 +61448,8 @@ module.exports = __webpack_require__(6) ? Object.defineProperties : function def
 /* 181 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var pIE            = __webpack_require__(29)
-  , createDesc     = __webpack_require__(30)
+var pIE            = __webpack_require__(30)
+  , createDesc     = __webpack_require__(31)
   , toIObject      = __webpack_require__(14)
   , toPrimitive    = __webpack_require__(56)
   , has            = __webpack_require__(12)
@@ -61392,7 +61496,7 @@ module.exports.f = function getOwnPropertyNames(it){
 
 // 19.1.2.9 / 15.2.3.2 Object.getPrototypeOf(O)
 var has         = __webpack_require__(12)
-  , toObject    = __webpack_require__(31)
+  , toObject    = __webpack_require__(32)
   , IE_PROTO    = __webpack_require__(52)('IE_PROTO')
   , ObjectProto = Object.prototype;
 
@@ -61437,7 +61541,7 @@ module.exports = function(O, D){
 /***/ (function(module, exports, __webpack_require__) {
 
 var toInteger = __webpack_require__(54)
-  , defined   = __webpack_require__(25);
+  , defined   = __webpack_require__(26);
 // true  -> String#at
 // false -> String#codePointAt
 module.exports = function(TO_STRING){
@@ -61557,7 +61661,7 @@ $export($export.S + $export.F, 'Object', {assign: __webpack_require__(179)});
 
 var $export = __webpack_require__(8)
 // 19.1.2.2 / 15.2.3.5 Object.create(O [, Properties])
-$export($export.S, 'Object', {create: __webpack_require__(28)});
+$export($export.S, 'Object', {create: __webpack_require__(29)});
 
 /***/ }),
 /* 193 */
@@ -61572,7 +61676,7 @@ $export($export.S + $export.F * !__webpack_require__(6), 'Object', {defineProper
 /***/ (function(module, exports, __webpack_require__) {
 
 // 19.1.2.14 Object.keys(O)
-var toObject = __webpack_require__(31)
+var toObject = __webpack_require__(32)
   , $keys    = __webpack_require__(18);
 
 __webpack_require__(184)('keys', function(){
@@ -61587,7 +61691,7 @@ __webpack_require__(184)('keys', function(){
 
 "use strict";
 
-var LIBRARY            = __webpack_require__(27)
+var LIBRARY            = __webpack_require__(28)
   , global             = __webpack_require__(5)
   , ctx                = __webpack_require__(17)
   , classof            = __webpack_require__(44)
@@ -61595,7 +61699,7 @@ var LIBRARY            = __webpack_require__(27)
   , isObject           = __webpack_require__(13)
   , aFunction          = __webpack_require__(42)
   , anInstance         = __webpack_require__(43)
-  , forOf              = __webpack_require__(26)
+  , forOf              = __webpack_require__(27)
   , speciesConstructor = __webpack_require__(185)
   , task               = __webpack_require__(86).set
   , microtask          = __webpack_require__(178)()
@@ -61902,7 +62006,7 @@ var global         = __webpack_require__(5)
   , $fails         = __webpack_require__(11)
   , shared         = __webpack_require__(53)
   , setToStringTag = __webpack_require__(22)
-  , uid            = __webpack_require__(32)
+  , uid            = __webpack_require__(33)
   , wks            = __webpack_require__(4)
   , wksExt         = __webpack_require__(58)
   , wksDefine      = __webpack_require__(57)
@@ -61912,8 +62016,8 @@ var global         = __webpack_require__(5)
   , anObject       = __webpack_require__(10)
   , toIObject      = __webpack_require__(14)
   , toPrimitive    = __webpack_require__(56)
-  , createDesc     = __webpack_require__(30)
-  , _create        = __webpack_require__(28)
+  , createDesc     = __webpack_require__(31)
+  , _create        = __webpack_require__(29)
   , gOPNExt        = __webpack_require__(182)
   , $GOPD          = __webpack_require__(181)
   , $DP            = __webpack_require__(7)
@@ -62041,10 +62145,10 @@ if(!USE_NATIVE){
   $GOPD.f = $getOwnPropertyDescriptor;
   $DP.f   = $defineProperty;
   __webpack_require__(82).f = gOPNExt.f = $getOwnPropertyNames;
-  __webpack_require__(29).f  = $propertyIsEnumerable;
+  __webpack_require__(30).f  = $propertyIsEnumerable;
   __webpack_require__(50).f = $getOwnPropertySymbols;
 
-  if(DESCRIPTORS && !__webpack_require__(27)){
+  if(DESCRIPTORS && !__webpack_require__(28)){
     redefine(ObjectProto, 'propertyIsEnumerable', $propertyIsEnumerable, true);
   }
 
@@ -63973,7 +64077,7 @@ exports.default = function (Vue) {
   return template;
 };
 
-var _util = __webpack_require__(33);
+var _util = __webpack_require__(34);
 
 var RE_NARGS = /(%|)\{([0-9a-zA-Z_]+)\}/g;
 /**
@@ -68622,7 +68726,7 @@ exports.default = PopupManager;
 /* 227 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var path = __webpack_require__(35);
+var path = __webpack_require__(36);
 var fs = __webpack_require__(69);
 var _0777 = parseInt('0777', 8);
 
@@ -68738,7 +68842,7 @@ module.exports = Datastore;
 /**
  * Manage access to data, be it to find, update or remove it
  */
-var model = __webpack_require__(34)
+var model = __webpack_require__(35)
   , _ = __webpack_require__(23)
   ;
 
@@ -68946,11 +69050,11 @@ module.exports = Cursor;
 /***/ (function(module, exports, __webpack_require__) {
 
 var customUtils = __webpack_require__(93)
-  , model = __webpack_require__(34)
+  , model = __webpack_require__(35)
   , async = __webpack_require__(24)
   , Executor = __webpack_require__(231)
   , Index = __webpack_require__(94)
-  , util = __webpack_require__(36)
+  , util = __webpack_require__(37)
   , _ = __webpack_require__(23)
   , Persistence = __webpack_require__(232)
   , Cursor = __webpack_require__(229)
@@ -69747,8 +69851,8 @@ module.exports = Executor;
  */
 
 var storage = __webpack_require__(233)
-  , path = __webpack_require__(35)
-  , model = __webpack_require__(34)
+  , path = __webpack_require__(36)
+  , model = __webpack_require__(35)
   , async = __webpack_require__(24)
   , customUtils = __webpack_require__(93)
   , Index = __webpack_require__(94)
@@ -70071,7 +70175,7 @@ module.exports = Persistence;
 var fs = __webpack_require__(69)
   , mkdirp = __webpack_require__(227)
   , async = __webpack_require__(24)
-  , path = __webpack_require__(35)
+  , path = __webpack_require__(36)
   , storage = {}
   ;
 
@@ -70218,7 +70322,7 @@ var Component = __webpack_require__(16)(
   /* moduleIdentifier (server only) */
   null
 )
-Component.options.__file = "/Users/paul/git-source/activity-builder/node_modules/vue-quill-editor/src/editor.vue"
+Component.options.__file = "E:\\GitHub\\activity-builder\\node_modules\\vue-quill-editor\\src\\editor.vue"
 if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key.substr(0, 2) !== "__"})) {console.error("named exports are not supported in *.vue files.")}
 if (Component.options.functional) {console.error("[vue-loader] editor.vue: functional components are not supported with templates, they should use render functions.")}
 
@@ -70262,7 +70366,7 @@ var Component = __webpack_require__(16)(
   /* moduleIdentifier (server only) */
   null
 )
-Component.options.__file = "/Users/paul/git-source/activity-builder/src/app/views/ButtonGroup.vue"
+Component.options.__file = "E:\\GitHub\\activity-builder\\src\\app\\views\\ButtonGroup.vue"
 if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key.substr(0, 2) !== "__"})) {console.error("named exports are not supported in *.vue files.")}
 if (Component.options.functional) {console.error("[vue-loader] ButtonGroup.vue: functional components are not supported with templates, they should use render functions.")}
 
@@ -70306,7 +70410,7 @@ var Component = __webpack_require__(16)(
   /* moduleIdentifier (server only) */
   null
 )
-Component.options.__file = "/Users/paul/git-source/activity-builder/src/app/views/CompsBar.vue"
+Component.options.__file = "E:\\GitHub\\activity-builder\\src\\app\\views\\CompsBar.vue"
 if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key.substr(0, 2) !== "__"})) {console.error("named exports are not supported in *.vue files.")}
 if (Component.options.functional) {console.error("[vue-loader] CompsBar.vue: functional components are not supported with templates, they should use render functions.")}
 
@@ -70350,7 +70454,7 @@ var Component = __webpack_require__(16)(
   /* moduleIdentifier (server only) */
   null
 )
-Component.options.__file = "/Users/paul/git-source/activity-builder/src/app/views/EditBar.vue"
+Component.options.__file = "E:\\GitHub\\activity-builder\\src\\app\\views\\EditBar.vue"
 if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key.substr(0, 2) !== "__"})) {console.error("named exports are not supported in *.vue files.")}
 if (Component.options.functional) {console.error("[vue-loader] EditBar.vue: functional components are not supported with templates, they should use render functions.")}
 
@@ -70400,28 +70504,30 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
   return _c('section', {
     staticClass: "tpl-lib"
   }, [_c('div', {
-    staticClass: "clearfix"
+    staticClass: "tpl-lib__inner clearfix"
   }, [_vm._l((_vm.tpls), function(tpl) {
     return [_c('div', {
-      staticClass: "tpl",
+      staticClass: "tpl-lib__tpl",
       on: {
         "click": function($event) {
           _vm.setTpl(tpl)
         }
       }
-    }, [_c('h2', [_vm._v(_vm._s(tpl.title))]), _c('div', {
-      staticClass: "snapshot-wrapper"
+    }, [_c('h2', {
+      staticClass: "tpl-lib__title"
+    }, [_vm._v(_vm._s(tpl.title))]), _c('div', {
+      staticClass: "tpl-lib__snapshot-wrapper"
     }, [_c('img', {
-      staticClass: "snapshot",
+      staticClass: "tpl-lib__snapshot",
       attrs: {
         "src": tpl.snapshot
       }
     })]), _c('p', {
-      staticClass: "time create-time"
+      staticClass: "tpl-lib__create-time"
     }, [_vm._v("修改时间：" + _vm._s(_vm.formatDate(new Date(tpl.modifiedTime), 'yyyy/MM/dd hh:mm:ss')))]), _c('p', {
-      staticClass: "time update-time"
+      staticClass: "tpl-lib__update-time"
     }, [_vm._v("创建时间：" + _vm._s(_vm.formatDate(new Date(tpl.createdTime), 'yyyy/MM/dd hh:mm:ss')))]), _c('button', {
-      staticClass: "del-btn",
+      staticClass: "tpl-lib__del-btn",
       on: {
         "click": function($event) {
           $event.stopPropagation();
@@ -70491,7 +70597,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
           "value": item.value
         }
       })
-    }))], 1) : (p.prop.$rule.clazz === 'String') ? _c('el-form-item', {
+    }))], 1) : (p.prop.$rule.clazz === 'String' || p.prop.$rule.clazz === 'Number') ? _c('el-form-item', {
       attrs: {
         "label": p.prop.$rule.name + '：'
       }
@@ -70838,9 +70944,9 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "dragend": _vm.dragUnSelectedCompEnd
     }
   }), _c('div', {
-    staticClass: "workspace-inner"
+    staticClass: "workspace__inner"
   }, [_c('div', {
-    staticClass: "status-bar"
+    staticClass: "workspace__status-bar"
   }, [_c('input', {
     directives: [{
       name: "model",
@@ -70848,7 +70954,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       value: (_vm.tpl.title),
       expression: "tpl.title"
     }],
-    staticClass: "tpl-title",
+    staticClass: "workspace__tpl-title",
     attrs: {
       "type": "text",
       "placeholder": "请输入模板名称..."
@@ -70872,7 +70978,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       "onSelect": _vm.onSelectMode
     }
   })], 1), _c('div', {
-    staticClass: "config-area",
+    staticClass: "workspace__config-area",
     class: {
       none: !_vm.modebtns[0].selected
     }
@@ -70883,24 +70989,61 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
   }, [_c('el-input', {
     attrs: {
       "placeholder": "默认1080"
+    },
+    model: {
+      value: (_vm.configStorage.App.propsData.psdWidth),
+      callback: function($$v) {
+        _vm.configStorage.App.propsData.psdWidth = $$v
+      },
+      expression: "configStorage.App.propsData.psdWidth"
     }
   })], 1), _c('el-form-item', {
     attrs: {
       "label": "页面背景颜色："
     }
+  }, [_c('el-col', {
+    attrs: {
+      "span": 20
+    }
   }, [_c('el-input', {
     attrs: {
-      "placeholder": "默认#ffffff"
+      "placeholder": "eg: #e5e5e5"
+    },
+    model: {
+      value: (_vm.configStorage.App.propsData.appBgColor),
+      callback: function($$v) {
+        _vm.configStorage.App.propsData.appBgColor = $$v
+      },
+      expression: "configStorage.App.propsData.appBgColor"
     }
-  })], 1)], 1)], 1), _c('div', {
-    staticClass: "design-area",
+  })], 1), _c('el-col', {
+    attrs: {
+      "span": 1
+    }
+  }, [_vm._v(" ")]), _c('el-col', {
+    attrs: {
+      "span": 3
+    }
+  }, [_c('el-color-picker', {
+    attrs: {
+      "show-alpha": ""
+    },
+    model: {
+      value: (_vm.configStorage.App.propsData.appBgColor),
+      callback: function($$v) {
+        _vm.configStorage.App.propsData.appBgColor = $$v
+      },
+      expression: "configStorage.App.propsData.appBgColor"
+    }
+  })], 1)], 1)], 1)], 1), _c('div', {
+    staticClass: "workspace__design-area",
     class: {
       none: !_vm.modebtns[1].selected
     }
   }, [_c('div', {
-    staticClass: "selected-comps-bar"
+    staticClass: "workspace__selected-comps-bar"
   }, [_c('ul', {
-    staticClass: "selected-comp-list",
+    staticClass: "workspace__selected-comp-list",
     on: {
       "dragover": function($event) {
         if ($event.target !== $event.currentTarget) { return null; }
@@ -70913,9 +71056,9 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     }
   }, [_vm._l((_vm.selectedComponents), function(comp, index) {
     return [_c('li', {
-      staticClass: "selected-comp-item",
+      staticClass: "workspace__selected-comp-item",
       class: {
-        move: index >= _vm._dragMoveFlag
+        'workspace__selected-comp-item--move': index >= _vm.dragMoveFlag
       },
       attrs: {
         "draggable": "true"
@@ -70941,7 +71084,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
         }
       }
     }, [_vm._v(_vm._s(comp.name)), _c('button', {
-      staticClass: "del-btn",
+      staticClass: "workspace__del-btn",
       on: {
         "click": function($event) {
           _vm.delSelectedComp(index)
@@ -70952,18 +71095,18 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     })])])]
   })], 2)]), _c('iframe', {
     ref: "design",
-    staticClass: "design",
+    staticClass: "workspace__design",
     attrs: {
       "src": ""
     }
   }), _c('div', {
-    staticClass: "tools-bar"
+    staticClass: "workspace__tools-bar"
   }, [_c('ul', {
-    staticClass: "tool-list"
+    staticClass: "workspace__tool-list"
   }, [_c('li', {
-    staticClass: "tool-item",
+    staticClass: "workspace__tool-item",
     class: {
-      activated: _vm.isInspectingNode
+      'workspace__tool-item--activated': _vm.isInspectingNode
     },
     on: {
       "click": function($event) {
@@ -70973,9 +71116,9 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
   }, [_c('i', {
     staticClass: "fa fa-crosshairs"
   })]), _c('li', {
-    staticClass: "tool-item",
+    staticClass: "workspace__tool-item",
     class: {
-      activated: _vm.isSelectingResizeNode, working: _vm.isResizingNode
+      'workspace__tool-item--activated': _vm.isSelectingResizeNode, 'workspace__tool-item--working': _vm.isResizingNode
     },
     on: {
       "click": function($event) {
@@ -70985,16 +71128,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
   }, [_c('i', {
     staticClass: "fa fa-arrows"
   })]), _c('li', {
-    staticClass: "tool-item",
-    on: {
-      "click": function($event) {
-        _vm.reload()
-      }
-    }
-  }, [_c('i', {
-    staticClass: "fa fa-crop"
-  })]), _c('li', {
-    staticClass: "tool-item",
+    staticClass: "workspace__tool-item",
     on: {
       "click": function($event) {
         _vm.reload()
@@ -71003,7 +71137,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
   }, [_c('i', {
     staticClass: "fa fa-repeat"
   })]), _c('li', {
-    staticClass: "tool-item",
+    staticClass: "workspace__tool-item",
     on: {
       "click": function($event) {
         _vm.create()
@@ -71012,7 +71146,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
   }, [_c('i', {
     staticClass: "fa fa-plus"
   })]), _c('li', {
-    staticClass: "tool-item",
+    staticClass: "workspace__tool-item",
     on: {
       "click": function($event) {
         _vm.save()
@@ -71021,7 +71155,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
   }, [_c('i', {
     staticClass: "fa fa-save"
   })]), _c('li', {
-    staticClass: "tool-item",
+    staticClass: "workspace__tool-item",
     on: {
       "click": function($event) {
         _vm.del()
@@ -71030,17 +71164,18 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
   }, [_c('i', {
     staticClass: "fa fa-trash"
   })])])])], 1), _c('div', {
-    staticClass: "preview-area",
+    staticClass: "workspace__preview-area",
     class: {
       none: !_vm.modebtns[2].selected
     }
   }, [_c('webview', {
     ref: "preview",
-    staticClass: "preview",
+    staticClass: "workspace__preview",
     attrs: {
       "src": "https://www.baidu.com"
     }
   })], 1)]), _c('edit-bar', {
+    staticClass: "workspace__edit-bar",
     attrs: {
       "node": _vm.inspectedNode,
       "storage": _vm.configStorage,
@@ -71064,10 +71199,10 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
   return _c('div', {
     staticClass: "comps-bar"
   }, [_c('ul', {
-    staticClass: "comp-list"
+    staticClass: "comps-bar__comps-list"
   }, [_vm._l((_vm.components), function(comp) {
     return [_c('li', {
-      staticClass: "comp-item",
+      staticClass: "comps-bar__comps-item",
       attrs: {
         "draggable": "true"
       },
@@ -71098,25 +71233,25 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
   return _c('div', {
     staticClass: "app"
   }, [_c('nav', {
-    staticClass: "navbar"
+    staticClass: "app__navbar"
   }, [_c('ul', {
-    staticClass: "navbar-list"
+    staticClass: "app__navbar-list"
   }, [_c('li', {
-    staticClass: "navbar-list-item",
+    staticClass: "app__navbar-list-item",
     on: {
       "click": function($event) {
         _vm.$router.push('/')
       }
     }
   }, [_vm._v("工作区")]), _c('li', {
-    staticClass: "navbar-list-item",
+    staticClass: "app__navbar-list-item",
     on: {
       "click": function($event) {
         _vm.$router.push('/tplLib')
       }
     }
   }, [_vm._v("模板库")])])]), _c('keep-alive', [_c('router-view', {
-    staticClass: "body"
+    staticClass: "app__body"
   })], 1)], 1)
 },staticRenderFns: []}
 module.exports.render._withStripped = true
@@ -71136,9 +71271,9 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     staticClass: "btn-group"
   }, [_vm._l((_vm.btns), function(btn) {
     return [_c('button', {
-      staticClass: "btn",
+      staticClass: "btn-group__btn btn",
       class: {
-        selected: btn.selected
+        'btn-group__btn--selected': btn.selected
       },
       on: {
         "click": function($event) {

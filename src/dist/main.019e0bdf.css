@@ -72,26 +72,26 @@ body {
   height: 0;
   clear: both;
 }
-.navbar {
+.app__navbar {
   height: 48px;
   box-shadow: 0 1px 3px 0 #ececec;
 }
-.body {
+.app__body {
   display: flex;
   height: calc(100% - 48px);
   overflow: hidden;
 }
-.navbar-list {
+.app__navbar-list {
   display: flex;
   height: 48px;
 }
-.navbar-list-item + .navbar-list-item {
+.app__navbar-list-item + .app__navbar-list-item {
   border-left: 1px solid #e5e5e5;
 }
-.navbar-list :last-child {
+.app__navbar-list :last-child {
   border-right: 1px solid #e5e5e5;
 }
-.navbar-list-item {
+.app__navbar-list-item {
   display: flex;
   width: 100px;
   height: 100%;
@@ -99,17 +99,17 @@ body {
   justify-content: center;
   cursor: default;
 }
-.navbar-list-item:hover {
+.app__navbar-list-item:hover {
   background: #e5e5e5;
 }
 /*模板库*/
 
-.comps-bar,
-.workspace-inner,
-.edit-bar {
+.workspace__comps-bar,
+.workspace.__inner,
+.workspace__edit-bar {
   height: 100%;
 }
-.workspace-inner {
+.workspace__inner {
   position: relative;
   display: flex;
   min-width: 360px;
@@ -118,12 +118,12 @@ body {
   justify-content: center;
   align-items: center;
 }
-.edit-bar {
+.workspace__edit-bar {
   width: 360px;
   box-shadow: -1px 0 3px 0 #ececec;
 }
-.design-area,
-.preview-area {
+.workspace__design-area,
+.workspace__preview-area {
   position: relative;
   width: 360px;
   height: 640px;
@@ -132,12 +132,16 @@ body {
   box-sizing: content-box;
   left: 40px;
 }
-.preview,
-.design {
+.workspace__config-area {
+  width: 480px;
+  min-height: 640px;
+}
+.workspace__preview,
+.workspace__design {
   width: 100%;
   height: 100%;
 }
-.selected-comp-item {
+.workspace__selected-comp-item {
   height: 48px;
   width: 100%;
   padding: 0 20px;
@@ -149,22 +153,32 @@ body {
   border-bottom: 1px solid #ececec;
   transition: transform .3s ease;
 }
-.selected-comp-item.move {
+.workspace__selected-comp-item--move {
   transform: translate3d(0, 48px, 0);
 }
-.selected-comp-item {
+.workspace__selected-comp-item {
   position: relative;
   border-bottom: 1px dashed #e5e5e5;
 }
-.selected-comp-item.hightlight {
+.workspace__selected-comp-item--hightlight {
   color: #fff;
   background: #ef8c34;
 }
-.comp-item:hover {
+.workspace__comp-item {
+  height: 48px;
+  width: 100%;
+  padding: 0 20px;
+  line-height: 48px;
+  font-size: 16px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  border-bottom: 1px solid #ececec;
+}
+.workspace__comp-item:hover {
   background: #ef8c34;
   color: #fff;
 }
-.status-bar {
+.workspace__status-bar {
   position: absolute;
   top: 0;
   left: 0;
@@ -172,17 +186,17 @@ body {
   height: 48px;
   padding: 8px 12px;
 }
-.status-bar .tpl-title {
+.workspace__tpl-title {
   width: 480px;
   height: 32px;
   border: 1px solid transparent;
   padding: 0 10px;
   font-size: 18px;
 }
-.status-bar .tpl-title:focus {
+.workspace__tpl-title:focus {
   border-color: #000;
 }
-.selected-comps-bar {
+.workspace__selected-comps-bar {
   position: absolute;
   width: 180px;
   height: 576px;
@@ -191,11 +205,11 @@ body {
   border: 1px solid #e5e5e5;
   overflow: auto;
 }
-.selected-comp-list {
+.workspace__selected-comp-list {
   min-height: 100%;
   padding-bottom: 48px;
 }
-.selected-comp-list .del-btn {
+.workspace__del-btn {
   position: absolute;
   top: 0;
   right: 0;
@@ -208,30 +222,30 @@ body {
   background: #d9534f;
   color: #fff;
 }
-.selected-comp-list .del-btn:hover {
+.workspace__del-btn:hover {
   background: #c9302c;
 }
-.tools-bar {
+.workspace__tools-bar {
   position: absolute;
   width: 32px;
   top: 60px;
   right: -42px;
   border: 1px solid #e5e5e5;
 }
-.tool-item {
+.workspace__tool-item {
   display: flex;
   height: 30px;
   justify-content: center;
   align-items: center;
 }
-.tool-item:hover {
+.workspace__tool-item:hover {
   background: #e5e5e5;
 }
-.tool-item.activated {
+.workspace__tool-item--activated {
   color: #fff;
   background: #ef8c34;
 }
-.tool-item.working {
+.workspace__tool-item--working {
   color: #fff;
   background: #00E5FF;
 }
@@ -312,23 +326,19 @@ body {
 .btn-group {
   display: inline-block;
 }
-.btn-group .btn + .btn {
+.btn-group__btn + .btn-group__btn {
   border-left-style: none;
 }
-.btn-group .selected {
-  background: #ef8c34;
-  color: #fff;
+.btn-group__btn--selected {
+  background: #ef8c34 !important;
+  color: #fff !important;
 }
 
 .comps-bar {
   width: 180px;
   box-shadow: 1px 0 3px 0 #ececec;
 }
-.comp-item:hover {
-  background: #ef8c34;
-  color: #fff;
-}
-.comp-item {
+.comps-bar__comps-item {
   height: 48px;
   width: 100%;
   padding: 0 20px;
@@ -337,6 +347,10 @@ body {
   overflow: hidden;
   text-overflow: ellipsis;
   border-bottom: 1px solid #ececec;
+}
+.comps-bar__comps-item:hover {
+  background: #ef8c34;
+  color: #fff;
 }
 
 .edit-bar {
@@ -441,12 +455,15 @@ body {
 .tpl-lib {
   padding: 10px;
 }
-.tpl-lib > div {
+.tpl-lib__inner {
   width: 100%;
   height: 100%;
   overflow-y: auto;
 }
-.tpl {
+.tpl-lib__inner:nth-child(5n+1) {
+  margin-left: 0;
+}
+.tpl-lib__tpl {
   position: relative;
   display: flex;
   flex-direction: column;
@@ -456,16 +473,13 @@ body {
   margin: 0 0 10px 10px;
   border: 1px solid #e5e5e5;
 }
-.tpl img {
-  width: 100%;
-}
-.tpl:hover {
+.tpl-lib__tpl:hover {
   border-color: #000;
 }
-.tpl-lib > div :nth-child(5n+1) {
-  margin-left: 0;
+.tpl-lib__snapshot {
+  width: 100%;
 }
-.tpl h2 {
+.tpl-lib__title {
   width: 100%;
   text-overflow: ellipsis;
   overflow: hidden;
@@ -475,18 +489,19 @@ body {
   height: 40px;
   line-height: 40px;
 }
-.tpl .time {
+.tpl-lib__create-time,
+.tpl-lib__update-time {
   font-size: 14px;
   text-align: right;
   padding-right: 10px;
 }
-.tpl .snapshot-wrapper {
+.tpl-lib__snapshot-wrapper {
   position: relative;
   flex: 1;
   background: #efefef;
   overflow: hidden;
 }
-.tpl .snapshot-wrapper:after {
+.tpl-lib__snapshot-wrapper :after {
   content: " ";
   position: absolute;
   bottom: 0;
@@ -496,7 +511,7 @@ body {
   background-image: -webkit-linear-gradient(top, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.8), #ffffff);
   background-size: 100% 100%;
 }
-.tpl .del-btn {
+.tpl-lib__del-btn {
   position: absolute;
   display: flex;
   width: 32px;
@@ -509,7 +524,7 @@ body {
   background: #d9534f;
   color: #fff;
 }
-.tpl .del-btn:hover {
+.tpl-lib__del-btn :hover {
   background: #c9302c;
 }
 

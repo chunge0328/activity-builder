@@ -1,4 +1,5 @@
 import { inDoc } from '../../support/util';
+import util from './util';
 const activateObjs = [];
 const BOUNDARY = 5;
 const DEFAULT = -1;
@@ -16,36 +17,42 @@ const DIMENSION = 'DIMENSION';
 const CANVAS_ID = 'resizing-canvas';
 class Resizing {
 
-    constructor(el, config, usePos) {
-        this.el = el;
+    constructor(node, config) {
+        this.node = node;
+        this.el = this.node.el;
         this.state = -1;
+        this.disposed = false;
+        let values = util.parseTrasfromValue(window.getComputedStyle(this.el).transform);
         if(config && config.staticStyle) {
-            if(!usePos) {
+            //if(!usePos) {
                 this.posData = {
                     width: config.staticStyle.width,
                     height: config.staticStyle.height,
-                    transform: config.staticStyle.transform
+                    transform: `translate(${~~values[4]}px,'${~~values[5]}px)`
                 };
-            } else  {
-               this.posData = {
-                   position: 'absolute',
-                   width: config.staticStyle.width,
-                   height: config.staticStyle.height,
-                   top: config.staticStyle.top || 0,
-                   left: config.staticStyle.left || 0
-               } 
-            }
+            // } else  {
+            //    this.posData = {
+            //        position: 'absolute',
+            //        width: config.staticStyle.width,
+            //        height: config.staticStyle.height,
+            //        top: config.staticStyle.top || 0,
+            //        left: config.staticStyle.left || 0
+            //    } 
+            // }
             
         } else {
-            if(!usePos) {
-                this.posData = {};
-            } else {
+            //if(!usePos) {
+                
                 this.posData = {
-                    position: 'absolute',
-                    top: usePos.top || 0,
-                    left: usePos.left || 0 
+                    transform: `translate(${~~values[4]}px,'${~~values[5]}px)`
                 };
-            }
+            // } else {
+            //     this.posData = {
+            //         position: 'absolute',
+            //         top: usePos.top || 0,
+            //         left: usePos.left || 0 
+            //     };
+            // }
         }
         this.stopStateChange = false;
         this._canvas = null;
@@ -102,8 +109,10 @@ class Resizing {
             this._canvas = this.el.ownerDocument.createElement('canvas');
             this._canvas.style = 'position:fixed;top:0;left:0;width:100%;height:100%;z-index:999;pointer-events:none;';
             let {width, height} = this.el.ownerDocument.documentElement.getBoundingClientRect();
+            //documentElment.getBoundingClientRect() 获取的宽度是包含滚动条的
+            //window.innerWidth 是会包含的
             this._canvas.width = width;
-            this._canvas.height = height; 
+            this._canvas.height = this.el.ownerDocument.defaultView.innerHeight; 
             this._canvas.id = CANVAS_ID;
             this.el.ownerDocument.body.appendChild(this._canvas);
         }
@@ -112,10 +121,11 @@ class Resizing {
         ctx.save();
         ctx.clearRect(0, 0, this._canvas.width, this._canvas.height);
         ctx.beginPath();
-
+        
         let {left, top, right, bottom, width, height} = this.el.getBoundingClientRect();
         width = parseInt(width);
         height = parseInt(height);
+        //console.log(this._canvas.width, this._canvas.height, top);
         ctx.fillStyle = ctx.strokeStyle = '#FFA500';
         ctx.font = '12px serif';
         ctx.lineWidth = 1;
@@ -154,6 +164,10 @@ class Resizing {
         ctx.restore();
 
         ctx.restore();
+        window.requestAnimationFrame(()=> {
+            if(this.disposed) return;
+            this._drawCanvas()
+        });
     }
 
    _onElMouseDownHandler(event) {
@@ -161,29 +175,35 @@ class Resizing {
         let oldPosY = ~~event.clientY;
         if(this.el.dataset['x'] === undefined && this.posData['transform']) {
             this.el.dataset['x'] = this.posData['transform'].match(/-?\d+/g)[0];
+            //this.el.dataset['x'] = values[4];
         }
         if(this.el.dataset['y'] === undefined && this.posData['transform']) {
             this.el.dataset['y'] = this.posData['transform'].match(/-?\d+/g)[1];
+            //this.el.dataset['y'] = values[5];
         }
         let oldDeltaX = this.el.dataset['x'] ? Number(this.el.dataset['x']) : 0;
         let oldDeltaY = this.el.dataset['y'] ? Number(this.el.dataset['y']) : 0;
         let offsetWidth = ~~this.el.offsetWidth;
         let offsetHeight = ~~this.el.offsetHeight;
         let self = this;
+        let ownerDocument = event.target.ownerDocument;
         this.stopStateChange = true;
         this._drawCanvas();
-        this.el.ownerDocument.onmouseup = function(event) {
-            self.el.ownerDocument.onmouseup = null;
-            self.el.ownerDocument.onmousemove = null;
+        function onDocumentElMouseUp(event) {
+            ownerDocument.removeEventListener('mousemove', onDocumentElMouseMove, true);
+            ownerDocument.removeEventListener('mouseup', onDocumentElMouseUp, true);
             self._applyCursor(self.el, DEFAULT);
             self.stopStateChange = false;
         };
-        event.target.ownerDocument.onmousemove = function(event) {
+        function onDocumentElMouseMove(event) {
             switch(self.state) {
                 case CENTER:
                     var deltaX = ~~event.clientX - oldPosX + oldDeltaX;
                     var deltaY = ~~event.clientY - oldPosY + oldDeltaY;
-                    self.el.style.webkitTransform = self.posData['transform'] = self.posData['webkitTransform'] = 'translate(' + deltaX + 'px,' + deltaY + 'px)';
+                    self.el.style.webkitTransform 
+                        = self.posData['transform'] 
+                        = self.posData['webkitTransform'] 
+                        = 'translate(' + deltaX + 'px,' + deltaY + 'px)';
                     self.el.dataset['x'] = deltaX;
                     self.el.dataset['y'] = deltaY;
                     break;
@@ -192,14 +212,20 @@ class Resizing {
                     var deltaY = ~~event.clientY - oldPosY;
                     self.el.style.width = self.posData['width'] = offsetWidth - deltaX + 'px';
                     self.el.style.height = self.posData['height'] = offsetHeight - deltaY + 'px';
-                    self.el.style.webkitTransform = self.posData['transform'] = self.posData['webkitTransform'] = 'translate(' + (oldDeltaX + deltaX) + 'px,' + (oldDeltaY + deltaY) + 'px)';
+                    self.el.style.webkitTransform 
+                        = self.posData['transform'] 
+                        = self.posData['webkitTransform'] 
+                        = 'translate(' + (oldDeltaX + deltaX) + 'px,' + (oldDeltaY + deltaY) + 'px)';
                     self.el.dataset['x'] = oldDeltaX + deltaX;
                     self.el.dataset['y'] = oldDeltaY + deltaY;
                     break;
                 case LEFT:
                     var deltaX = ~~event.clientX - oldPosX;
                     self.el.style.width = self.posData['width'] = offsetWidth - deltaX + 'px';
-                    self.el.style.webkitTransform = self.posData['transform'] = self.posData['webkitTransform'] =  'translate(' + (oldDeltaX + deltaX) + 'px,' + (oldDeltaY) + 'px)';
+                    self.el.style.webkitTransform 
+                        = self.posData['transform'] 
+                        = self.posData['webkitTransform'] 
+                        =  'translate(' + (oldDeltaX + deltaX) + 'px,' + (oldDeltaY) + 'px)';
                     self.el.dataset['x'] = oldDeltaX + deltaX;
                     break;
                 case LEFT_BOTTOM:
@@ -207,14 +233,20 @@ class Resizing {
                     var deltaY = ~~event.clientY - oldPosY;
                     self.el.style.width = self.posData['width'] = offsetWidth - deltaX + 'px';
                     self.el.style.height = self.posData['height'] = offsetHeight + deltaY + 'px';
-                    self.el.style.webkitTransform = self.posData['transform'] = self.posData['webkitTransform'] = 'translate(' + (oldDeltaX + deltaX) + 'px,' + (oldDeltaY) + 'px)';
+                    self.el.style.webkitTransform 
+                        = self.posData['transform'] 
+                        = self.posData['webkitTransform'] 
+                        = 'translate(' + (oldDeltaX + deltaX) + 'px,' + (oldDeltaY) + 'px)';
                     self.el.dataset['x'] = oldDeltaX + deltaX;
                     self.el.dataset['y'] = oldDeltaY;
                     break;
                 case TOP:
                     var deltaY = ~~event.clientY - oldPosY;
                     self.el.style.height = self.posData['height'] = offsetHeight - deltaY + 'px';
-                    self.el.style.webkitTransform = self.posData['transform'] = self.posData['webkitTransform'] = 'translate(' + (oldDeltaX) + 'px,' + (oldDeltaY + deltaY) + 'px)';
+                    self.el.style.webkitTransform 
+                        = self.posData['transform'] 
+                        = self.posData['webkitTransform'] 
+                        = 'translate(' + (oldDeltaX) + 'px,' + (oldDeltaY + deltaY) + 'px)';
                     self.el.dataset['y'] = oldDeltaY + deltaY;
                     break;
                 case RIGHT_TOP:
@@ -222,29 +254,43 @@ class Resizing {
                     var deltaY = ~~event.clientY - oldPosY;
                     self.el.style.width = self.posData['width'] = offsetWidth + deltaX + 'px';
                     self.el.style.height = self.posData['height'] = offsetHeight - deltaY + 'px';
-                    self.el.style.webkitTransform = self.posData['transform'] = self.posData['webkitTransform'] = 'translate(' + (oldDeltaX) + 'px,' + (oldDeltaY + deltaY) + 'px)';
+                    self.el.style.webkitTransform 
+                        = self.posData['transform'] 
+                        = self.posData['webkitTransform'] 
+                        = 'translate(' + (oldDeltaX) + 'px,' + (oldDeltaY + deltaY) + 'px)';
                     self.el.dataset['y'] = oldDeltaY + deltaY;
                     break;
                 case RIGHT:
                     var deltaX = ~~event.clientX - oldPosX;
                     self.el.style.width = self.posData['width'] = offsetWidth + deltaX + 'px';
-                    self.el.style.webkitTransform = self.posData['transform'] = self.posData['webkitTransform'] = 'translate(' + (oldDeltaX) + 'px,' + (oldDeltaY) + 'px)';
+                    self.el.style.webkitTransform 
+                        = self.posData['transform'] 
+                        = self.posData['webkitTransform'] 
+                        = 'translate(' + (oldDeltaX) + 'px,' + (oldDeltaY) + 'px)';
                     break;
                 case RIGHT_BOTTOM:
                     var deltaX = ~~event.clientX - oldPosX;
                     var deltaY = ~~event.clientY - oldPosY;
                     self.el.style.width = self.posData['width'] = offsetWidth + deltaX + 'px';
                     self.el.style.height = self.posData['height'] = offsetHeight + deltaY + 'px';
-                    self.el.style.webkitTransform = self.posData['transform'] = self.posData['webkitTransform'] = 'translate(' + (oldDeltaX) + 'px,' + (oldDeltaY) + 'px)';
+                    self.el.style.webkitTransform 
+                        = self.posData['transform'] 
+                        = self.posData['webkitTransform'] 
+                        = 'translate(' + (oldDeltaX) + 'px,' + (oldDeltaY) + 'px)';
                     break;
                 case BOTTOM:
                     var deltaY = ~~event.clientY - oldPosY;
                     self.el.style.height = self.posData['height'] = offsetHeight + deltaY + 'px';
-                    self.el.style.webkitTransform = self.posData['transform'] = self.posData['webkitTransform'] = 'translate(' + (oldDeltaX) + 'px,' + (oldDeltaY) + 'px)';
+                    self.el.style.webkitTransform 
+                        = self.posData['transform'] 
+                        = self.posData['webkitTransform'] 
+                        = 'translate(' + (oldDeltaX) + 'px,' + (oldDeltaY) + 'px)';
                     break;
             }
-            self._drawCanvas();
+            //self._drawCanvas();
         }
+        ownerDocument.addEventListener('mousemove', onDocumentElMouseMove, true);
+        ownerDocument.addEventListener('mouseup', onDocumentElMouseUp, true);
         event.stopPropagation();
     }
 
@@ -303,6 +349,7 @@ class Resizing {
         this.el.addEventListener('mousemove', _onElMouseMoveHandler, true);
         this.el.addEventListener('mouseleave', _onElMouseLeaveHandler, true);
         this.el.ownerDocument.addEventListener('click', _onDocumentClickHandler, true);
+        let oldDispose = this._dispose.bind(this);
         this._dispose = function() {
             this.el.removeEventListener('mousedown', _onElMouseDownHandler, true);
             this.el.removeEventListener('mousemove', _onElMouseMoveHandler, true);
@@ -311,6 +358,8 @@ class Resizing {
             if(this._canvas) {
                 this._canvas.parentNode.removeChild(this._canvas);
             }
+            this.disposed = true;
+            oldDispose();
         }   
     }
 

@@ -34,5 +34,13 @@ export default {
 	        }
 	    }
 	    return format;
+	},
+	//matrix(1, 0, 0, 1, -138, -5724)
+	parseTrasfromValue(val) {
+		if(val == 'none') {
+			return [0, 0, 0, 0, 0, 0]
+		} else {
+			return val.split('(')[1].split(')')[0].split(',').map((str)=> Number(str.trim()));
+		}
 	}
 }

@@ -1,180 +1,220 @@
 <style lang="less">
-	.comps-bar, .workspace-inner, .edit-bar {
-        height: 100%;
-    }
-    .workspace-inner {
-    	position: relative;
-        display: flex;
-        min-width: 360px;
-        padding-top: 48px;
-        flex: 1;
-        justify-content: center;
-        align-items: center;
-    }
-    .edit-bar {
-        width: 360px;
-        box-shadow: -1px 0 3px 0 #ececec;
-    }
-    .design-area, .preview-area {
-    	position: relative;
-        width: 360px;
-        height: 640px;
-        /*box-shadow: 0 0 3px 3px #ececec;*/
-        border: 1px solid #e5e5e5;
-        box-sizing: content-box;
-        left: 40px;
-    }
-    .preview, .design {
-    	width: 100%;
-    	height: 100%;
-    }
-    .selected-comp-item {
-    	height: 48px;
-    	width: 100%;
-    	padding: 0 20px;
-    	line-height: 48px;
-    	font-size: 16px;
-    	overflow: hidden;
-    	text-overflow: ellipsis;
-        white-space: nowrap;
-    	border-bottom: 1px solid #ececec;
-        transition: transform .3s ease;
-    }
-    .selected-comp-item.move {
-        transform: translate3d(0, 48px, 0);
-    }
-    .selected-comp-item {
-    	position: relative;
-    	border-bottom: 1px dashed #e5e5e5;
-    }
-    .selected-comp-item.hightlight {
-        color: #fff;
-        background: #ef8c34;
-    }
-    .comp-item:hover {
-    	background: #ef8c34;
-    	color: #fff;
-    }
-    .status-bar {
-    	position: absolute;
-    	top: 0;
-    	left: 0;
-    	width: 100%;
-    	height: 48px;
-    	padding: 8px 12px;
-    }
-    .status-bar .tpl-title {
-    	width: 480px;
-    	height: 32px;
-    	border: 1px solid transparent;
-    	padding: 0 10px;
-    	font-size: 18px;
-    }
-    .status-bar .tpl-title:focus {
-    	border-color: #000;
-    }
-    .selected-comps-bar {
-    	position: absolute;
-    	width: 180px;
-    	height: 576px;
-    	top: 0;
-    	left: -190px;
-    	border: 1px solid #e5e5e5;
-        overflow: auto;
-    }
-    .selected-comp-list {
-    	min-height: 100%;
-        padding-bottom: 48px;
-    }
-    .selected-comp-list .del-btn {
-    	position: absolute;
-    	top: 0;
-    	right: 0;
-    	display: flex;
-    	width: 20px;
-    	height: 100%;
-    	font-size: 16px;
-    	align-items: center;
-    	justify-content: center;
-    	background: #d9534f;
-    	color: #fff;
-    }
-    .selected-comp-list .del-btn:hover {
-    	background: #c9302c;
-    }
-    .tools-bar {
-        position: absolute;
-        width: 32px;
-        top: 60px;
-        right: -42px;
-        border: 1px solid #e5e5e5;
-    }
+    .workspace {
+        &__comps-bar, &.__inner, &__edit-bar {
+            height: 100%;
+        }
 
-    .tool-item {
-        display: flex;
-        height: 30px;
-        justify-content: center;
-        align-items: center;
-    }
+        &__inner {
+            position: relative;
+            display: flex;
+            min-width: 360px;
+            padding-top: 48px;
+            flex: 1;
+            justify-content: center;
+            align-items: center;
+        }
 
-    .tool-item:hover {
-        background: #e5e5e5;
-    }
+        &__edit-bar {
+            width: 360px;
+            box-shadow: -1px 0 3px 0 #ececec;
+        }
 
-    .tool-item.activated {
-        color: #fff;
-        background: #ef8c34;
-    }
+        &__design-area, &__preview-area {
+            position: relative;
+            width: 360px;
+            height: 640px;
+            /*box-shadow: 0 0 3px 3px #ececec;*/
+            border: 1px solid #e5e5e5;
+            box-sizing: content-box;
+            left: 40px;
+        }
 
-    .tool-item.working {
-        color: #fff;
-        background: #00E5FF;
+        &__config-area {
+            width: 480px;
+            min-height: 640px;
+        }
+
+        &__preview, &__design {
+            width: 100%;
+            height: 100%;
+        }
+
+        &__selected-comp-item {
+            height: 48px;
+            width: 100%;
+            padding: 0 20px;
+            line-height: 48px;
+            font-size: 16px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            border-bottom: 1px solid #ececec;
+            transition: transform .3s ease;
+
+             &--move {
+                transform: translate3d(0, 48px, 0);
+            }
+        }
+
+        &__selected-comp-item {
+            position: relative;
+    	    border-bottom: 1px dashed #e5e5e5;
+
+            &--hightlight {
+                color: #fff;
+                background: #ef8c34;
+            }
+        }
+
+        &__comp-item {
+            height: 48px;
+            width: 100%;
+            padding: 0 20px;
+            line-height: 48px;
+            font-size: 16px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            border-bottom: 1px solid #ececec;
+
+            &:hover {
+                background: #ef8c34;
+    	        color: #fff;
+            }
+        }
+
+        &__status-bar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 48px;
+            padding: 8px 12px;
+        }
+
+        &__tpl-title {
+            width: 480px;
+            height: 32px;
+            border: 1px solid transparent;
+            padding: 0 10px;
+            font-size: 18px;
+
+            &:focus {
+                border-color: #000;
+            }
+        }
+
+        &__selected-comps-bar {
+            position: absolute;
+            width: 180px;
+            height: 576px;
+            top: 0;
+            left: -190px;
+            border: 1px solid #e5e5e5;
+            overflow: auto;
+        }
+
+        &__selected-comp-list {
+            min-height: 100%;
+            padding-bottom: 48px;
+        }
+
+        &__del-btn {
+            position: absolute;
+            top: 0;
+            right: 0;
+            display: flex;
+            width: 20px;
+            height: 100%;
+            font-size: 16px;
+            align-items: center;
+            justify-content: center;
+            background: #d9534f;
+            color: #fff;
+
+            &:hover {
+                background: #c9302c;
+            }
+        }
+
+        &__tools-bar {
+            position: absolute;
+            width: 32px;
+            top: 60px;
+            right: -42px;
+            border: 1px solid #e5e5e5;
+        }
+
+        &__tool-item {
+            display: flex;
+            height: 30px;
+            justify-content: center;
+            align-items: center;
+
+            &:hover {
+                background: #e5e5e5;
+            }
+
+            &--activated {
+                color: #fff;
+                background: #ef8c34;
+            }
+
+            &--working {
+                color: #fff;
+                background: #00E5FF;
+            }
+        }
     }
 </style>
 <template>
 	<section class="workspace">
         <comps-bar @dragend="dragUnSelectedCompEnd"></comps-bar>
-        <div class="workspace-inner">
-        	<div class="status-bar">
-        		<input class="tpl-title" type="text" v-model="tpl.title" @blur="save()" placeholder="请输入模板名称..." />        	
+        <div class="workspace__inner">
+        	<div class="workspace__status-bar">
+        		<input class="workspace__tpl-title" type="text" v-model="tpl.title" @blur="save()" placeholder="请输入模板名称..." />        	
 				<button-group class="pull-right" :btns="modebtns" :onSelect="onSelectMode"></button-group>
         	</div>
-            <div class="config-area" v-bind:class="{none: !modebtns[0].selected}">
+            <div class="workspace__config-area" v-bind:class="{none: !modebtns[0].selected}">
                 <el-form>
                     <el-form-item label="设计图宽度：">
-                        <el-input placeholder="默认1080"></el-input>
+                        <el-input v-model="configStorage.App.propsData.psdWidth" placeholder="默认1080"></el-input>
                     </el-form-item>
                     <el-form-item label="页面背景颜色：">
-                        <el-input placeholder="默认#ffffff"></el-input>
+                        <el-col :span="20">
+							<el-input v-model="configStorage.App.propsData.appBgColor" placeholder="eg: #e5e5e5"></el-input>
+						</el-col>
+						<el-col :span="1">&nbsp;</el-col>
+						<el-col :span="3">
+							<el-color-picker v-model="configStorage.App.propsData.appBgColor" show-alpha></el-color-picker>
+						</el-col>
                     </el-form-item>
                 </el-form>
             </div>
-        	<div class="design-area" v-bind:class="{none: !modebtns[1].selected}">
-        		<div class="selected-comps-bar">
-        			<ul class="selected-comp-list" @dragover.self="allowDrop($event)" @drop.self="addComp($event)">
+        	<div class="workspace__design-area" v-bind:class="{none: !modebtns[1].selected}">
+        		<div class="workspace__selected-comps-bar">
+        			<ul class="workspace__selected-comp-list" @dragover.self="allowDrop($event)" @drop.self="addComp($event)">
                         <template v-for="(comp, index) in selectedComponents">
-        				    <li class="selected-comp-item" v-bind:class="{move: index >= _dragMoveFlag}" draggable="true" @dragstart="dragSelectedCompStart(index, $event)" @dragover="dragSelectedCompOver(index, $event)" @dragenter="dragEnterSelectedComp(index, $event)" @dragleave="dragLeaveSelectedComp(index, $event)" @dragend="dragSelectedCompEnd($event)" @drop="replaceSelectedComp(index, $event)">{{ comp.name }}<button class="del-btn" @click="delSelectedComp(index)"><i class="fa fa-times"></i></button></li>
+        				    <li class="workspace__selected-comp-item" v-bind:class="{'workspace__selected-comp-item--move': index >= dragMoveFlag}" draggable="true" @dragstart="dragSelectedCompStart(index, $event)" @dragover="dragSelectedCompOver(index, $event)" @dragenter="dragEnterSelectedComp(index, $event)" @dragleave="dragLeaveSelectedComp(index, $event)" @dragend="dragSelectedCompEnd($event)" @drop="replaceSelectedComp(index, $event)">{{ comp.name }}<button class="workspace__del-btn" @click="delSelectedComp(index)"><i class="fa fa-times"></i></button></li>
                         </template>
         			</ul>
         		</div>
-        		<iframe ref="design" class="design" src=""></iframe>
-                <div class="tools-bar">
-                    <ul class="tool-list">
-                        <li class="tool-item" v-bind:class="{activated: isInspectingNode}" @click="inspectNode($event)"><i class="fa fa-crosshairs"></i></li>
-                        <li class="tool-item" v-bind:class="{activated: isSelectingResizeNode, working: isResizingNode}" @click="resize($event)"><i class="fa fa-arrows"></i></li>
-                        <li class="tool-item" @click="reload()"><i class="fa fa-crop"></i></li>
-                        <li class="tool-item" @click="reload()"><i class="fa fa-repeat"></i></li>
-                        <li class="tool-item" @click="create()"><i class="fa fa-plus"></i></li>
-                        <li class="tool-item" @click="save()"><i class="fa fa-save"></i></li>
-                        <li class="tool-item" @click="del()"><i class="fa fa-trash"></i></li>
+        		<iframe ref="design" class="workspace__design" src=""></iframe>
+                <div class="workspace__tools-bar">
+                    <ul class="workspace__tool-list">
+                        <li class="workspace__tool-item" v-bind:class="{'workspace__tool-item--activated': isInspectingNode}" @click="inspectNode($event)"><i class="fa fa-crosshairs"></i></li>
+                        <li class="workspace__tool-item" v-bind:class="{'workspace__tool-item--activated': isSelectingResizeNode, 'workspace__tool-item--working': isResizingNode}" @click="resize($event)"><i class="fa fa-arrows"></i></li>
+                        <li class="workspace__tool-item" @click="reload()"><i class="fa fa-repeat"></i></li>
+                        <li class="workspace__tool-item" @click="create()"><i class="fa fa-plus"></i></li>
+                        <li class="workspace__tool-item" @click="save()"><i class="fa fa-save"></i></li>
+                        <li class="workspace__tool-item" @click="del()"><i class="fa fa-trash"></i></li>
                     </ul>
                 </div>
             </div>
-            <div class="preview-area" v-bind:class="{none: !modebtns[2].selected}">
-            	<webview ref="preview" class="preview" src="https://www.baidu.com"></webview>
+            <div class="workspace__preview-area" v-bind:class="{none: !modebtns[2].selected}">
+            	<webview ref="preview" class="workspace__preview" src="https://www.baidu.com"></webview>
             </div>
         </div>
-        <edit-bar :node="inspectedNode" :storage="configStorage" :inspectedContext="inspectedContext"></edit-bar>
+        <edit-bar class="workspace__edit-bar" :node="inspectedNode" :storage="configStorage" :inspectedContext="inspectedContext"></edit-bar>
     </section>
 </template>
 <script>
@@ -205,7 +245,7 @@
                 configStorage: {},
                 selectedComponents: [],
                 needReload: false,
-                _dragMoveFlag: -1
+                dragMoveFlag: -1
             }
         },
         mounted: function() {
@@ -269,20 +309,24 @@
 			}
 		},
 		watch: {
-            tpl: function() {
-                this.selectedComponents = this.tpl.components ? JSON.parse(this.tpl.components) : [];
-                this._dragMoveFlag = this.selectedComponents.length;
-                this.configStorage = this.tpl.storage ? JSON.parse(this.tpl.storage) : {};
-                this.makeActivity();
-            },
-			configStorage: {
-				handler: function() {
-                    if(this.$refs.design.contentWindow) {
-                        this.$refs.design.contentWindow._STORAGE_ = this.configStorage;
-                    }
-				},
-				deep: true
-			}
+            tpl:{
+                handler : function() {
+                    this.selectedComponents = this.tpl.components ? JSON.parse(this.tpl.components) : [];
+                    this.dragMoveFlag = this.selectedComponents.length;
+                    this.configStorage = this.tpl.storage ? JSON.parse(this.tpl.storage) : {App: {propsData: {psdWidth: 1080, appBgColor: '#ffffff'}}};
+                    this.makeActivity();
+                },
+                immediate: true
+            }
+            // },
+			// configStorage: {
+			// 	handler: function() {
+            //         if(this.$refs.design.contentWindow) {
+            //             this.$refs.design.contentWindow._STORAGE_ = this.configStorage;
+            //         }
+			// 	},
+			// 	deep: true
+			// }
 		},
 		methods: {
             inspectNode: function() {
@@ -321,8 +365,8 @@
 
             _isInNode: function(x, y, all) {
                 function walk(instance) {
-                    for(var i = 0; i < instance.children.length; i++) {
-                        var c = instance.children[i]
+                    for(var i = instance.children.length - 1; i >= 0; i--) {
+                        var c = instance.children[i];
                         var got = walk(c);
                         if(got) {
                             return got;
@@ -335,7 +379,7 @@
                     }
                     return false;
                 }
-                for(var j = 0; j < all.length; j++) {
+                for(var j = all.length - 1; j >= 0; j--) {
                     var got = walk(all[j]);
                     if(got) return got;
                 }
@@ -478,7 +522,7 @@
 
             dragSelectedCompOver: function(index, $event) {            
                 if(this.isDragingSelectedComp) {
-                    $event.target.classList.add('hightlight');
+                    $event.target.classList.add('workspace__selected-comp-item--hightlight');
                 } else {
                     return false;
                 }
@@ -488,10 +532,10 @@
 
             dragEnterSelectedComp: function(index, $event) {
                 if(this.isDragingSelectedComp) return;
-                if($event.target.classList.contains('move')) {
-                    this._dragMoveFlag = index + 1;
+                if($event.target.classList.contains('workspace__selected-comp-item--move')) {
+                    this.dragMoveFlag = index + 1;
                 } else {
-                    this._dragMoveFlag = index;
+                    this.dragMoveFlag = index;
                 }
                 this.$forceUpdate();
                 $event.preventDefault();
@@ -499,15 +543,15 @@
 
             dragLeaveSelectedComp: function(index, $event) {
                 if(this.isDragingSelectedComp) {
-                    event.target.classList.remove('hightlight');
+                    event.target.classList.remove('workspace__selected-comp-item--hightlight');
                 }
             },
 
 			addComp: function($event) {
                 if(this.isDragingSelectedComp) return;
-                this.selectedComponents.splice(this._dragMoveFlag, 0, JSON.parse($event.dataTransfer.getData('text')));
-                this._relocateStorage('INSERT', this._dragMoveFlag);
-                this._dragMoveFlag = this.selectedComponents.length;
+                this.selectedComponents.splice(this.dragMoveFlag, 0, JSON.parse($event.dataTransfer.getData('text')));
+                this._relocateStorage('INSERT', this.dragMoveFlag);
+                this.dragMoveFlag = this.selectedComponents.length;
                 this.$forceUpdate();
                 this.makeActivity();
 			},
@@ -518,7 +562,7 @@
                 Vue.set(this.selectedComponents, src, this.selectedComponents[to]);
                 Vue.set(this.selectedComponents, to, tmp);
                 this._relocateStorage('REPLACE', src, to);
-                $event.target.classList.remove('hightlight');
+                $event.target.classList.remove('workspace__selected-comp-item--hightlight');
                 this.$forceUpdate();
                 this.makeActivity();
             },
@@ -541,7 +585,7 @@
 
             dragUnSelectedCompEnd: function() {
                 Vue.nextTick(()=> {
-                    this._dragMoveFlag = this.selectedComponents.length;
+                    this.dragMoveFlag = this.selectedComponents.length;
                     this.$forceUpdate();
                 });
             },
@@ -583,7 +627,7 @@
                         support.setHighlightColor('rgba(24, 255, 255, 0.35)');
                         support.highlight(got, function() {
                             self.isResizingNode = true;
-                            new Resizing(got, self.configStorage[util.locate(support.getInstance(got))]).activate();
+                            new Resizing(got, self.configStorage[support.getInstance(got).$location]).activate();
                             support.unHighlight();
                         });
                     } 
@@ -601,9 +645,9 @@
             },
 
             saveResizeState: function() {
-                var obj = Resizing.getTop();
+                let obj = Resizing.getTop();
                 if(obj) {
-                    var location = util.locate(support.getInstance(obj._node));
+                    let location = support.getInstance(obj.node).$location;
                     if(!this.configStorage[location]) {
                         util.initConfig(this.configStorage, location);
                     }
