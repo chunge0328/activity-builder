@@ -139,7 +139,17 @@
         		<input class="tpl-title" type="text" v-model="tpl.title" @blur="save()" placeholder="请输入模板名称..." />        	
 				<button-group class="pull-right" :btns="modebtns" :onSelect="onSelectMode"></button-group>
         	</div>
-        	<div class="design-area" v-bind:class="{none: !modebtns[0].selected}">
+            <div class="config-area" v-bind:class="{none: !modebtns[0].selected}">
+                <el-form>
+                    <el-form-item label="设计图宽度：">
+                        <el-input placeholder="默认1080"></el-input>
+                    </el-form-item>
+                    <el-form-item label="页面背景颜色：">
+                        <el-input placeholder="默认#ffffff"></el-input>
+                    </el-form-item>
+                </el-form>
+            </div>
+        	<div class="design-area" v-bind:class="{none: !modebtns[1].selected}">
         		<div class="selected-comps-bar">
         			<ul class="selected-comp-list" @dragover.self="allowDrop($event)" @drop.self="addComp($event)">
                         <template v-for="(comp, index) in selectedComponents">
@@ -160,7 +170,7 @@
                     </ul>
                 </div>
             </div>
-            <div class="preview-area" v-bind:class="{none: !modebtns[1].selected}">
+            <div class="preview-area" v-bind:class="{none: !modebtns[2].selected}">
             	<webview ref="preview" class="preview" src="https://www.baidu.com"></webview>
             </div>
         </div>
@@ -182,8 +192,9 @@
         data: function() {
             return {
                 modebtns: [ 
+                    {id: 'params', name: '全局', selected: false},
                     {id: 'design', name: '设计', selected: true},
-                    {id: 'preview', name: '预览', selected: false} 
+                    {id: 'preview', name: '预览', selected: false}
                 ],
                 isDragingSelectedComp: false,
                 isInspectingNode: false,

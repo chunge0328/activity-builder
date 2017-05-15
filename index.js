@@ -11,7 +11,7 @@ function createApp() {
   const BrowserWindow = electron.BrowserWindow;
 
   const service = require('./src/service');
-  service.register();
+  service.setup();
 
   // Keep a global reference of the window object, if you don't, the window will
   // be closed automatically when the JavaScript object is garbage collected.
@@ -41,7 +41,7 @@ function createApp() {
         // Dereference the window object, usually you would store windows
         // in an array if your app supports multi windows, this is the time
         // when you should delete the corresponding element.
-        service.unRegister(); //unRegister service
+        service.dispose(); //unRegister service
         mainWindow = null
       })
     }

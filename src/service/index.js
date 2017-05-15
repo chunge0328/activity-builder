@@ -21,10 +21,10 @@ function unRegisterShort() {
 	shortcut.unRegisterAll();
 }
 
-exports.register = function() {
+exports.setup = function() {
 	registerServiceApi();
 	registerShortcut();
 }
-exports.unRegister = function() {
+exports.dispose = function() {
 	unRegisterShort();
 }

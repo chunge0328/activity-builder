@@ -24,37 +24,6 @@
 	.el-form-item {
 		 margin: 11px 0;
 	}
-	/*.el-form-item:last-of-type {
-		border-bottom: none;
-	}*/
-    /*.form-group {
-    	display: flex;
-    	height: 32px;
-    	margin-bottom: 5px;
-    }
-    .form-group > label {
-    	display: inline-block;
-    	width: 100px;
-    	height: 100%;
-    	padding-right: 10px;
-    	line-height: 32px;
-    	font-size: 14px;
-    	overflow: hidde;
-    	text-overflow: ellipsis;
-    	white-space: nowrap;
-    }
-    .form-group > .form-control {
-    	flex: 1;
-    }
-    input.form-control {
-    	display: inline-block;
-    	border: 1px solid #e5e5e5;
-    	padding: 5px 10px;
-    	height: 100%;
-    }
-    input.form-control:focus {
-    	border: 1px solid rgba(0, 0, 0, 0.8);
-    }*/
 </style>
 <template>
 	<div class="edit-bar">
@@ -374,12 +343,12 @@
 				let self = this;
 				function _handleMotionUpdate(key, value) {
 					if(!self.node[key]) {
-						Vue.set(self.node, key, {});					
+						self.node.$set(self.node, key, {});					
 					}
-					//if(!self.node[key]['params']) {
-					Vue.set(self.node[key], 'params', []);
-					//}
-					Vue.set(self.node[key], 'motion', value);
+					let prop = self.node[key];
+					prop.motion = value;
+					prop.params = [];
+					self.node[key] = Object.assign({}, prop);
 					self.$forceUpdate();
 				}
 				return _handleMotionUpdate.bind(this, key);
@@ -387,8 +356,10 @@
 
 			handleMotionParamsUpdate: function(key, index) {
 				let self = this;
-				function _handleMotionParamsUpdate($event) {
-					Vue.set(self.node[key].params, index, $event);
+				function _handleMotionParamsUpdate(key, index, value) {
+					let prop = self.node[key];
+					prop.params[index] = value;
+					self.node[key] = Object.assign({}, prop);
 					self.$forceUpdate();
 				}
 				return _handleMotionParamsUpdate.bind(this, key, index)

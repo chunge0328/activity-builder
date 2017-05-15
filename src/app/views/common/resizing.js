@@ -16,18 +16,36 @@ const DIMENSION = 'DIMENSION';
 const CANVAS_ID = 'resizing-canvas';
 class Resizing {
 
-    constructor(node, config) {
-        this._node = node;
-        this.el = node.el;
+    constructor(el, config, usePos) {
+        this.el = el;
         this.state = -1;
         if(config && config.staticStyle) {
-            this.posData = {
-                width: config.staticStyle.width,
-                height: config.staticStyle.height,
-                transform: config.staticStyle.transform
-            };
+            if(!usePos) {
+                this.posData = {
+                    width: config.staticStyle.width,
+                    height: config.staticStyle.height,
+                    transform: config.staticStyle.transform
+                };
+            } else  {
+               this.posData = {
+                   position: 'absolute',
+                   width: config.staticStyle.width,
+                   height: config.staticStyle.height,
+                   top: config.staticStyle.top || 0,
+                   left: config.staticStyle.left || 0
+               } 
+            }
+            
         } else {
-            this.posData = {};
+            if(!usePos) {
+                this.posData = {};
+            } else {
+                this.posData = {
+                    position: 'absolute',
+                    top: usePos.top || 0,
+                    left: usePos.left || 0 
+                };
+            }
         }
         this.stopStateChange = false;
         this._canvas = null;
