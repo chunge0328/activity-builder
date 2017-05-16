@@ -201,8 +201,8 @@
         		<iframe ref="design" class="workspace__design" src=""></iframe>
                 <div class="workspace__tools-bar">
                     <ul class="workspace__tool-list">
-                        <li class="workspace__tool-item" v-bind:class="{'workspace__tool-item--activated': isInspectingNode}" @click="inspectNode($event)"><i class="fa fa-crosshairs"></i></li>
-                        <li class="workspace__tool-item" v-bind:class="{'workspace__tool-item--activated': isSelectingResizeNode, 'workspace__tool-item--working': isResizingNode}" @click="resize($event)"><i class="fa fa-arrows"></i></li>
+                        <li class="workspace__tool-item" v-bind:class="{'workspace__tool-item--activated': isInspectingInstance}" @click="inspectInstance($event)"><i class="fa fa-crosshairs"></i></li>
+                        <li class="workspace__tool-item" v-bind:class="{'workspace__tool-item--activated': isSelectingResizeInstance, 'workspace__tool-item--working': isResizingInstance}" @click="resize($event)"><i class="fa fa-arrows"></i></li>
                         <li class="workspace__tool-item" @click="reload()"><i class="fa fa-repeat"></i></li>
                         <li class="workspace__tool-item" @click="create()"><i class="fa fa-plus"></i></li>
                         <li class="workspace__tool-item" @click="save()"><i class="fa fa-save"></i></li>
@@ -214,7 +214,7 @@
             	<webview ref="preview" class="workspace__preview" src="https://www.baidu.com"></webview>
             </div>
         </div>
-        <edit-bar class="workspace__edit-bar" :node="inspectedNode" :storage="configStorage" :inspectedContext="inspectedContext"></edit-bar>
+        <edit-bar class="workspace__edit-bar" :instance="inspectedInstance" :storage="configStorage" :inspectedContext="inspectedContext"></edit-bar>
     </section>
 </template>
 <script>
@@ -237,10 +237,10 @@
                     {id: 'preview', name: '预览', selected: false}
                 ],
                 isDragingSelectedComp: false,
-                isInspectingNode: false,
-                isSelectingResizeNode: false,
-                isResizingNode: false,
-                inspectedNode: null,
+                isInspectingInstance: false,
+                isSelectingResizeInstance: false,
+                isResizingInstance: false,
+                inspectedInstance: null,
                 inspectedContext: null,
                 configStorage: {},
                 selectedComponents: [],
@@ -309,7 +309,7 @@
 			}
 		},
 		watch: {
-            tpl:{
+            tpl: {
                 handler : function() {
                     this.selectedComponents = this.tpl.components ? JSON.parse(this.tpl.components) : [];
                     this.dragMoveFlag = this.selectedComponents.length;
@@ -329,10 +329,10 @@
 			// }
 		},
 		methods: {
-            inspectNode: function() {
+            inspectInstance: function() {
                 let doc = this.$refs.design.contentWindow.document;
-                this.isInspectingNode = !this.isInspectingNode;
-                if(!this.isInspectingNode) {
+                this.isInspectingInstance = !this.isInspectingInstance;
+                if(!this.isInspectingInstance) {
                     this.clearInspectState();
                     return;
                 }
@@ -342,12 +342,12 @@
                 this.saveResizeState();
                 doc.documentElement.onmousemove = function(event) {
                     if(support.isFixedNode()) return;
-                    var got = self._isInNode(event.clientX, event.clientY, allInstances);
+                    var got = self._isInInstance(event.clientX, event.clientY, allInstances);
                     if(got) {
                         support.setHighlightColor('rgba(104, 182, 255, 0.35)');
                         support.highlight(got);
                         self.inspectedContext = self.$refs.design.contentWindow;
-                        self.inspectedNode = support.getInstance(got);
+                        self.inspectedInstance = support.getInstance(got);
                     } else {
                         support.unHighlight();
                     }
@@ -358,12 +358,12 @@
                 let doc = this.$refs.design.contentWindow.document;
                 support.unHighlight();
                 support.unFixedNode();
-                this.inspectedNode = null;
-                this.isInspectingNode = false;
+                this.inspectedInstance = null;
+                this.isInspectingInstance = false;
                 doc.documentElement.onmousemove = null;
             },
 
-            _isInNode: function(x, y, all) {
+            _isInInstance: function(x, y, all) {
                 function walk(instance) {
                     for(var i = instance.children.length - 1; i >= 0; i--) {
                         var c = instance.children[i];
@@ -611,8 +611,8 @@
 
             resize: function() {
                 var doc = this.$refs.design.contentWindow.document;
-                this.isSelectingResizeNode = !this.isSelectingResizeNode;
-                if(!this.isSelectingResizeNode || this.isResizingNode) {
+                this.isSelectingResizeInstance = !this.isSelectingResizeInstance;
+                if(!this.isSelectingResizeInstance || this.isResizingInstance) {
                     this.clearResizeState();
                     this.save();
                     return;
@@ -622,11 +622,11 @@
                 this.clearInspectState();
                 doc.documentElement.onmousemove = function(event) {
                     if(support.isFixedNode()) return;
-                    var got = self._isInNode(event.clientX, event.clientY, allInstances);
+                    var got = self._isInInstance(event.clientX, event.clientY, allInstances);
                     if(got) {                      
                         support.setHighlightColor('rgba(24, 255, 255, 0.35)');
                         support.highlight(got, function() {
-                            self.isResizingNode = true;
+                            self.isResizingInstance = true;
                             new Resizing(got, self.configStorage[support.getInstance(got).$location]).activate();
                             support.unHighlight();
                         });
@@ -638,16 +638,17 @@
                 let doc = this.$refs.design.contentWindow.document;
                 support.unHighlight();
                 support.unFixedNode();
-                this.inspectedNode = null;
+                this.inspectedInstance = null;
                 doc.documentElement.onmousemove = null;
-                this.isSelectingResizeNode = false;
-                this.isResizingNode = false;          
+                this.isSelectingResizeInstance = false;
+                this.isResizingInstance = false;          
             },
 
             saveResizeState: function() {
                 let obj = Resizing.getTop();
                 if(obj) {
-                    let location = support.getInstance(obj.node).$location;
+                    let instance = support.getInstance(obj.instance);
+                    let location = instance.$options.$global ? instance.$options.name : instance.$location;
                     if(!this.configStorage[location]) {
                         util.initConfig(this.configStorage, location);
                     }
@@ -656,6 +657,7 @@
                 }
             }
 		},
+
 		components: {
 			ButtonGroup,
             CompsBar,

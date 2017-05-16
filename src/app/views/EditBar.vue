@@ -31,7 +31,7 @@
 			<el-form label-width="80px" label-position="top">
 				<template v-for="(p, index) in props">
 					<el-form-item v-if="p.prop.$rule.clazz === Enum.CLAZZ.SELECT" :label="p.prop.$rule.name + '：'">
-						<el-select style="width:100%" v-model="node[p.key]" placeholder="请选择" @handleOptionClick="$forceUpdate()">
+						<el-select style="width:100%" v-model="instance[p.key]" placeholder="请选择" @handleOptionClick="$forceUpdate()">
 							<el-option
 								v-for="item in p.prop.$rule.options"
 								:key="item.value"
@@ -41,18 +41,18 @@
 						</el-select>
 					</el-form-item>
 					<el-form-item v-else-if="p.prop.$rule.clazz === 'String' || p.prop.$rule.clazz === 'Number'" :label="p.prop.$rule.name + '：'">
-						<el-input :placeholder="p.prop.$rule.placeholder || '请输入内容'"  v-model="node[p.key]"  @input="$forceUpdate()"></el-input>
+						<el-input :placeholder="p.prop.$rule.placeholder || '请输入内容'"  v-model="instance[p.key]"  @input="$forceUpdate()"></el-input>
 					</el-form-item>
 					<el-form-item v-else-if="p.prop.$rule.clazz === 'Boolean'" :label="p.prop.$rule.name + '：'">
-						<el-switch on-text="是" off-text="否" v-model="node[p.key]" @input="$forceUpdate()"></el-switch>
+						<el-switch on-text="是" off-text="否" v-model="instance[p.key]" @input="$forceUpdate()"></el-switch>
 					</el-form-item>
 					<el-form-item style="line-height: 0" v-else-if="p.prop.$rule.clazz === Enum.CLAZZ.COLOR" :label="p.prop.$rule.name + '：'">
 						<el-col :span="19">
-							<el-input :placeholder="p.prop.$rule.placeholder || 'eg: #e5e5e5'"  v-model="node[p.key]"  @input="$forceUpdate()"></el-input>
+							<el-input :placeholder="p.prop.$rule.placeholder || 'eg: #e5e5e5'"  v-model="instance[p.key]"  @input="$forceUpdate()"></el-input>
 						</el-col>
 						<el-col :span="1">&nbsp;</el-col>
 						<el-col :span="4">
-							<el-color-picker v-model="node[p.key]" show-alpha @change="$forceUpdate()"></el-color-picker>
+							<el-color-picker v-model="instance[p.key]" show-alpha @change="$forceUpdate()"></el-color-picker>
 						</el-col>					
 					</el-form-item>
 					<el-form-item v-else-if="p.prop.$rule.clazz === Enum.CLAZZ.IMAGE" :label="p.prop.$rule.name + '：'">
@@ -61,10 +61,10 @@
 							:http-request="handleFileRequest"
 							:multiple="false"
 							:ref="p.key"
-							:disabled="node[p.key] && node[p.key].url"
+							:disabled="instance[p.key] && instance[p.key].url"
 							:on-success="handleFileSuccess(p.key)"
 							:on-remove="handleFileRemove(p.key)"
-							:file-list="node[p.key].url ? [{url: path.join(config.INTERNAL_SERVER_HOST, node[p.key].url)}] : []"
+							:file-list="instance[p.key].url ? [{url: path.join(config.INTERNAL_SERVER_HOST, instance[p.key].url)}] : []"
 							>
 							<el-button>添加图片</el-button>
 						</el-upload>
@@ -75,10 +75,10 @@
 							:http-request="handleFileRequest"
 							:multiple="false"
 							:ref="p.key"
-							:disabled="node[p.key].length >= (p.prop.$rule.max || 99)"
+							:disabled="instance[p.key].length >= (p.prop.$rule.max || 99)"
 							:on-success="handleFileSuccess(p.key)"
 							:on-remove="handleFileRemove(p.key)"
-							:file-list="node[p.key].map((img)=>({url: path.join(config.INTERNAL_SERVER_HOST, img.url)}))"
+							:file-list="instance[p.key].map((img)=>({url: path.join(config.INTERNAL_SERVER_HOST, img.url)}))"
 							>
 							<el-button>添加图片</el-button>
 						</el-upload>
@@ -86,7 +86,7 @@
 					<el-form-item v-else-if="p.prop.$rule.clazz === Enum.CLAZZ.FONT_SIZE" :label="p.prop.$rule.name + '：'">
 						<el-autocomplete
 							popper-class="my-autocomplete"
-							v-model="node[p.key]"
+							v-model="instance[p.key]"
 							:fetch-suggestions="loadFontSizeSuggestions"
 							custom-item="fontsize-item"
 							@select="$forceUpdate()"
@@ -96,7 +96,7 @@
 					</el-form-item>
 					<el-form-item v-else-if="p.prop.$rule.clazz === Enum.CLAZZ.DATE" :label="p.prop.$rule.name + '：'">
 						<el-date-picker
-							v-model="node[p.key]"
+							v-model="instance[p.key]"
 							type="date"
 							:placeholder="p.prop.$rule.placeholder || '选择日期'"
 							@input="$forceUpdate()"
@@ -107,7 +107,7 @@
 					</el-form-item>
 					<el-form-item v-else-if="p.prop.$rule.clazz === Enum.CLAZZ.DATE_TIME" :label="p.prop.$rule.name + '：'">
 						<el-date-picker
-							v-model="node[p.key]"
+							v-model="instance[p.key]"
 							type="datetime"
 							:editable="false"
 							@input="$forceUpdate()"
@@ -117,10 +117,10 @@
 						</el-date-picker>
 					</el-form-item>
 					<el-form-item v-else-if="p.prop.$rule.clazz === Enum.CLAZZ.RITCH_TEXT" :label="p.prop.$rule.name + '：'">
-						<quill-editor :options="editorOption" v-model="node[p.key]"></quill-editor>
+						<quill-editor :options="editorOption" v-model="instance[p.key]"></quill-editor>
 					</el-form-item>
 					<el-form-item v-else-if="p.prop.$rule.clazz === Enum.CLAZZ.MOTION" :label="p.prop.$rule.name + '：'">
-						<el-select style="width:100%" v-model="node[p.key].motion" placeholder="请选择" @input="handleMotionUpdate(p.key)($event)">
+						<el-select style="width:100%" v-model="instance[p.key].motion" placeholder="请选择" @input="handleMotionUpdate(p.key)($event)">
 							<el-option
 								v-for="item in motions"
 								:key="item.value"
@@ -128,11 +128,11 @@
 								:value="item.value">
 							</el-option>
 						</el-select>
-						<template v-if="node.__MOTIONS__[node[p.key].motion] && node.__MOTIONS__[node[p.key].motion].params.length">
+						<template v-if="instance.__MOTIONS__[instance[p.key].motion] && instance.__MOTIONS__[instance[p.key].motion].params.length">
 							<el-form>
-								<template v-for="(param, index) in node.__MOTIONS__[node[p.key].motion].params">
+								<template v-for="(param, index) in instance.__MOTIONS__[instance[p.key].motion].params">
 									<el-form-item>
-										<el-input :placeholder="param.$rule.name || param.$rule.placeholder" v-model="node[p.key].params[index]"  @input="handleMotionParamsUpdate(p.key, paramIndex)($event)"></el-input>
+										<el-input :placeholder="param.$rule.name || param.$rule.placeholder" v-model="instance[p.key].params[index]"  @input="handleMotionParamsUpdate(p.key, paramIndex)($event)"></el-input>
 									</el-form-item>
 								</template>
 							</el-form>
@@ -168,7 +168,7 @@
 	export default {
 		name: 'EditBar',
 		props: {
-			node: {
+			instance: {
 				type: Object
 			},
 			storage: {
@@ -202,9 +202,9 @@
 		},
 		computed: {
 			props: function() {
-				if(!this.node) return props;
+				if(!this.instance) return props;
 				let props = [];
-				let $props = this.node.$options.props;
+				let $props = this.instance.$options.props;
 				let oToStr = Object.prototype.toString;
 				for(let key in $props) {
 					let p = $props[key];
@@ -229,10 +229,10 @@
 				return props;
 			},
 			motions: function() {
-				if(!this.node) return;
+				if(!this.instance) return;
 				let motions = [];
-				Object.keys(this.node.__MOTIONS__).forEach((key) =>{
-					let motion = this.node.__MOTIONS__[key];
+				Object.keys(this.instance.__MOTIONS__).forEach((key) =>{
+					let motion = this.instance.__MOTIONS__[key];
 					motions.push({
 						value: key,
 						label: motion.name
@@ -243,20 +243,20 @@
 		},
 		methods: {
 			watchConfig: function(props) {
-				if(this.node._recorded_) return;
+				if(this.instance._recorded) return;
 				let self = this;
-				//let location = util.locate(this.node);
-				let location = this.node.$location;
+				//let location = util.locate(this.instance);
+				let location = this.instance.$options.$global ? this.instance.$options.name : this.instance.$location;
 				if(!this.storage[location]) {
 					util.initConfig(this.storage, location);
 				}
 				
 				props.forEach(function(p) {
-					self.node.$watch(p.key, function(newVal, oldVal) {
+					self.instance.$watch(p.key, function(newVal, oldVal) {
 						Vue.set(self.storage[location]['propsData'], p.key, newVal);
 					});
 				});
-				this.node._recorded_ = true;
+				this.instance._recorded = true;
 			},
 			handleFileRequest: function(opts) {
 				let p = new Promise(function(resolve, reject) {
@@ -290,10 +290,10 @@
 			},
 			handleFileSuccess: function(key) {
 				function _handleFileSuccess(key, response, file, fileList) {
-					if(!Array.isArray(this.node[key])) {
-						this.node[key] = response;
+					if(!Array.isArray(this.instance[key])) {
+						this.instance[key] = response;
 					} else {
-						this.node[key].push(response);
+						this.instance[key].push(response);
 					}
 					this.$forceUpdate();
 				}
@@ -302,14 +302,14 @@
 			handleFileRemove: function(key) {
 				let self = this;
 				function _handleFileRemove(key, file, fileList) {
-					if(!Array.isArray(this.node[key])) {
-						self.node[key] = {};
+					if(!Array.isArray(this.instance[key])) {
+						self.instance[key] = {};
 					} else {
-						let len = self.node[key].length;
+						let len = self.instance[key].length;
 						while(len) {
 							len--;
-							if(path.basename(self.node[key][len].url) == path.basename(file.url)) {
-								self.node[key].splice(len, 1);
+							if(path.basename(self.instance[key][len].url) == path.basename(file.url)) {
+								self.instance[key].splice(len, 1);
 								break;
 							}
 						}
@@ -342,13 +342,13 @@
 			handleMotionUpdate: function(key) {
 				let self = this;
 				function _handleMotionUpdate(key, value) {
-					if(!self.node[key]) {
-						self.node.$set(self.node, key, {});					
+					if(!self.instance[key]) {
+						self.instance.$set(self.instance, key, {});					
 					}
-					let prop = self.node[key];
+					let prop = self.instance[key];
 					prop.motion = value;
 					prop.params = [];
-					self.node[key] = Object.assign({}, prop);
+					self.instance[key] = Object.assign({}, prop);
 					self.$forceUpdate();
 				}
 				return _handleMotionUpdate.bind(this, key);
@@ -357,9 +357,9 @@
 			handleMotionParamsUpdate: function(key, index) {
 				let self = this;
 				function _handleMotionParamsUpdate(key, index, value) {
-					let prop = self.node[key];
+					let prop = self.instance[key];
 					prop.params[index] = value;
-					self.node[key] = Object.assign({}, prop);
+					self.instance[key] = Object.assign({}, prop);
 					self.$forceUpdate();
 				}
 				return _handleMotionParamsUpdate.bind(this, key, index)

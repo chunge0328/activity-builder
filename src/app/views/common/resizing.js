@@ -17,9 +17,9 @@ const DIMENSION = 'DIMENSION';
 const CANVAS_ID = 'resizing-canvas';
 class Resizing {
 
-    constructor(node, config) {
-        this.node = node;
-        this.el = this.node.el;
+    constructor(instance, config) {
+        this.instance = instance;
+        this.el = this.instance.el;
         this.state = -1;
         this.disposed = false;
         let values = util.parseTrasfromValue(window.getComputedStyle(this.el).transform);

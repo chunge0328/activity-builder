@@ -13,7 +13,7 @@
   import FloatTile from 'business/FloatTile/index.vue';
   vue.use({
     install(vue) {
-      vue.prototype.__STORE__ = ({ "App": { "propsData": { "psdWidth": 1080, "appBgColor": "#ffffff" } }, "0.0": { "propsData": {}, "staticStyle": {} }, "0.0.0": { "propsData": {}, "staticStyle": {} }, "0.0.0.0": { "propsData": { "bgColor": "rgba(217, 26, 26, 1)", "fontColor": "rgba(197, 30, 30, 1)" }, "staticStyle": {} }, "0.0.3": { "propsData": {}, "staticStyle": { "transform": "translate(87px,75px)", "webkitTransform": "translate(87px,75px)", "height": "42px" } } });
+      vue.prototype.__STORE__ = ({ "App": { "propsData": { "psdWidth": 1080, "appBgColor": "rgba(26, 214, 92, 1)" } }, "0.0": { "propsData": {}, "staticStyle": {} }, "0.0.0": { "propsData": {}, "staticStyle": {} }, "0.0.0.0": { "propsData": { "bgColor": "rgba(217, 26, 26, 1)", "fontColor": "rgba(197, 30, 30, 1)" }, "staticStyle": {} }, "0.0.3": { "propsData": {}, "staticStyle": { "height": "42px", "transform": "translate(87px,77px)", "webkitTransform": "translate(87px,77px)" } }, "0.0.2.0": { "propsData": { "motion": { "motion": "ShowDailog", "params": ["asdfsd", "dsdfsdfsd"] } }, "staticStyle": { "transform": "translate(276px,-41px)", "webkitTransform": "translate(276px,-41px)" } }, "0.0.2": { "propsData": {}, "staticStyle": {} }, "0.0.1": { "propsData": {}, "staticStyle": {} } });
     }
   });
   export default {

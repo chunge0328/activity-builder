@@ -58265,7 +58265,7 @@ _vue2.default.component('fontsize-item', {
 exports.default = {
 	name: 'EditBar',
 	props: {
-		node: {
+		instance: {
 			type: Object
 		},
 		storage: {
@@ -58290,9 +58290,9 @@ exports.default = {
 	},
 	computed: {
 		props: function props() {
-			if (!this.node) return props;
+			if (!this.instance) return props;
 			var props = [];
-			var $props = this.node.$options.props;
+			var $props = this.instance.$options.props;
 			var oToStr = Object.prototype.toString;
 			for (var key in $props) {
 				var p = $props[key];
@@ -58319,10 +58319,10 @@ exports.default = {
 		motions: function motions() {
 			var _this = this;
 
-			if (!this.node) return;
+			if (!this.instance) return;
 			var motions = [];
-			(0, _keys2.default)(this.node.__MOTIONS__).forEach(function (key) {
-				var motion = _this.node.__MOTIONS__[key];
+			(0, _keys2.default)(this.instance.__MOTIONS__).forEach(function (key) {
+				var motion = _this.instance.__MOTIONS__[key];
 				motions.push({
 					value: key,
 					label: motion.name
@@ -58333,20 +58333,20 @@ exports.default = {
 	},
 	methods: {
 		watchConfig: function watchConfig(props) {
-			if (this.node._recorded_) return;
+			if (this.instance._recorded) return;
 			var self = this;
-			//let location = util.locate(this.node);
-			var location = this.node.$location;
+			//let location = util.locate(this.instance);
+			var location = this.instance.$options.$global ? this.instance.$options.name : this.instance.$location;
 			if (!this.storage[location]) {
 				_util2.default.initConfig(this.storage, location);
 			}
 
 			props.forEach(function (p) {
-				self.node.$watch(p.key, function (newVal, oldVal) {
+				self.instance.$watch(p.key, function (newVal, oldVal) {
 					_vue2.default.set(self.storage[location]['propsData'], p.key, newVal);
 				});
 			});
-			this.node._recorded_ = true;
+			this.instance._recorded = true;
 		},
 		handleFileRequest: function handleFileRequest(opts) {
 			var p = new _promise2.default(function (resolve, reject) {
@@ -58380,10 +58380,10 @@ exports.default = {
 		},
 		handleFileSuccess: function handleFileSuccess(key) {
 			function _handleFileSuccess(key, response, file, fileList) {
-				if (!Array.isArray(this.node[key])) {
-					this.node[key] = response;
+				if (!Array.isArray(this.instance[key])) {
+					this.instance[key] = response;
 				} else {
-					this.node[key].push(response);
+					this.instance[key].push(response);
 				}
 				this.$forceUpdate();
 			}
@@ -58392,14 +58392,14 @@ exports.default = {
 		handleFileRemove: function handleFileRemove(key) {
 			var self = this;
 			function _handleFileRemove(key, file, fileList) {
-				if (!Array.isArray(this.node[key])) {
-					self.node[key] = {};
+				if (!Array.isArray(this.instance[key])) {
+					self.instance[key] = {};
 				} else {
-					var len = self.node[key].length;
+					var len = self.instance[key].length;
 					while (len) {
 						len--;
-						if (path.basename(self.node[key][len].url) == path.basename(file.url)) {
-							self.node[key].splice(len, 1);
+						if (path.basename(self.instance[key][len].url) == path.basename(file.url)) {
+							self.instance[key].splice(len, 1);
 							break;
 						}
 					}
@@ -58424,13 +58424,13 @@ exports.default = {
 		handleMotionUpdate: function handleMotionUpdate(key) {
 			var self = this;
 			function _handleMotionUpdate(key, value) {
-				if (!self.node[key]) {
-					self.node.$set(self.node, key, {});
+				if (!self.instance[key]) {
+					self.instance.$set(self.instance, key, {});
 				}
-				var prop = self.node[key];
+				var prop = self.instance[key];
 				prop.motion = value;
 				prop.params = [];
-				self.node[key] = (0, _assign2.default)({}, prop);
+				self.instance[key] = (0, _assign2.default)({}, prop);
 				self.$forceUpdate();
 			}
 			return _handleMotionUpdate.bind(this, key);
@@ -58439,9 +58439,9 @@ exports.default = {
 		handleMotionParamsUpdate: function handleMotionParamsUpdate(key, index) {
 			var self = this;
 			function _handleMotionParamsUpdate(key, index, value) {
-				var prop = self.node[key];
+				var prop = self.instance[key];
 				prop.params[index] = value;
-				self.node[key] = (0, _assign2.default)({}, prop);
+				self.instance[key] = (0, _assign2.default)({}, prop);
 				self.$forceUpdate();
 			}
 			return _handleMotionParamsUpdate.bind(this, key, index);
@@ -58654,10 +58654,10 @@ exports.default = {
         return {
             modebtns: [{ id: 'params', name: '全局', selected: false }, { id: 'design', name: '设计', selected: true }, { id: 'preview', name: '预览', selected: false }],
             isDragingSelectedComp: false,
-            isInspectingNode: false,
-            isSelectingResizeNode: false,
-            isResizingNode: false,
-            inspectedNode: null,
+            isInspectingInstance: false,
+            isSelectingResizeInstance: false,
+            isResizingInstance: false,
+            inspectedInstance: null,
             inspectedContext: null,
             configStorage: {},
             selectedComponents: [],
@@ -58747,8 +58747,8 @@ exports.default = {
     methods: {
         inspectNode: function inspectNode() {
             var doc = this.$refs.design.contentWindow.document;
-            this.isInspectingNode = !this.isInspectingNode;
-            if (!this.isInspectingNode) {
+            this.isInspectingInstance = !this.isInspectingInstance;
+            if (!this.isInspectingInstance) {
                 this.clearInspectState();
                 return;
             }
@@ -58758,12 +58758,12 @@ exports.default = {
             this.saveResizeState();
             doc.documentElement.onmousemove = function (event) {
                 if (_support2.default.isFixedNode()) return;
-                var got = self._isInNode(event.clientX, event.clientY, allInstances);
+                var got = self._isInInstance(event.clientX, event.clientY, allInstances);
                 if (got) {
                     _support2.default.setHighlightColor('rgba(104, 182, 255, 0.35)');
                     _support2.default.highlight(got);
                     self.inspectedContext = self.$refs.design.contentWindow;
-                    self.inspectedNode = _support2.default.getInstance(got);
+                    self.inspectedInstance = _support2.default.getInstance(got);
                 } else {
                     _support2.default.unHighlight();
                 }
@@ -58774,12 +58774,12 @@ exports.default = {
             var doc = this.$refs.design.contentWindow.document;
             _support2.default.unHighlight();
             _support2.default.unFixedNode();
-            this.inspectedNode = null;
-            this.isInspectingNode = false;
+            this.inspectedInstance = null;
+            this.isInspectingInstance = false;
             doc.documentElement.onmousemove = null;
         },
 
-        _isInNode: function _isInNode(x, y, all) {
+        _isInInstance: function _isInInstance(x, y, all) {
             function walk(instance) {
                 for (var i = instance.children.length - 1; i >= 0; i--) {
                     var c = instance.children[i];
@@ -59024,8 +59024,8 @@ exports.default = {
 
         resize: function resize() {
             var doc = this.$refs.design.contentWindow.document;
-            this.isSelectingResizeNode = !this.isSelectingResizeNode;
-            if (!this.isSelectingResizeNode || this.isResizingNode) {
+            this.isSelectingResizeInstance = !this.isSelectingResizeInstance;
+            if (!this.isSelectingResizeInstance || this.isResizingInstance) {
                 this.clearResizeState();
                 this.save();
                 return;
@@ -59035,11 +59035,11 @@ exports.default = {
             this.clearInspectState();
             doc.documentElement.onmousemove = function (event) {
                 if (_support2.default.isFixedNode()) return;
-                var got = self._isInNode(event.clientX, event.clientY, allInstances);
+                var got = self._isInInstance(event.clientX, event.clientY, allInstances);
                 if (got) {
                     _support2.default.setHighlightColor('rgba(24, 255, 255, 0.35)');
                     _support2.default.highlight(got, function () {
-                        self.isResizingNode = true;
+                        self.isResizingInstance = true;
                         new _resizing2.default(got, self.configStorage[_support2.default.getInstance(got).$location]).activate();
                         _support2.default.unHighlight();
                     });
@@ -59051,16 +59051,17 @@ exports.default = {
             var doc = this.$refs.design.contentWindow.document;
             _support2.default.unHighlight();
             _support2.default.unFixedNode();
-            this.inspectedNode = null;
+            this.inspectedInstance = null;
             doc.documentElement.onmousemove = null;
-            this.isSelectingResizeNode = false;
-            this.isResizingNode = false;
+            this.isSelectingResizeInstance = false;
+            this.isResizingInstance = false;
         },
 
         saveResizeState: function saveResizeState() {
             var obj = _resizing2.default.getTop();
             if (obj) {
-                var location = _support2.default.getInstance(obj.node).$location;
+                var instance = _support2.default.getInstance(obj.instance);
+                var location = instance.$options.$global ? instance.$options.name : instance.$location;
                 if (!this.configStorage[location]) {
                     _util2.default.initConfig(this.configStorage, location);
                 }
@@ -59598,11 +59599,11 @@ var DIMENSION = 'DIMENSION';
 var CANVAS_ID = 'resizing-canvas';
 
 var Resizing = function () {
-    function Resizing(node, config) {
+    function Resizing(instance, config) {
         (0, _classCallCheck3.default)(this, Resizing);
 
-        this.node = node;
-        this.el = this.node.el;
+        this.instance = instance;
+        this.el = this.instance.el;
         this.state = -1;
         this.disposed = false;
         var values = _util3.default.parseTrasfromValue(window.getComputedStyle(this.el).transform);
@@ -70582,17 +70583,17 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
         }
       },
       model: {
-        value: (_vm.node[p.key]),
+        value: (_vm.instance[p.key]),
         callback: function($$v) {
-          var $$exp = _vm.node,
+          var $$exp = _vm.instance,
             $$idx = p.key;
           if (!Array.isArray($$exp)) {
-            _vm.node[p.key] = $$v
+            _vm.instance[p.key] = $$v
           } else {
             $$exp.splice($$idx, 1, $$v)
           }
         },
-        expression: "node[p.key]"
+        expression: "instance[p.key]"
       }
     }, _vm._l((p.prop.$rule.options), function(item) {
       return _c('el-option', {
@@ -70616,17 +70617,17 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
         }
       },
       model: {
-        value: (_vm.node[p.key]),
+        value: (_vm.instance[p.key]),
         callback: function($$v) {
-          var $$exp = _vm.node,
+          var $$exp = _vm.instance,
             $$idx = p.key;
           if (!Array.isArray($$exp)) {
-            _vm.node[p.key] = $$v
+            _vm.instance[p.key] = $$v
           } else {
             $$exp.splice($$idx, 1, $$v)
           }
         },
-        expression: "node[p.key]"
+        expression: "instance[p.key]"
       }
     })], 1) : (p.prop.$rule.clazz === 'Boolean') ? _c('el-form-item', {
       attrs: {
@@ -70643,17 +70644,17 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
         }
       },
       model: {
-        value: (_vm.node[p.key]),
+        value: (_vm.instance[p.key]),
         callback: function($$v) {
-          var $$exp = _vm.node,
+          var $$exp = _vm.instance,
             $$idx = p.key;
           if (!Array.isArray($$exp)) {
-            _vm.node[p.key] = $$v
+            _vm.instance[p.key] = $$v
           } else {
             $$exp.splice($$idx, 1, $$v)
           }
         },
-        expression: "node[p.key]"
+        expression: "instance[p.key]"
       }
     })], 1) : (p.prop.$rule.clazz === _vm.Enum.CLAZZ.COLOR) ? _c('el-form-item', {
       staticStyle: {
@@ -70676,17 +70677,17 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
         }
       },
       model: {
-        value: (_vm.node[p.key]),
+        value: (_vm.instance[p.key]),
         callback: function($$v) {
-          var $$exp = _vm.node,
+          var $$exp = _vm.instance,
             $$idx = p.key;
           if (!Array.isArray($$exp)) {
-            _vm.node[p.key] = $$v
+            _vm.instance[p.key] = $$v
           } else {
             $$exp.splice($$idx, 1, $$v)
           }
         },
-        expression: "node[p.key]"
+        expression: "instance[p.key]"
       }
     })], 1), _c('el-col', {
       attrs: {
@@ -70706,17 +70707,17 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
         }
       },
       model: {
-        value: (_vm.node[p.key]),
+        value: (_vm.instance[p.key]),
         callback: function($$v) {
-          var $$exp = _vm.node,
+          var $$exp = _vm.instance,
             $$idx = p.key;
           if (!Array.isArray($$exp)) {
-            _vm.node[p.key] = $$v
+            _vm.instance[p.key] = $$v
           } else {
             $$exp.splice($$idx, 1, $$v)
           }
         },
-        expression: "node[p.key]"
+        expression: "instance[p.key]"
       }
     })], 1)], 1) : (p.prop.$rule.clazz === _vm.Enum.CLAZZ.IMAGE) ? _c('el-form-item', {
       attrs: {
@@ -70729,11 +70730,11 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
         "list-type": "picture",
         "http-request": _vm.handleFileRequest,
         "multiple": false,
-        "disabled": _vm.node[p.key] && _vm.node[p.key].url,
+        "disabled": _vm.instance[p.key] && _vm.instance[p.key].url,
         "on-success": _vm.handleFileSuccess(p.key),
         "on-remove": _vm.handleFileRemove(p.key),
-        "file-list": _vm.node[p.key].url ? [{
-          url: _vm.path.join(_vm.config.INTERNAL_SERVER_HOST, _vm.node[p.key].url)
+        "file-list": _vm.instance[p.key].url ? [{
+          url: _vm.path.join(_vm.config.INTERNAL_SERVER_HOST, _vm.instance[p.key].url)
         }] : []
       }
     }, [_c('el-button', [_vm._v("添加图片")])], 1)], 1) : (p.prop.$rule.clazz === _vm.Enum.CLAZZ.IMAGE_ARRAY) ? _c('el-form-item', {
@@ -70747,10 +70748,10 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
         "list-type": "picture",
         "http-request": _vm.handleFileRequest,
         "multiple": false,
-        "disabled": _vm.node[p.key].length >= (p.prop.$rule.max || 99),
+        "disabled": _vm.instance[p.key].length >= (p.prop.$rule.max || 99),
         "on-success": _vm.handleFileSuccess(p.key),
         "on-remove": _vm.handleFileRemove(p.key),
-        "file-list": _vm.node[p.key].map(function (img) { return ({
+        "file-list": _vm.instance[p.key].map(function (img) { return ({
           url: _vm.path.join(_vm.config.INTERNAL_SERVER_HOST, img.url)
         }); })
       }
@@ -70774,17 +70775,17 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
         }
       },
       model: {
-        value: (_vm.node[p.key]),
+        value: (_vm.instance[p.key]),
         callback: function($$v) {
-          var $$exp = _vm.node,
+          var $$exp = _vm.instance,
             $$idx = p.key;
           if (!Array.isArray($$exp)) {
-            _vm.node[p.key] = $$v
+            _vm.instance[p.key] = $$v
           } else {
             $$exp.splice($$idx, 1, $$v)
           }
         },
-        expression: "node[p.key]"
+        expression: "instance[p.key]"
       }
     })], 1) : (p.prop.$rule.clazz === _vm.Enum.CLAZZ.DATE) ? _c('el-form-item', {
       attrs: {
@@ -70806,17 +70807,17 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
         }
       },
       model: {
-        value: (_vm.node[p.key]),
+        value: (_vm.instance[p.key]),
         callback: function($$v) {
-          var $$exp = _vm.node,
+          var $$exp = _vm.instance,
             $$idx = p.key;
           if (!Array.isArray($$exp)) {
-            _vm.node[p.key] = $$v
+            _vm.instance[p.key] = $$v
           } else {
             $$exp.splice($$idx, 1, $$v)
           }
         },
-        expression: "node[p.key]"
+        expression: "instance[p.key]"
       }
     })], 1) : (p.prop.$rule.clazz === _vm.Enum.CLAZZ.DATE_TIME) ? _c('el-form-item', {
       attrs: {
@@ -70838,17 +70839,17 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
         }
       },
       model: {
-        value: (_vm.node[p.key]),
+        value: (_vm.instance[p.key]),
         callback: function($$v) {
-          var $$exp = _vm.node,
+          var $$exp = _vm.instance,
             $$idx = p.key;
           if (!Array.isArray($$exp)) {
-            _vm.node[p.key] = $$v
+            _vm.instance[p.key] = $$v
           } else {
             $$exp.splice($$idx, 1, $$v)
           }
         },
-        expression: "node[p.key]"
+        expression: "instance[p.key]"
       }
     })], 1) : (p.prop.$rule.clazz === _vm.Enum.CLAZZ.RITCH_TEXT) ? _c('el-form-item', {
       attrs: {
@@ -70859,17 +70860,17 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
         "options": _vm.editorOption
       },
       model: {
-        value: (_vm.node[p.key]),
+        value: (_vm.instance[p.key]),
         callback: function($$v) {
-          var $$exp = _vm.node,
+          var $$exp = _vm.instance,
             $$idx = p.key;
           if (!Array.isArray($$exp)) {
-            _vm.node[p.key] = $$v
+            _vm.instance[p.key] = $$v
           } else {
             $$exp.splice($$idx, 1, $$v)
           }
         },
-        expression: "node[p.key]"
+        expression: "instance[p.key]"
       }
     })], 1) : (p.prop.$rule.clazz === _vm.Enum.CLAZZ.MOTION) ? _c('el-form-item', {
       attrs: {
@@ -70888,11 +70889,11 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
         }
       },
       model: {
-        value: (_vm.node[p.key].motion),
+        value: (_vm.instance[p.key].motion),
         callback: function($$v) {
-          _vm.node[p.key].motion = $$v
+          _vm.instance[p.key].motion = $$v
         },
-        expression: "node[p.key].motion"
+        expression: "instance[p.key].motion"
       }
     }, _vm._l((_vm.motions), function(item) {
       return _c('el-option', {
@@ -70902,7 +70903,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
           "value": item.value
         }
       })
-    })), (_vm.node.__MOTIONS__[_vm.node[p.key].motion] && _vm.node.__MOTIONS__[_vm.node[p.key].motion].params.length) ? [_c('el-form', [_vm._l((_vm.node.__MOTIONS__[_vm.node[p.key].motion].params), function(param, index) {
+    })), (_vm.instance.__MOTIONS__[_vm.instance[p.key].motion] && _vm.instance.__MOTIONS__[_vm.instance[p.key].motion].params.length) ? [_c('el-form', [_vm._l((_vm.instance.__MOTIONS__[_vm.instance[p.key].motion].params), function(param, index) {
       return [_c('el-form-item', [_c('el-input', {
         attrs: {
           "placeholder": param.$rule.name || param.$rule.placeholder
@@ -70913,17 +70914,17 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
           }
         },
         model: {
-          value: (_vm.node[p.key].params[index]),
+          value: (_vm.instance[p.key].params[index]),
           callback: function($$v) {
-            var $$exp = _vm.node[p.key].params,
+            var $$exp = _vm.instance[p.key].params,
               $$idx = index;
             if (!Array.isArray($$exp)) {
-              _vm.node[p.key].params[index] = $$v
+              _vm.instance[p.key].params[index] = $$v
             } else {
               $$exp.splice($$idx, 1, $$v)
             }
           },
-          expression: "node[p.key].params[index]"
+          expression: "instance[p.key].params[index]"
         }
       })], 1)]
     })], 2)] : _vm._e()], 2) : _vm._e()]
@@ -71063,7 +71064,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     return [_c('li', {
       staticClass: "workspace__selected-comp-item",
       class: {
-        'workspace__selected-comp-item--move': index >= _vm.dragMoveFlag
+        'workspace__selected-comp-item--moving': index >= _vm.dragMoveFlag
       },
       attrs: {
         "draggable": "true"
@@ -71111,7 +71112,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
   }, [_c('li', {
     staticClass: "workspace__tool-item",
     class: {
-      'workspace__tool-item--activated': _vm.isInspectingNode
+      'workspace__tool-item--activated': _vm.isInspectingInstance
     },
     on: {
       "click": function($event) {
@@ -71123,7 +71124,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
   })]), _c('li', {
     staticClass: "workspace__tool-item",
     class: {
-      'workspace__tool-item--activated': _vm.isSelectingResizeNode, 'workspace__tool-item--working': _vm.isResizingNode
+      'workspace__tool-item--activated': _vm.isSelectingResizeInstance, 'workspace__tool-item--working': _vm.isResizingInstance
     },
     on: {
       "click": function($event) {
@@ -71182,7 +71183,7 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
   })], 1)]), _c('edit-bar', {
     staticClass: "workspace__edit-bar",
     attrs: {
-      "node": _vm.inspectedNode,
+      "instance": _vm.inspectedInstance,
       "storage": _vm.configStorage,
       "inspectedContext": _vm.inspectedContext
     }
