@@ -51,7 +51,7 @@
             border-bottom: 1px solid #ececec;
             transition: transform .3s ease;
 
-             &--move {
+             &--moving {
                 transform: translate3d(0, 48px, 0);
             }
         }
