@@ -7443,7 +7443,7 @@ if(typeof __e == 'number')__e = core; // eslint-disable-line no-undef
 /***/ (function(module, exports, __webpack_require__) {
 
 var store      = __webpack_require__(49)('wks')
-  , uid        = __webpack_require__(33)
+  , uid        = __webpack_require__(32)
   , Symbol     = __webpack_require__(5).Symbol
   , USE_SYMBOL = typeof Symbol == 'function';
 
@@ -7564,7 +7564,7 @@ module.exports = $export;
 /***/ (function(module, exports, __webpack_require__) {
 
 var dP         = __webpack_require__(7)
-  , createDesc = __webpack_require__(31);
+  , createDesc = __webpack_require__(30);
 module.exports = __webpack_require__(6) ? function(object, key, value){
   return dP.f(object, key, createDesc(1, value));
 } : function(object, key, value){
@@ -7617,7 +7617,7 @@ module.exports = function(it){
 
 // to indexed object, toObject with fallback for non-array-like ES3 strings
 var IObject = __webpack_require__(43)
-  , defined = __webpack_require__(26);
+  , defined = __webpack_require__(25);
 module.exports = function(it){
   return IObject(defined(it));
 };
@@ -8115,12 +8115,6 @@ exports.default = {
 
 /***/ }),
 /* 25 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports = { "default": __webpack_require__(146), __esModule: true };
-
-/***/ }),
-/* 26 */
 /***/ (function(module, exports) {
 
 // 7.2.1 RequireObjectCoercible(argument)
@@ -8130,7 +8124,7 @@ module.exports = function(it){
 };
 
 /***/ }),
-/* 27 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var ctx         = __webpack_require__(17)
@@ -8160,13 +8154,13 @@ exports.BREAK  = BREAK;
 exports.RETURN = RETURN;
 
 /***/ }),
-/* 28 */
+/* 27 */
 /***/ (function(module, exports) {
 
 module.exports = true;
 
 /***/ }),
-/* 29 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // 19.1.2.2 / 15.2.3.5 Object.create(O [, Properties])
@@ -8213,13 +8207,13 @@ module.exports = Object.create || function create(O, Properties){
 
 
 /***/ }),
-/* 30 */
+/* 29 */
 /***/ (function(module, exports) {
 
 exports.f = {}.propertyIsEnumerable;
 
 /***/ }),
-/* 31 */
+/* 30 */
 /***/ (function(module, exports) {
 
 module.exports = function(bitmap, value){
@@ -8232,17 +8226,17 @@ module.exports = function(bitmap, value){
 };
 
 /***/ }),
-/* 32 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // 7.1.13 ToObject(argument)
-var defined = __webpack_require__(26);
+var defined = __webpack_require__(25);
 module.exports = function(it){
   return Object(defined(it));
 };
 
 /***/ }),
-/* 33 */
+/* 32 */
 /***/ (function(module, exports) {
 
 var id = 0
@@ -8252,7 +8246,7 @@ module.exports = function(key){
 };
 
 /***/ }),
-/* 34 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8284,7 +8278,7 @@ function toObject(arr) {
 };
 
 /***/ }),
-/* 35 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8300,7 +8294,7 @@ var _map2 = _interopRequireDefault(_map);
 
 var _highlighter = __webpack_require__(130);
 
-var _util = __webpack_require__(37);
+var _util = __webpack_require__(36);
 
 var _config = __webpack_require__(23);
 
@@ -8626,7 +8620,7 @@ exports.setHighlightColor = _highlighter.setHighlightColor;
 exports.unFixedNode = _highlighter.unFixedNode;
 
 /***/ }),
-/* 36 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8664,7 +8658,7 @@ exports["default"] = type;
 module.exports = exports['default'];
 
 /***/ }),
-/* 37 */
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8784,6 +8778,12 @@ function isPrimitive(data) {
 }
 
 /***/ }),
+/* 37 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = { "default": __webpack_require__(146), __esModule: true };
+
+/***/ }),
 /* 38 */
 /***/ (function(module, exports) {
 
@@ -8867,7 +8867,7 @@ module.exports = Object('z').propertyIsEnumerable(0) ? Object : function(it){
 
 "use strict";
 
-var LIBRARY        = __webpack_require__(28)
+var LIBRARY        = __webpack_require__(27)
   , $export        = __webpack_require__(8)
   , redefine       = __webpack_require__(77)
   , hide           = __webpack_require__(9)
@@ -8941,7 +8941,7 @@ module.exports = function(Base, NAME, Constructor, next, DEFAULT, IS_SET, FORCED
 /* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var META     = __webpack_require__(33)('meta')
+var META     = __webpack_require__(32)('meta')
   , isObject = __webpack_require__(13)
   , has      = __webpack_require__(12)
   , setDesc  = __webpack_require__(7).f
@@ -9018,7 +9018,7 @@ module.exports = function(target, src, safe){
 /***/ (function(module, exports, __webpack_require__) {
 
 var shared = __webpack_require__(49)('keys')
-  , uid    = __webpack_require__(33);
+  , uid    = __webpack_require__(32);
 module.exports = function(key){
   return shared[key] || (shared[key] = uid(key));
 };
@@ -9079,7 +9079,7 @@ module.exports = function(it, S){
 
 var global         = __webpack_require__(5)
   , core           = __webpack_require__(3)
-  , LIBRARY        = __webpack_require__(28)
+  , LIBRARY        = __webpack_require__(27)
   , wksExt         = __webpack_require__(54)
   , defineProperty = __webpack_require__(7).f;
 module.exports = function(name){
@@ -10824,7 +10824,7 @@ module.exports =
 /***/ 260:
 /***/ function(module, exports) {
 
-	module.exports = __webpack_require__(34);
+	module.exports = __webpack_require__(33);
 
 /***/ },
 
@@ -11628,7 +11628,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 exports.isVNode = isVNode;
 exports.getFirstComponentChild = getFirstComponentChild;
 
-var _util = __webpack_require__(34);
+var _util = __webpack_require__(33);
 
 function isVNode(node) {
   return (typeof node === 'undefined' ? 'undefined' : _typeof(node)) === 'object' && (0, _util.hasOwn)(node, 'componentOptions');
@@ -46711,7 +46711,7 @@ module.exports =
 /* 333 */
 /***/ function(module, exports) {
 
-	module.exports = __webpack_require__(34);
+	module.exports = __webpack_require__(33);
 
 /***/ },
 /* 334 */
@@ -50164,7 +50164,7 @@ var Component = __webpack_require__(16)(
   /* moduleIdentifier (server only) */
   null
 )
-Component.options.__file = "E:\\git\\game-open\\src\\app\\views\\App.vue"
+Component.options.__file = "/Users/paul/git-source/activity-builder/src/app/views/App.vue"
 if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key.substr(0, 2) !== "__"})) {console.error("named exports are not supported in *.vue files.")}
 if (Component.options.functional) {console.error("[vue-loader] App.vue: functional components are not supported with templates, they should use render functions.")}
 
@@ -50208,7 +50208,7 @@ var Component = __webpack_require__(16)(
   /* moduleIdentifier (server only) */
   null
 )
-Component.options.__file = "E:\\git\\game-open\\src\\app\\views\\TplLib.vue"
+Component.options.__file = "/Users/paul/git-source/activity-builder/src/app/views/TplLib.vue"
 if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key.substr(0, 2) !== "__"})) {console.error("named exports are not supported in *.vue files.")}
 if (Component.options.functional) {console.error("[vue-loader] TplLib.vue: functional components are not supported with templates, they should use render functions.")}
 
@@ -50252,7 +50252,7 @@ var Component = __webpack_require__(16)(
   /* moduleIdentifier (server only) */
   null
 )
-Component.options.__file = "E:\\git\\game-open\\src\\app\\views\\Workspace.vue"
+Component.options.__file = "/Users/paul/git-source/activity-builder/src/app/views/Workspace.vue"
 if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key.substr(0, 2) !== "__"})) {console.error("named exports are not supported in *.vue files.")}
 if (Component.options.functional) {console.error("[vue-loader] Workspace.vue: functional components are not supported with templates, they should use render functions.")}
 
@@ -53259,10 +53259,10 @@ module.exports = {
   object: __webpack_require__(115),
   "enum": __webpack_require__(109),
   pattern: __webpack_require__(116),
-  email: __webpack_require__(36),
-  url: __webpack_require__(36),
+  email: __webpack_require__(35),
+  url: __webpack_require__(35),
   date: __webpack_require__(108),
-  hex: __webpack_require__(36),
+  hex: __webpack_require__(35),
   required: __webpack_require__(118)
 };
 
@@ -53974,7 +53974,7 @@ Object.defineProperty(exports, "__esModule", {
 	value: true
 });
 
-var _stringify = __webpack_require__(25);
+var _stringify = __webpack_require__(37);
 
 var _stringify2 = _interopRequireDefault(_stringify);
 
@@ -54598,7 +54598,7 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _stringify = __webpack_require__(25);
+var _stringify = __webpack_require__(37);
 
 var _stringify2 = _interopRequireDefault(_stringify);
 
@@ -54622,7 +54622,7 @@ var _remote = __webpack_require__(129);
 
 var _remote2 = _interopRequireDefault(_remote);
 
-var _support = __webpack_require__(35);
+var _support = __webpack_require__(34);
 
 var _support2 = _interopRequireDefault(_support);
 
@@ -55315,26 +55315,38 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = {
     CLAZZ: {
-        IMAGE: 'Image', //图片
-        IMAGE_ARRAY: 'ImageArray', //图片数组
-        COLOR: 'Color', //颜色
-        SELECT: 'Select', //下拉
-        FONT_SIZE: 'FontSize', //字体大小
-        DATE: 'Date', //日期
-        DATE_TIME: 'DateTime', //日期时间
-        RITCH_TEXT: 'RichText', //富文本
-        MOTION: 'Motion', //动作
+        IMAGE: 'IMAGE', //图片
+        IMAGE_ARRAY: 'IMAGE_ARRAY', //图片数组
+        COLOR: 'COLOR', //颜色
+        SELECT: 'SELECT', //下拉
+        FONT_SIZE: 'FONT_SIZE', //字体大小
+        DATE: 'DATE', //日期
+        DATE_TIME: 'DATE_TIME', //日期时间
+        RITCH_TEXT: 'RITCH_TEXT', //富文本
+        MOTION: 'MOTION', //动作
         CHECKBOX: 'CHECKBOX', //多类选择框
-        BANNER: 'Banner',
-        AWARD_LIST: 'AwardList' //奖品横排列表图
+        BANNER: 'BANNER',
+        AWARD_LIST: 'AWARD_LIST' //奖品横排列表图
     },
     MOTION: {
-        OPEN_URL: 'OpenUrl',
-        SHOW_DIALOG: 'ShowDailog',
-        INSTALL_APP: 'installApp', //下载app
-        MY_AWARD: 'myAward', //我的奖品
-        RULE_TXT: 'ruleTxt', //活动规则
-        WINNER_LIST: 'winnerList' //中奖名单
+        OPEN_URL: 'OPEN_URL',
+        SHOW_DIALOG: 'SHOW_DIALOG',
+        INSTALL_APP: 'INSTALL_APP', //下载app
+        MY_AWARD: 'MY_AWARD', //我的奖品
+        RULE_TXT: 'RULE_TEXT', //活动规则
+        WINNER_LIST: 'WINNER_LIST' //中奖名单
+    },
+    INTERFACE_EVENT: {
+        APP_PROGRESS: 'APP_PROGRESS',
+        START_LOTTERY: 'START_LOTTERY',
+        STOP_LOTTERY: 'STOP_LOTTERY',
+        PAGE_HIDE: 'PAGE_HIDE',
+        PAY_SUCCESS: 'PAY_SUCCESS',
+        PAY_ERROR: 'PAY_ERROR',
+        OAUTH_RESPONSE: 'OAUTH_RESPONSE',
+        OAUTH_ERROR: 'OAUTH_ERROR',
+        TOKEN_SUCCESS: 'TOKEN_SUCCESS',
+        TOKEN_ERROR: 'TOKEN_ERROR'
     }
 };
 
@@ -55393,7 +55405,7 @@ exports.highlight = highlight;
 exports.unHighlight = unHighlight;
 exports.getInstanceRect = getInstanceRect;
 
-var _util = __webpack_require__(37);
+var _util = __webpack_require__(36);
 
 var overlay = void 0;
 var doc = document;
@@ -55588,7 +55600,7 @@ function util() {
 "use strict";
 
 
-var _stringify = __webpack_require__(25);
+var _stringify = __webpack_require__(37);
 
 var _stringify2 = _interopRequireDefault(_stringify);
 
@@ -55757,10 +55769,6 @@ exports.getCompiler = _getCompiler;
 "use strict";
 
 
-var _stringify = __webpack_require__(25);
-
-var _stringify2 = _interopRequireDefault(_stringify);
-
 var _activityComponentCleanPlugin = __webpack_require__(137);
 
 var _activityComponentCleanPlugin2 = _interopRequireDefault(_activityComponentCleanPlugin);
@@ -55781,12 +55789,12 @@ var ExtractTextPlugin = nodeRequire('extract-text-webpack-plugin');
 var HtmlWebpackPlugin = nodeRequire('html-webpack-plugin');
 var nodeExternals = nodeRequire('webpack-node-externals');
 var renderer = nodeRequire('vue-server-renderer').createRenderer();
-var cacheLoderConfig = {
-    loader: "cache-loader",
-    options: {
-        cacheDirectory: path.join(_config2.default.ACTIVITY_BASE_DIR, 'cache')
-    }
-};
+// const cacheLoderConfig = {
+//     loader: "cache-loader",
+//     options: {
+//         cacheDirectory: path.join(config.ACTIVITY_BASE_DIR, 'cache')
+//     }
+// }
 nodeRequire('shelljs/global');
 var ssrCompiler = webpack({
     context: path.join(process.cwd(), "/src"),
@@ -55868,8 +55876,7 @@ function _buildStandardCompiler(data) {
                         less: ExtractTextPlugin.extract({
                             use: ['css-loader', 'less-loader'],
                             fallback: 'vue-style-loader'
-                        }),
-                        js: 'babel?' + (0, _stringify2.default)({ cacheDirectory: path.join(_config2.default.ACTIVITY_BASE_DIR, 'cache') })
+                        })
                     }
                 }
             }, {
@@ -55961,7 +55968,7 @@ var _createClass2 = __webpack_require__(70);
 
 var _createClass3 = _interopRequireDefault(_createClass2);
 
-var _util = __webpack_require__(37);
+var _util = __webpack_require__(36);
 
 var _util2 = __webpack_require__(24);
 
@@ -56401,7 +56408,7 @@ var _vueRouter = __webpack_require__(98);
 
 var _vueRouter2 = _interopRequireDefault(_vueRouter);
 
-var _support = __webpack_require__(35);
+var _support = __webpack_require__(34);
 
 var _support2 = _interopRequireDefault(_support);
 
@@ -56452,7 +56459,7 @@ Object.defineProperty(exports, "__esModule", {
 	value: true
 });
 
-var _support = __webpack_require__(35);
+var _support = __webpack_require__(34);
 
 var _support2 = _interopRequireDefault(_support);
 
@@ -56784,7 +56791,7 @@ module.exports = function(){ /* empty */ };
 /* 156 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var forOf = __webpack_require__(27);
+var forOf = __webpack_require__(26);
 
 module.exports = function(iter, ITERATOR){
   var result = [];
@@ -56832,7 +56839,7 @@ module.exports = function(IS_INCLUDES){
 // 6 -> Array#findIndex
 var ctx      = __webpack_require__(17)
   , IObject  = __webpack_require__(43)
-  , toObject = __webpack_require__(32)
+  , toObject = __webpack_require__(31)
   , toLength = __webpack_require__(51)
   , asc      = __webpack_require__(160);
 module.exports = function(TYPE, $create){
@@ -56907,12 +56914,12 @@ module.exports = function(original, length){
 "use strict";
 
 var dP          = __webpack_require__(7).f
-  , create      = __webpack_require__(29)
+  , create      = __webpack_require__(28)
   , redefineAll = __webpack_require__(47)
   , ctx         = __webpack_require__(17)
   , anInstance  = __webpack_require__(39)
-  , defined     = __webpack_require__(26)
-  , forOf       = __webpack_require__(27)
+  , defined     = __webpack_require__(25)
+  , forOf       = __webpack_require__(26)
   , $iterDefine = __webpack_require__(44)
   , step        = __webpack_require__(74)
   , setSpecies  = __webpack_require__(78)
@@ -57074,7 +57081,7 @@ var global         = __webpack_require__(5)
   , fails          = __webpack_require__(11)
   , hide           = __webpack_require__(9)
   , redefineAll    = __webpack_require__(47)
-  , forOf          = __webpack_require__(27)
+  , forOf          = __webpack_require__(26)
   , anInstance     = __webpack_require__(39)
   , isObject       = __webpack_require__(13)
   , setToStringTag = __webpack_require__(22)
@@ -57134,7 +57141,7 @@ module.exports = function(NAME, wrapper, methods, common, IS_MAP, IS_WEAK){
 // all enumerable object keys, includes symbols
 var getKeys = __webpack_require__(18)
   , gOPS    = __webpack_require__(46)
-  , pIE     = __webpack_require__(30);
+  , pIE     = __webpack_require__(29);
 module.exports = function(it){
   var result     = getKeys(it)
     , getSymbols = gOPS.f;
@@ -57204,8 +57211,8 @@ module.exports = function(iterator, fn, value, entries){
 
 "use strict";
 
-var create         = __webpack_require__(29)
-  , descriptor     = __webpack_require__(31)
+var create         = __webpack_require__(28)
+  , descriptor     = __webpack_require__(30)
   , setToStringTag = __webpack_require__(22)
   , IteratorPrototype = {};
 
@@ -57340,8 +57347,8 @@ module.exports = function(){
 // 19.1.2.1 Object.assign(target, source, ...)
 var getKeys  = __webpack_require__(18)
   , gOPS     = __webpack_require__(46)
-  , pIE      = __webpack_require__(30)
-  , toObject = __webpack_require__(32)
+  , pIE      = __webpack_require__(29)
+  , toObject = __webpack_require__(31)
   , IObject  = __webpack_require__(43)
   , $assign  = Object.assign;
 
@@ -57392,8 +57399,8 @@ module.exports = __webpack_require__(6) ? Object.defineProperties : function def
 /* 174 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var pIE            = __webpack_require__(30)
-  , createDesc     = __webpack_require__(31)
+var pIE            = __webpack_require__(29)
+  , createDesc     = __webpack_require__(30)
   , toIObject      = __webpack_require__(14)
   , toPrimitive    = __webpack_require__(52)
   , has            = __webpack_require__(12)
@@ -57440,7 +57447,7 @@ module.exports.f = function getOwnPropertyNames(it){
 
 // 19.1.2.9 / 15.2.3.2 Object.getPrototypeOf(O)
 var has         = __webpack_require__(12)
-  , toObject    = __webpack_require__(32)
+  , toObject    = __webpack_require__(31)
   , IE_PROTO    = __webpack_require__(48)('IE_PROTO')
   , ObjectProto = Object.prototype;
 
@@ -57485,7 +57492,7 @@ module.exports = function(O, D){
 /***/ (function(module, exports, __webpack_require__) {
 
 var toInteger = __webpack_require__(50)
-  , defined   = __webpack_require__(26);
+  , defined   = __webpack_require__(25);
 // true  -> String#at
 // false -> String#codePointAt
 module.exports = function(TO_STRING){
@@ -57605,7 +57612,7 @@ $export($export.S + $export.F, 'Object', {assign: __webpack_require__(172)});
 
 var $export = __webpack_require__(8)
 // 19.1.2.2 / 15.2.3.5 Object.create(O [, Properties])
-$export($export.S, 'Object', {create: __webpack_require__(29)});
+$export($export.S, 'Object', {create: __webpack_require__(28)});
 
 /***/ }),
 /* 186 */
@@ -57620,7 +57627,7 @@ $export($export.S + $export.F * !__webpack_require__(6), 'Object', {defineProper
 /***/ (function(module, exports, __webpack_require__) {
 
 // 19.1.2.14 Object.keys(O)
-var toObject = __webpack_require__(32)
+var toObject = __webpack_require__(31)
   , $keys    = __webpack_require__(18);
 
 __webpack_require__(177)('keys', function(){
@@ -57635,7 +57642,7 @@ __webpack_require__(177)('keys', function(){
 
 "use strict";
 
-var LIBRARY            = __webpack_require__(28)
+var LIBRARY            = __webpack_require__(27)
   , global             = __webpack_require__(5)
   , ctx                = __webpack_require__(17)
   , classof            = __webpack_require__(40)
@@ -57643,7 +57650,7 @@ var LIBRARY            = __webpack_require__(28)
   , isObject           = __webpack_require__(13)
   , aFunction          = __webpack_require__(38)
   , anInstance         = __webpack_require__(39)
-  , forOf              = __webpack_require__(27)
+  , forOf              = __webpack_require__(26)
   , speciesConstructor = __webpack_require__(178)
   , task               = __webpack_require__(79).set
   , microtask          = __webpack_require__(171)()
@@ -57950,7 +57957,7 @@ var global         = __webpack_require__(5)
   , $fails         = __webpack_require__(11)
   , shared         = __webpack_require__(49)
   , setToStringTag = __webpack_require__(22)
-  , uid            = __webpack_require__(33)
+  , uid            = __webpack_require__(32)
   , wks            = __webpack_require__(4)
   , wksExt         = __webpack_require__(54)
   , wksDefine      = __webpack_require__(53)
@@ -57960,8 +57967,8 @@ var global         = __webpack_require__(5)
   , anObject       = __webpack_require__(10)
   , toIObject      = __webpack_require__(14)
   , toPrimitive    = __webpack_require__(52)
-  , createDesc     = __webpack_require__(31)
-  , _create        = __webpack_require__(29)
+  , createDesc     = __webpack_require__(30)
+  , _create        = __webpack_require__(28)
   , gOPNExt        = __webpack_require__(175)
   , $GOPD          = __webpack_require__(174)
   , $DP            = __webpack_require__(7)
@@ -58089,10 +58096,10 @@ if(!USE_NATIVE){
   $GOPD.f = $getOwnPropertyDescriptor;
   $DP.f   = $defineProperty;
   __webpack_require__(75).f = gOPNExt.f = $getOwnPropertyNames;
-  __webpack_require__(30).f  = $propertyIsEnumerable;
+  __webpack_require__(29).f  = $propertyIsEnumerable;
   __webpack_require__(46).f = $getOwnPropertySymbols;
 
-  if(DESCRIPTORS && !__webpack_require__(28)){
+  if(DESCRIPTORS && !__webpack_require__(27)){
     redefine(ObjectProto, 'propertyIsEnumerable', $propertyIsEnumerable, true);
   }
 
@@ -60021,7 +60028,7 @@ exports.default = function (Vue) {
   return template;
 };
 
-var _util = __webpack_require__(34);
+var _util = __webpack_require__(33);
 
 var RE_NARGS = /(%|)\{([0-9a-zA-Z_]+)\}/g;
 /**
@@ -64687,7 +64694,7 @@ var Component = __webpack_require__(16)(
   /* moduleIdentifier (server only) */
   null
 )
-Component.options.__file = "E:\\git\\game-open\\node_modules\\vue-quill-editor\\src\\editor.vue"
+Component.options.__file = "/Users/paul/git-source/activity-builder/node_modules/vue-quill-editor/src/editor.vue"
 if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key.substr(0, 2) !== "__"})) {console.error("named exports are not supported in *.vue files.")}
 if (Component.options.functional) {console.error("[vue-loader] editor.vue: functional components are not supported with templates, they should use render functions.")}
 
@@ -64731,7 +64738,7 @@ var Component = __webpack_require__(16)(
   /* moduleIdentifier (server only) */
   null
 )
-Component.options.__file = "E:\\git\\game-open\\src\\app\\views\\ButtonGroup.vue"
+Component.options.__file = "/Users/paul/git-source/activity-builder/src/app/views/ButtonGroup.vue"
 if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key.substr(0, 2) !== "__"})) {console.error("named exports are not supported in *.vue files.")}
 if (Component.options.functional) {console.error("[vue-loader] ButtonGroup.vue: functional components are not supported with templates, they should use render functions.")}
 
@@ -64775,7 +64782,7 @@ var Component = __webpack_require__(16)(
   /* moduleIdentifier (server only) */
   null
 )
-Component.options.__file = "E:\\git\\game-open\\src\\app\\views\\CompsBar.vue"
+Component.options.__file = "/Users/paul/git-source/activity-builder/src/app/views/CompsBar.vue"
 if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key.substr(0, 2) !== "__"})) {console.error("named exports are not supported in *.vue files.")}
 if (Component.options.functional) {console.error("[vue-loader] CompsBar.vue: functional components are not supported with templates, they should use render functions.")}
 
@@ -64819,7 +64826,7 @@ var Component = __webpack_require__(16)(
   /* moduleIdentifier (server only) */
   null
 )
-Component.options.__file = "E:\\git\\game-open\\src\\app\\views\\EditBar.vue"
+Component.options.__file = "/Users/paul/git-source/activity-builder/src/app/views/EditBar.vue"
 if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key.substr(0, 2) !== "__"})) {console.error("named exports are not supported in *.vue files.")}
 if (Component.options.functional) {console.error("[vue-loader] EditBar.vue: functional components are not supported with templates, they should use render functions.")}
 

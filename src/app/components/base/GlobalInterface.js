@@ -38,7 +38,7 @@ import Enum from '../common/enum';
         emitter.emit(Enum.INTERFACE_EVENT.PAGE_HIDE);
     }
 
-    global.onPaySucess = function(appId,pkgName) {
+    global.onPaySucess = function(appId, pkgName) {
         emitter.emit(Enum.INTERFACE_EVENT.PAY_SUCCESS, appId, pkgName);
     }
 
@@ -62,7 +62,7 @@ import Enum from '../common/enum';
         emitter.emit(Enum.INTERFACE_EVENT.OAUTH_ERROR, tag, errorMsg);
     }
 
-    const interface = {};
+    const Interface = {};
 
     let _getUrlParam = function (key) {
         var reg = new RegExp("(^|&)" + key + "=([^&]*)(&|$)", "i");
@@ -87,12 +87,12 @@ import Enum from '../common/enum';
         }
         else {
             if(!access_token_local || access_token_local.expires <= Date.now()) {
-                interface.login()
+                Interface.login()
             }
         }
     }
 
-    interface.login = function() {
+    Interface.login = function() {
         if(_isMzBrower) {
             localStorage['mz_game_access_token'] = ''
             location.href = 'https://login.flyme.cn/authorize/cert.html?'
@@ -106,7 +106,7 @@ import Enum from '../common/enum';
         }
     }
 
-    interface.getUserInfoBy = function() {
+    Interface.getUserInfoBy = function() {
         return function() {
             var access_token_local = localStorage['mz_game_access_token'] && JSON.parse(localStorage['mz_game_access_token'])
             if(!access_token_local || access_token_local.expires <= Date.now()) {
@@ -117,5 +117,89 @@ import Enum from '../common/enum';
 
             return access_token_local[param]
         }
+    }
+
+    Interface.getUserId = function() {
+       return isMzBrower ? obj.getUserInfoBy('uid')() : EventJavascriptInterface.getUserId() 
+    }
+
+    Interface.getUserToken = Interface.getUserInfoBy('access_token');
+
+    Interface.oauthRequest = function() {
+       if(_isMzBrower) {
+            var dataObj = JSON.parse(dataStr)
+            dataObj.uid = obj.getUserId()
+            dataObj.access_token = obj.getUserToken()
+            dataObj.imei = MzJavascriptInterface.getIMEI()
+            dataObj.sn = MzPrivateJavascriptInterface.getSN()
+            for(var i in dataObj) {
+                if(typeof dataObj[i] == 'object') {
+                    dataObj[i] = JSON.stringify(dataObj[i])
+                }
+            }
+            //todo
+            $.ajax({
+                url: 'https://api-' + Activity.dataType + '.meizu.com/'
+                    + Activity.dataType + 's' + url,
+                dataType: 'jsonp',
+                jsonpCallback: 'callbackMap["' + tag + '"]',
+                data: dataObj
+            });
+        }
+        else {
+            EventJavascriptInterface.oauthRequest(tag, url, dataStr)
+        } 
+    }
+
+    Interface.lottery = function(zippoArr) {
+        if(_isMzBrower) {
+            var param = {
+                uid: obj.getUserId(),
+                access_token: obj.getUserToken(),
+                imei: MzJavascriptInterface.getIMEI(),
+                sn: MzPrivateJavascriptInterface.getSN(),
+                zippo_ids: zippoArr.join(',')
+            }
+            $.ajax({
+                url: 'https://api-' + Activity.dataType + '.meizu.com/'
+                    + Activity.dataType + 's' + '/oauth/activity/zippo/do/' + Activity.activityId,
+                dataType: 'jsonp',
+                beforeSend: onLotteryStart,
+                jsonpCallback: 'onLotteryStop',
+                data: param
+            });
+        }
+        else {
+            EventJavascriptInterface.lottery(zippoArr)
+        }
+    }
+
+    Interface.gotoAppInfoPage = function() {
+        if(isMzBrower) {
+            location.href = 'https://game-res.meizu.com/resources/gameh5/html/app/details.html?' 
+                          + 'packageName=' + pkg + '&'  
+                          + 'channel_id=' + getUrlParam('channel_id') + '&'
+                          + '_=' + Date.now()
+        }
+        else {
+            EventJavascriptInterface.gotoAppInfoPage(pkg)
+        }
+    }
+
+    Interface.isAppInstalled = function(pkg) {
+        return isMzBrower ? EventJavascriptInterface.isAppInstalled(pkg, 0) : EventJavascriptInterface.isAppInstalled(pkg) 
+    }
+
+    Interface.onAppShowInPage = function() {
+        return isMzBrower ? null : EventJavascriptInterface.onAppShowInPage(pkgs) 
+    }
+
+    Inteface.launchApp = function(pkg) {
+        return isMzBrower ? EventJavascriptInterface.installApp(1, pkg, 0) || true : EventJavascriptInterface.launchApp(pkg) 
+    }
+
+    Interface.onInstallButtonClick = function(id, pkg) {
+        var c = getUrlParam('channel_id')
+        return isMzBrower ? EventJavascriptInterface.installApp(1, (c ? pkg + '_channelId' + c : pkg), 0) : EventJavascriptInterface.onInstallButtonClick(Number(id), pkg) 
     }
 })(window);
