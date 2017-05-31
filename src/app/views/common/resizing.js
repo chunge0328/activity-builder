@@ -109,8 +109,8 @@ class Resizing {
             this._canvas = this.el.ownerDocument.createElement('canvas');
             this._canvas.style = 'position:fixed;top:0;left:0;width:100%;height:100%;z-index:999;pointer-events:none;';
             let {width, height} = this.el.ownerDocument.documentElement.getBoundingClientRect();
-            //documentElment.getBoundingClientRect() 获取的宽度是包含滚动条的
-            //window.innerWidth 是会包含的
+            //documentElment.getBoundingClientRect() 获取的宽度是不包含滚动条的
+            //window.innerWidth 是包含的
             this._canvas.width = width;
             this._canvas.height = this.el.ownerDocument.defaultView.innerHeight; 
             this._canvas.id = CANVAS_ID;

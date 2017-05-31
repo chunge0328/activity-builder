@@ -2,25 +2,28 @@
 <html>
 	<head>
 	    <meta charset="UTF-8">
-	    <title>Activity</title>
+	    <title>${htmlWebpackPlugin.options.title}</title>
 	    <style type="text/css">
-	    	@font-face {
-			    font-family: 'Flyme';
-			    src: url(./fonts/Flyme-Normal.ttf) format('truetype');
-			    font-weight: normal;
-			}
+			<% if(htmlWebpackPlugin.options.IS_DEV) {%>
+				@font-face {
+					font-family: 'Flyme';
+					src: url(./fonts/Flyme-Normal.ttf) format('truetype');
+					font-weight: normal;
+				}
 
-			@font-face {
-				font-family: 'Flyme';
-				src: url(./fonts/Flyme-Medium.ttf) format('truetype');
-			    font-weight: 500;
-			}
+				@font-face {
+					font-family: 'Flyme';
+					src: url(./fonts/Flyme-Medium.ttf) format('truetype');
+					font-weight: 500;
+				}
 
-			@font-face {
-				font-family: 'Flyme';
-				src: url(./fonts/Flyme-Bold.ttf) format('truetype');
-			    font-weight: bold;
-			}
+				@font-face {
+					font-family: 'Flyme';
+					src: url(./fonts/Flyme-Bold.ttf) format('truetype');
+					font-weight: bold;
+				}
+			<% } %>
+	    	
 
 			* {
 		        margin: 0;
@@ -34,6 +37,8 @@
 			html, body, .app {
 				width: 100%;
 				height: 100%;
+				overflow-y: auto;
+				overflow-x: hidden;
 			}
 
 		    li {
@@ -45,6 +50,9 @@
 		    	-webkit-user-select: none;
 		    	overflow-x: hidden;
 		    }
+			a {
+				text-decoration: none;
+			}
 		</style>
 		<script type="text/javascript">
 			;(function(win, lib) {
@@ -168,8 +176,10 @@
 		</script>
 	</head>
     <body>
-        <div id="app"></div>
-		<script type="text/javascript" src="../vendor.bundle.js"></script>
-        <script type="text/javascript" src="../bundle.js"></script>
+		<% if(htmlWebpackPlugin.options.IS_DEV) {%>
+        	<div id="app"></div>
+		<%} else {%>
+			<%= htmlWebpackPlugin.options.content %>
+		<%}%>
     </body>
 </html>

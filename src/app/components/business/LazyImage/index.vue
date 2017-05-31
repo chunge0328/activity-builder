@@ -11,10 +11,10 @@
     export default {
         name: 'LazyImage',
         props: {
-			src: {
-				type: String,
-				$rule: { name: '图片' }
-			}
-		}
+         src: {
+          type: String,
+          $rule: { name: '图片' }
+        }
+      }
     }
 </script>

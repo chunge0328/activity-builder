@@ -73,7 +73,7 @@
 						<el-upload
 							list-type="picture"
 							:http-request="handleFileRequest"
-							:multiple="false"
+							:multiple="true"
 							:ref="p.key"
 							:disabled="instance[p.key].length >= (p.prop.$rule.max || 99)"
 							:on-success="handleFileSuccess(p.key)"
@@ -131,13 +131,26 @@
 						<template v-if="instance.__MOTIONS__[instance[p.key].motion] && instance.__MOTIONS__[instance[p.key].motion].params.length">
 							<el-form>
 								<template v-for="(param, index) in instance.__MOTIONS__[instance[p.key].motion].params">
-									<el-form-item>
-										<el-input :placeholder="param.$rule.name || param.$rule.placeholder" v-model="instance[p.key].params[index]"  @input="handleMotionParamsUpdate(p.key, paramIndex)($event)"></el-input>
+
+									<el-form-item v-if="param.$rule.istextarea">
+										<el-input type="textarea" autosize :placeholder="param.$rule.name || param.$rule.placeholder" v-model="instance[p.key].params[index]"  @input="handleMotionParamsUpdate(p.key, paramIndex)($event)"></el-input>
 									</el-form-item>
+                  
+                  <el-form-item v-else>
+                    <el-input :placeholder="param.$rule.name || param.$rule.placeholder" v-model="instance[p.key].params[index]"  @input="handleMotionParamsUpdate(p.key, paramIndex)($event)"></el-input>
+                  </el-form-item>
+
 								</template>
 							</el-form>
 						</template>
 					</el-form-item>
+          <el-form-item v-else-if="p.prop.$rule.clazz === Enum.CLAZZ.CHECKBOX">
+            <el-checkbox-group 
+              v-model="instance[p.key]"
+              :min="1" @change="$forceUpdate()">
+              <el-checkbox v-for="item in p.prop.$rule.options" :label="item.name" :key="item.value">{{item.name}}</el-checkbox>
+            </el-checkbox-group>
+          </el-form-item>     
 				</template>
 			</el-form>
 		<!--</div>	-->
@@ -259,6 +272,7 @@
 				this.instance._recorded = true;
 			},
 			handleFileRequest: function(opts) {
+        console.log('xxxxxx=>',opts);
 				let p = new Promise(function(resolve, reject) {
 					let rs = fs.createReadStream(opts.file.path);
 					let newName = shortid.generate() + path.extname(opts.file.name);
@@ -289,11 +303,13 @@
 				return p;
 			},
 			handleFileSuccess: function(key) {
+        console.log('======>',this.instance)
 				function _handleFileSuccess(key, response, file, fileList) {
 					if(!Array.isArray(this.instance[key])) {
 						this.instance[key] = response;
 					} else {
 						this.instance[key].push(response);
+            this.instance.$forceUpdate();
 					}
 					this.$forceUpdate();
 				}
@@ -310,6 +326,7 @@
 							len--;
 							if(path.basename(self.instance[key][len].url) == path.basename(file.url)) {
 								self.instance[key].splice(len, 1);
+                this.instance.$forceUpdate();
 								break;
 							}
 						}

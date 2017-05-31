@@ -7,7 +7,7 @@
 </style>
 <template>
 	<div class="disk">
-		<p>转盘 {{ content }}</p>
+		<p>转盘{{ content }}</p>
 		<XButton/>
 	</div>
 </template>

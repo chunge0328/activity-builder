@@ -1,6 +1,6 @@
 <template>
-  <div class="app" v-bind:style="{'background-color': appBgColor}">
-<XButton/><FloatTile/>
+<div id="app" class="app" v-bind:style="{'background-color': appBgColor}">
+<banner/><Disk/>
   </div>
 </template>
 <script>
@@ -8,11 +8,11 @@
   import 'style/common.less';
   import 'quill/dist/quill.core.css';
   import Enum from 'common/enum';
-  import XButton from 'business/XButton/index.vue';
-  import FloatTile from 'business/FloatTile/index.vue';
+  import banner from 'business/banner/index.vue';
+  import Disk from 'business/Disk/index.vue';
   vue.use({
     install(vue) {
-      vue.prototype.__STORE__ = ({ "App": { "propsData": { "psdWidth": 1080, "appBgColor": "#ffffff" } }, "0.0.1": { "propsData": {}, "staticStyle": { "transform": "translate(153px,97px)", "webkitTransform": "translate(153px,97px)", "width": "69px", "height": "92px" } } });
+      vue.prototype.__STORE__ = ({ "App": { "propsData": { "psdWidth": 1080, "appBgColor": "#ffffff" } }, "Root.0.0": { "propsData": { "bgImg": { "url": require("assets/images/B1mS4Ts-W.jpg"), "width": 1080, "height": 1107 } }, "staticStyle": { "transform": "translate(0px,'0px)" } }, "Root.0.1": { "propsData": {}, "staticStyle": {} }, "Root.0.1.0": { "propsData": { "fontSize": "24px" }, "staticStyle": {} } });
     }
   });
   export default {
@@ -39,7 +39,7 @@
       return {}
     }, 
     components: {
-      XButton,FloatTile
+      banner,Disk
     }
   }
 </script>

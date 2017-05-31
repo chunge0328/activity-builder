@@ -161,8 +161,9 @@ function compileResource() {
   require('shelljs/global');
   rm('-rf', RELEEASE_PATH);
   compiler.watch({
-    aggregateTimeout: 300,
-    poll: true
+    aggregateTimeout: 900,
+    poll: true,
+    ignored: /node_modules/
   }, function(err, stats) {
       if(!mainWindow) {
         createApp();

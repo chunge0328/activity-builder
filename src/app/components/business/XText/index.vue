@@ -19,7 +19,7 @@
     */
 </style>
 <template>
-    <div class="ql-editor" v-bind:style="{'background-color': bgColor}" v-html="ritchText"></div>
+    <div class="ql-editor" v-bind:style="{'background-color': bgColor,'text-align':location}" v-html="ritchText"></div>
 </template>
 <script>
     import Enum from '../../common/enum';
@@ -51,6 +51,28 @@
                     name: '富文本',
                     clazz: Enum.CLAZZ.RITCH_TEXT
                 }
+            },
+            location: {
+              type: String,
+              default: 'left',
+              $rule: {
+                name: '位置',
+                options: [
+                  {
+                   value: 'left',
+                   label: '左边'
+                  },
+                  {
+                   value: 'center',
+                   label: '中间'
+                  },
+                  {
+                   value: 'right',
+                   label: '右边'
+                  }
+                ],
+                clazz: Enum.CLAZZ.SELECT
+              }
             }
 		}
     }

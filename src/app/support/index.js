@@ -1,219 +1,22 @@
 import { highlight, unHighlight, getInstanceRect, setDoc, isFixedNode, unFixedNode, setHighlightColor } from './highlighter';
-import ActivityComponentCleanPlugin from '../../plugins/activity-component-clean-plugin';
 import { stringify, classify, camelize } from './util';
 import config from '../config';
-const webpack = nodeRequire("webpack");
-const WebpackDevServer = nodeRequire("webpack-dev-server");
+import internalServer from './internalServer';
+import ssr from './ssr';
 const path = require('path');
 const fs = require('fs');
-const Datastore = require('nedb');
-const babel = nodeRequire('babel-core');
-const template = nodeRequire('babel-template');
-const t = nodeRequire('babel-types');
+const Datastore = nodeRequire('nedb');
 let rootInstances = [];
 let captureCount = 0;
 let filter = '';
 let instanceMap = new Map();
 let consoleBoundInstances = Array(5);
 let db = null;
-let compiler = null;
+
 
 function _initDB() {
   db = new Datastore({filename: config.DB_FILE});
   db.loadDatabase();
-}
-
-function _initServer(callback) {
-	compiler = webpack({
-	    context: path.join(process.cwd(), "/src"),
-	    entry: {
-        index: ["webpack/hot/dev-server", `webpack-dev-server/client?${config.INTERNAL_SERVER_HOST}`, "./app/activity/index"],
-        vendor: ["vue"]
-      },
-	    output: {
-	        path: config.ACTIVITY_BUILD_DIR,
-	        filename: "bundle.js"
-	    },
-	    module: {
-	      rules: [
-          {
-            test: /vue/,
-            loader: 'babel-loader',
-            options: {
-              compact: false,
-              plugins: [
-                  [{
-                    visitor: {
-                        BlockStatement(path) {
-                            if(t.isFunctionDeclaration(path.parent) && path.parent.id.name == 'updateChildComponent') {                           
-                                let buildExpression = 
-                                    template(`vm._updateFromParent&&vm._updateFromParent(propsData, listeners, parentVnode, renderChildren)`);
-                                let ast = buildExpression({});
-                                path.unshiftContainer('body', ast);
-                            }
-                        }
-                    }
-                  }]
-              ]
-            }
-          },
-	        {
-	          test: /\.vue$/,
-	          loader: 'vue-loader'
-            
-	        }, 
-	        {
-	          test: /\.js$/,
-	          loader: 'babel-loader',
-	          exclude: /node_modules/
-	        },
-          {
-	          test: /\.less$/,
-	          loader: ['style-loader', 'css-loader', 'less-loader']
-	        },
-	        {
-	          test: /\.css$/,
-	          loader: ['style-loader', 'css-loader']
-	        },
-	        {
-	          test: /\.(png|jpg|gif|svg|jpeg)$/,
-	          loader: 'file-loader',
-	          options: {
-	            name: '[name].[ext]'
-	          }
-	        }
-	      ]
-	    },
-	    resolve: {
-	    	modules: ['node_modules', 'app/components', 'app/activity']
-	    },
-	    plugins: [
-          // new ActivityComponentCleanPlugin(),
-          new webpack.DefinePlugin({
-            'process.env': {NODE_ENV: '"dev"'}
-          }),
-          new webpack.optimize.CommonsChunkPlugin({name: "vendor", filename: "vendor.bundle.js"}),
-	        new webpack.HotModuleReplacementPlugin()
-	    ],
-	    target: "web"
-	});
-
-	let server = new WebpackDevServer(compiler, {
-	  	publicPath: "/",
-  		contentBase: path.join(process.cwd(), "/src/app/activity"),
-	   	hot: true,
-	  	historyApiFallback: false,
-	  	compress: false,
-	  	setup: function(app) {
-	  	},
-  		staticOptions: {
-  		},
-  		clientLogLevel: "info",
-  		quiet: true,
-  		noInfo: false,
-  		lazy: false,
-  		watchOptions: {
-  		    aggregateTimeout: 100,
-  		    poll: 100
-  		},
-  	  stats: { colors: false }
-	});
-	server.listen(config.INTERNAL_SERVER_PORT, "0.0.0.0", function() {
-    callback();
-  });
-}
-
-function _resolveResource(source) {
-  const buildRequire = template(`require(SOURCE)`);
-  let result = babel.transform(`(${source})`, {
-    plugins: [
-      {
-        visitor: {
-          Literal(path) {
-            if(/^assets\//.test(path.node.value) && !t.isCallExpression(path.parent)) {
-              let ast = buildRequire({
-                SOURCE: t.stringLiteral(path.node.value)
-              });
-              path.replaceWith(ast);
-            }
-          }
-        }
-      }
-    ]
-  });
-  return result.code;
-}
-
-function _flushFile(data, configStorage) {
-	let appFile = path.join(process.cwd(), 'src/app/activity/App.vue');
-	let map = {};
-	let comps = [];
-	data.forEach(function(comp) {
-		if(!map[comp.componentName]) {
-			map[comp.componentName] = true;
-			comps.push(comp.componentName);
-		}
-	});
-let appTpl = 
-`<template>
-  <div class="app" v-bind:style="{'background-color': appBgColor}">
-`;
-	data.forEach(function(comp) {
-		  appTpl += 
-    `<${comp.componentName}/>`;
-	});
-	appTpl += 
-`
-  </div>
-</template>
-`;
-	appTpl += 
-`<script>
-  import vue from 'vue';
-  import 'style/common.less';
-  import 'quill/dist/quill.core.css';
-  import Enum from 'common/enum';
-  `;
-	comps.forEach(function(name) {
-		appTpl += 
-  `import ${name} from 'business/${name}/index.vue';
-  `;
-	});
-	appTpl += 
-  `vue.use({
-    install(vue) {
-      vue.prototype.__STORE__ = ${_resolveResource(JSON.stringify(configStorage))}
-    }
-  });
-  export default {
-    name: 'App',
-    $global: true,
-    props: {
-      psdWidth: {
-        type: Number,
-        default: 1080,
-        $rule: {
-          name: '设计图宽度'
-        }
-      },
-      appBgColor: {
-        type: String,
-        default: '#fff',
-        $rule: {
-          name: 'app背景颜色',
-          clazz: Enum.CLAZZ.COLOR
-        }
-      }
-    },
-    data: function() {
-      return {}
-    }, 
-    components: {
-      ${comps.join(",")}
-    }
-  }
-</script>`;
-	fs.writeFileSync(appFile, appTpl);
 }
 
 function _getAllInstances(doc) {
@@ -243,10 +46,6 @@ function _getInstance(instance) {
 
 function _getDB() {
   return db;
-}
-
-function _getCompiler() {
-  return compiler;
 }
 
 function _unHighlight() {
@@ -511,8 +310,8 @@ function bindToConsole (instance) {
 
 
 exports.initDB = _initDB;
-exports.initServer = _initServer;
-exports.flushFile = _flushFile;
+exports.initServer = internalServer.init;
+exports.flushFile = internalServer.flushFile;
 exports.getAllInstances = _getAllInstances;
 exports.highlight = _highlight;
 exports.unHighlight = _unHighlight;
@@ -521,7 +320,8 @@ exports.getInstance = _getInstance;
 exports.getInstanceDetails = getInstanceDetails;
 exports.isFixedNode = isFixedNode;
 exports.getDB = _getDB;
-exports.getCompiler = _getCompiler;
+exports.getCompiler = internalServer.getCompiler;
 exports.clear = _clear;
+exports.ssrRender = ssr.render;
 exports.setHighlightColor = setHighlightColor;
 exports.unFixedNode = unFixedNode;

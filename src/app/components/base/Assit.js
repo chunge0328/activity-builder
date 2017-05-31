@@ -1,6 +1,7 @@
 import Enum from '../common/enum';
 const MOTIONS = {};
 const TYPES = {};
+const AWARDS = [];
 
 function doMotion(opts) {
     let motion = MOTIONS[opts.motion];
@@ -17,6 +18,7 @@ function install(Vue) {
     //Vue.prototype.$defineState = defineState;
     Vue.prototype.$doMotion = doMotion;
     Vue.prototype.__MOTIONS__ = MOTIONS;
+    Vue.prototype.AWARDS = AWARDS;
 }
 
 export function defineMotion(motion, opts) {

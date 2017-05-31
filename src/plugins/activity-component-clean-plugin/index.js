@@ -1,5 +1,5 @@
 const babel = nodeRequire('babel-core');
-//const RawSource = nodeRequire("webpack-sources").RawSource;
+const types = nodeRequire('babel-types');
 
 class ActvityComponentCleanPlugin {
     constructor() {}
@@ -10,12 +10,28 @@ class ActvityComponentCleanPlugin {
                 const files = [];
 				chunks.forEach((chunk) => files.push.apply(files, chunk.files));
 				files.push.apply(files, compilation.additionalChunkAssets);
-                files.forEach((file) => {
+                files.filter((file) => /\.js$/.test(file)).forEach((file) => {
                     let asset = compilation.assets[file];
                     let result = babel.transform(asset.source(), {
                         compact: false,
                         plugins: [
-                            ['transform-remove-props', {regex: /^(\$rule)$/}]
+                            [{
+                                visitor: {
+                                    ObjectProperty: function ObjectProperty(path) {
+                                        var key = path.node.key;
+                                        var name = '';
+                                        if (types.isIdentifier(key)) {
+                                            name = key.name;
+                                        } else if (types.isStringLiteral(key)) {
+                                            name = key.value;
+                                        }
+                                        if (/^\$rule$/.test(name)) {
+                                            path.remove();
+                                        }
+                                    }
+                                }
+                            }]
+                            //['transform-remove-props', {regex: /^\$rule$/}]
                         ]
                     });
                     asset.source = ()=> result.code;

@@ -16,12 +16,11 @@ export default {
 		//let ufp = this._updateFromParent;
     this.$newChildren = [];   
     //let location = util.locate(this);
-		this.$location = this.$parent ? this.$parent.$location + '.' + this.$parent.$newChildren.length : '0';
-
+		this.$location = this.$parent ? this.$parent.$location + '.' + this.$parent.$newChildren.length : (this.$options.$global && this.$options.name ? this.$options.name : this._uid);
 		if(this.$parent) {
 			this.$parent.$newChildren.push(this);
 		}
-
+    
 		if(!this.$options.$global) {
 			this.$config = this.__STORE__[this.$location] || {};
 		} else {

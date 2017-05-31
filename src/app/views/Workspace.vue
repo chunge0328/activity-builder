@@ -211,7 +211,7 @@
                 </div>
             </div>
             <div class="workspace__preview-area" v-bind:class="{none: !modebtns[2].selected}">
-            	<webview ref="preview" class="workspace__preview" src="https://www.baidu.com"></webview>
+            	<webview ref="preview" class="workspace__preview" src="http://127.0.0.1:8092/build/index.html"></webview>
             </div>
         </div>
         <edit-bar class="workspace__edit-bar" :instance="inspectedInstance" :storage="configStorage" :inspectedContext="inspectedContext"></edit-bar>
@@ -386,7 +386,7 @@
             },
 
             _relocateStorage: function(op, src, to) {
-                let prefix = '0.0.';
+                let prefix = 'Root.0.';
                 let srcLevels = [];
                 let toLevels = [];
                 let self = this;
@@ -508,7 +508,18 @@
             },
 
 			openPreviewView: function() {
-				
+                let $msg = this.$message({
+                    message: '正在编译...请稍后',
+                    duration: 0
+                })
+				support.ssrRender(()=> {
+                    $msg.close();
+                    this.$message({
+                        message: 'Done! 编译成功!',
+                        type: 'success'
+                    });
+                    this.$refs.preview.reload();
+                });
 			},
 
 			openDesignView: function() {

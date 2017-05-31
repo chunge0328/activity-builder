@@ -1,10 +1,11 @@
 import { inDoc } from './util'
 
-var overlay;
-var doc = document;
-var isFixed = false;
-var overlayColor = 'rgba(104, 182, 255, 0.35)';
-var clickOverlayCallback = null;
+let overlay;
+let doc = document;
+let isFixed = false;
+let overlayColor = 'rgba(104, 182, 255, 0.35)';
+let clickOverlayCallback = null;
+let resizeTimer = -1;
 
 export function setHighlightColor(color) {
   overlayColor = color
@@ -31,11 +32,20 @@ export function unFixedNode() {
 
 export function highlight (instance, callback) {
   if (!instance) return
-  const rect = getInstanceRect(instance)
-  clickOverlayCallback = callback
-  if (rect) {
-    showOverlay(rect)
+  function _showOverlay() {
+    const rect = getInstanceRect(instance)
+    if (rect) {
+      showOverlay(rect)
+    }
   }
+  function resizeOverlay() {
+    _showOverlay();
+    resizeTimer = setTimeout(resizeOverlay, 100);
+  }
+  clickOverlayCallback = callback
+  _showOverlay()
+  clearTimeout(resizeTimer)
+  resizeTimer = setTimeout(resizeOverlay, 100);
 }
 
 /**
@@ -43,7 +53,8 @@ export function highlight (instance, callback) {
  */
 
 export function unHighlight () {
-  clickOverlayCallback = null;
+  clickOverlayCallback = null
+  clearTimeout(resizeTimer)
   if (overlay && overlay.parentNode) {
     doc.body.removeChild(overlay)
   }

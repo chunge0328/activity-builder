@@ -73,11 +73,17 @@
 			<div class="dialog" v-show="open" @click.stop v-bind:style="{'z-index': zIndex}">
 				<div class="dialog-header">
 					<component v-if="!!title.cid" v-bind:is="title"></component>
-					<slot v-else name="title">{{title}}</slot>
+					<slot v-else name="title">
+            <div v-html="title">
+            </div>
+          </slot>
 				</div>
 				<div class="dialog-body" v-if="!!content">
 					<component v-if="!!content.cid" v-bind:is="content"></component>
-					<slot v-else name="content">{{content}}</slot>
+					<slot v-else name="content" >
+           <div v-html="content">
+           </div>     
+          </slot>
 				</div>
 				<div class="dialog-footer">
 					<button class="cancel-btn" v-show="mode == 'confirm'" @click="handleCancel">{{cancelBtnTxt}}</button>
