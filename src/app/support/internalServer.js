@@ -45,6 +45,7 @@ function _flushFile(data, configStorage) {
 let appTpl = 
 `<template>
 <div id="app" class="app" v-bind:style="{'background-color': appBgColor}">
+  <div style="position:relative">
 `;
 	data.forEach(function(comp) {
 		  appTpl += 
@@ -52,6 +53,7 @@ let appTpl =
 	});
 	appTpl += 
 `
+    </div>
   </div>
 </template>
 `;
@@ -109,7 +111,7 @@ function _init(callback) {
 	    context: path.join(process.cwd(), "/src"),
 	    entry: {
             index: ["webpack/hot/dev-server", `webpack-dev-server/client?${config.INTERNAL_SERVER_HOST}`, "./app/activity/entry-client"],
-            vendor: ["vue", "vuex"]
+            vendor: ["vue", "vuex", "vue-resource"]
       },
 	    output: {
 	        path: config.ACTIVITY_BUILD_DIR,
@@ -149,7 +151,7 @@ function _init(callback) {
 	          test: /\.(png|jpg|gif|svg|jpeg)$/,
 	          loader: 'file-loader',
 	          options: {
-	            name: '[name].[ext]'
+	            name: 'images/[name].[ext]'
 	          }
 	        }
 	      ]
@@ -189,6 +191,7 @@ function _init(callback) {
   		quiet: true,
   		noInfo: false,
   		lazy: false,
+      disableHostCheck: true,
       overlay: {
           warnings: false,
           errors: true

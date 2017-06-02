@@ -15,7 +15,7 @@
 <template>
     <ul class="awardlist">
      <li v-for="img in awardImg">
-       <img v-bind:src="img.url" v-bind:style="{'height':img.height/2+'px'}">
+       <img v-bind:src="img.url" v-bind:style="{'height':(img.height/1080*10).toFixed(6)+'rem'}">
      </li>
     </ul>
 </template>

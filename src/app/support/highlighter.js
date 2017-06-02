@@ -56,7 +56,9 @@ export function unHighlight () {
   clickOverlayCallback = null
   clearTimeout(resizeTimer)
   if (overlay && overlay.parentNode) {
-    doc.body.removeChild(overlay)
+    try {
+      doc.body.removeChild(overlay)
+    } catch(err) {}
   }
   overlay = null;
 }

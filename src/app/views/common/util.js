@@ -42,5 +42,20 @@ export default {
 		} else {
 			return val.split('(')[1].split(')')[0].split(',').map((str)=> Number(str.trim()));
 		}
+	},
+
+	getLocalIps: function() {
+		var os = nodeRequire('os');
+		var interfaces = os.networkInterfaces();
+		var addresses = [];
+		for (var k in interfaces) {
+			for (var k2 in interfaces[k]) {
+				var address = interfaces[k][k2];
+				if (address.family === 'IPv4' && !address.internal) {
+					addresses.push(address.address);
+				}
+			}
+		}
+		return addresses;
 	}
 }

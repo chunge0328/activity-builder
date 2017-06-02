@@ -34,9 +34,26 @@
             min-height: 640px;
         }
 
-        &__preview, &__design {
+        &__preview, &__design-container, &__design {
             width: 100%;
             height: 100%;
+        }
+
+        &__qrcode-container {
+            position: absolute;
+            display: flex;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255,255, 255, .7);
+            align-items: center;
+            justify-content: center;
+        }
+
+        &__qrcode {
+            width: 240px;
+            height: 240px;
         }
 
         &__selected-comp-item {
@@ -198,11 +215,17 @@
                         </template>
         			</ul>
         		</div>
-        		<iframe ref="design" class="workspace__design" src=""></iframe>
+                <div class="workspace__design-container">
+        		    <iframe ref="design" class="workspace__design" src=""></iframe>
+                    <div class="workspace__qrcode-container" v-show="qrcodeShowed">
+                        <canvas ref="qrcode" class="workspace__qrcode" width="240" height="240"></canvas>
+                    </div>
+                </div>
                 <div class="workspace__tools-bar">
                     <ul class="workspace__tool-list">
                         <li class="workspace__tool-item" v-bind:class="{'workspace__tool-item--activated': isInspectingInstance}" @click="inspectInstance($event)"><i class="fa fa-crosshairs"></i></li>
                         <li class="workspace__tool-item" v-bind:class="{'workspace__tool-item--activated': isSelectingResizeInstance, 'workspace__tool-item--working': isResizingInstance}" @click="resize($event)"><i class="fa fa-arrows"></i></li>
+                        <li class="workspace__tool-item" @click="showQRCode()"><i class="fa fa-qrcode"></i></li>
                         <li class="workspace__tool-item" @click="reload()"><i class="fa fa-repeat"></i></li>
                         <li class="workspace__tool-item" @click="create()"><i class="fa fa-plus"></i></li>
                         <li class="workspace__tool-item" @click="save()"><i class="fa fa-save"></i></li>
@@ -214,7 +237,7 @@
             	<webview ref="preview" class="workspace__preview" src="http://127.0.0.1:8092/build/index.html"></webview>
             </div>
         </div>
-        <edit-bar class="workspace__edit-bar" :instance="inspectedInstance" :storage="configStorage" :inspectedContext="inspectedContext"></edit-bar>
+        <edit-bar class="workspace__edit-bar" :instance="inspectedInstance" :storage="configStorage"></edit-bar>
     </section>
 </template>
 <script>
@@ -227,6 +250,8 @@
     import Resizing from './common/resizing';
     import util from './common/util';
     import Enum from '../../common/enum';
+    import Config from '../config';
+    let QRCode = nodeRequire('qrcode');
     export default {
     	name: 'Workspace',
         data: function() {
@@ -245,13 +270,15 @@
                 configStorage: {},
                 selectedComponents: [],
                 needReload: false,
-                dragMoveFlag: -1
+                dragMoveFlag: -1,
+                unsyncedMsgInstance: null,
+                qrcodeShowed: false
             }
         },
         mounted: function() {
             var self = this
             support.initServer(function() {
-                self.$refs.design.src = 'http://127.0.0.1:8092/index.html';
+                self.$refs.design.src = `${Config.INTERNAL_SERVER_HOST}/index.html`;
                 // support.getCompiler().plugin('done', function() {
                 //     if(self.needReload) {
                 //         self.reload();
@@ -264,6 +291,25 @@
             remote.on(Enum.EVENTS.RELOAD, function() {
                 window.location.reload();
             });
+
+            this.$store.watch(function(state) {
+                return state.state;
+            }, function(newVal) {
+                switch(newVal) {
+                    case Enum.STATE.SYNCED:
+                            self.unsyncedMsgInstance && self.unsyncedMsgInstance.close();
+                            self.unsyncedMsgInstance = null;
+                        break;
+                    case Enum.STATE.EDITING:
+                            if(self.unsyncedMsgInstance) return;
+                            self.unsyncedMsgInstance = self.$message({
+                                message: '有未保存改动',
+                                type: 'warning',
+                                duration: 0
+                            });
+                        break;
+                }
+            });
         },     
     	activated: function() {
     		var self = this;
@@ -271,7 +317,7 @@
 	            self.$refs.design.contentWindow.addEventListener('message', function(e) {
 	            	if(e.data.type == 'webpackOk') {                       
 	            		setTimeout(function() {
-	            			self.save();
+	            			self.capture();
 	            		}, 300)
 	            	}
 	            });
@@ -288,13 +334,13 @@
 
             this.$refs.design.onload = function() {
                 setUpListener();
-                self.$refs.design.contentWindow._STORAGE_ = self.configStorage;
+                //self.$refs.design.contentWindow._STORAGE_ = self.configStorage;
                 // setTimeout(function() {
                 //     self.needReload = false;
                 // }, 300);       
             }; 
-            this.clearInspectState();
-            this.clearResizeState();    
+
+            this.clearState();
 		},	
         // deactivated: function() {
         //     this.needReload = true; 
@@ -310,7 +356,8 @@
 		},
 		watch: {
             tpl: {
-                handler : function() {
+                handler : function(newVal, oldVal) {
+                    if(oldVal && newVal._id == oldVal._id && newVal.modifiedTime == oldVal.modifiedTime) return;
                     this.selectedComponents = this.tpl.components ? JSON.parse(this.tpl.components) : [];
                     this.dragMoveFlag = this.selectedComponents.length;
                     this.configStorage = this.tpl.storage ? JSON.parse(this.tpl.storage) : {App: {propsData: {psdWidth: 1080, appBgColor: '#ffffff'}}};
@@ -318,15 +365,6 @@
                 },
                 immediate: true
             }
-            // },
-			// configStorage: {
-			// 	handler: function() {
-            //         if(this.$refs.design.contentWindow) {
-            //             this.$refs.design.contentWindow._STORAGE_ = this.configStorage;
-            //         }
-			// 	},
-			// 	deep: true
-			// }
 		},
 		methods: {
             inspectInstance: function() {
@@ -346,7 +384,7 @@
                     if(got) {
                         support.setHighlightColor('rgba(104, 182, 255, 0.35)');
                         support.highlight(got);
-                        self.inspectedContext = self.$refs.design.contentWindow;
+                        //self.inspectedContext = self.$refs.design.contentWindow;
                         self.inspectedInstance = support.getInstance(got);
                     } else {
                         support.unHighlight();
@@ -439,7 +477,7 @@
                                     this.configStorage[p] = undefined;
                                     continue;
                                 }
-                                var r = /^\d+\.\d+\.(\d+)/.exec(p);
+                                var r = /^Root\.\d+\.(\d+)/.exec(p);
                                 if(r && Number(r[1]) > src) {
                                     srcLevels.push({idx: Number(r[1]), l: p});
                                 }
@@ -476,16 +514,13 @@
                 support.flushFile(this.selectedComponents, this.configStorage);
             },
 
-            save: function() {
-                var self = this;
-                //this.clearResizeState();
-                //this.clearInspectState();
-                this.saveResizeState();
+            capture: function() {
+                let self = this;
                 remote.capturePage(this._transformRect(this.$refs.design.getBoundingClientRect()), function(imageData) {
 	                let data = {
                         title: self.tpl.title, 
-                        createdTime: self.tpl.createdTime || Date.now(), 
-                        modifiedTime: Date.now(), 
+                        createdTime: self.tpl.createdTime, 
+                        modifiedTime:  self.tpl.modifiedTime, 
                         components: JSON.stringify(self.selectedComponents),
                         storage: JSON.stringify(self.configStorage),
                         snapshot: imageData,
@@ -495,16 +530,97 @@
 		                support.getDB().insert(data, function (err, newDoc) {
 		                	if(err) return;
                             self.$store.commit('setActiveTpl', newDoc);
+                            self.$message({
+                                message: '更新成功',
+                                type: 'success'
+                            });
 	                    });
 		            } else {
 		            	support.getDB().update({_id: self.tpl._id}, data, {returnUpdatedDocs: true}, function(err, numReplaced, doc) {
                             if(err) return;
                             if(numReplaced) {
                                 self.$store.commit('setActiveTpl', doc);
+                                self.$message({
+                                    message: '更新成功',
+                                    type: 'success'
+                                });
                             }
 		            	});
 		            }
                 });   
+            },
+
+            save: function() {
+                var self = this;
+                let data = {
+                    title: self.tpl.title, 
+                    createdTime: self.tpl.createdTime || Date.now(), 
+                    modifiedTime: Date.now(), 
+                    components: JSON.stringify(self.selectedComponents),
+                    storage: JSON.stringify(self.configStorage),
+                    snapshot: self.tpl.snapshot,
+                    local: true
+                };
+                this.clearState();
+                //this.$store.replaceState({state: Enum.STATE.SYNCING});
+                this.$store.commit('setState', Enum.STATE.SYNCING);
+                if(!self.tpl._id) {
+                    support.getDB().insert(data, function (err, newDoc) {
+                        if(err) return;
+                        self.$store.commit('setActiveTpl', newDoc);
+                        //self.$store.replaceState({state: Enum.STATE.SYNCED});
+                        self.$store.commit('setState', Enum.STATE.SYNCED);
+                        self.$message({
+                            message: '保存成功',
+                            type: 'success'
+                        });
+                    });
+                } else {
+                    support.getDB().update({_id: self.tpl._id}, data, {returnUpdatedDocs: true}, function(err, numReplaced, doc) {
+                        if(err) return;
+                        if(numReplaced) {
+                            self.$store.commit('setActiveTpl', doc);
+                            //self.$store.replaceState({state: Enum.STATE.SYNCED});
+                            self.$store.commit('setState', Enum.STATE.SYNCED);
+                            self.$message({
+                                message: '保存成功',
+                                type: 'success'
+                            });
+                        }
+                    });
+                }
+                // remote.capturePage(this._transformRect(this.$refs.design.getBoundingClientRect()), function(imageData) {
+	            //     let data = {
+                //         title: self.tpl.title, 
+                //         createdTime: self.tpl.createdTime || Date.now(), 
+                //         modifiedTime: Date.now(), 
+                //         components: JSON.stringify(self.selectedComponents),
+                //         storage: JSON.stringify(self.configStorage),
+                //         snapshot: imageData,
+                //         local: true
+                //     };
+	            //     if(!self.tpl._id) {
+		        //         support.getDB().insert(data, function (err, newDoc) {
+		        //         	if(err) return;
+                //             self.$store.commit('setActiveTpl', newDoc);
+                //             self.$message({
+                //                 message: '保存成功',
+                //                 type: 'success'
+                //             });
+	            //         });
+		        //     } else {
+		        //     	support.getDB().update({_id: self.tpl._id}, data, {returnUpdatedDocs: true}, function(err, numReplaced, doc) {
+                //             if(err) return;
+                //             if(numReplaced) {
+                //                 self.$store.commit('setActiveTpl', doc);
+                //                 self.$message({
+                //                     message: '保存成功',
+                //                     type: 'success'
+                //                 });
+                //             }
+		        //     	});
+		        //     }
+                // });   
             },
 
 			openPreviewView: function() {
@@ -543,7 +659,7 @@
 
             dragEnterSelectedComp: function(index, $event) {
                 if(this.isDragingSelectedComp) return;
-                if($event.target.classList.contains('workspace__selected-comp-item--move')) {
+                if($event.target.classList.contains('workspace__selected-comp-item--moving')) {
                     this.dragMoveFlag = index + 1;
                 } else {
                     this.dragMoveFlag = index;
@@ -603,6 +719,7 @@
 
             reload: function() {
             	//this.$refs.design.contentWindow.location.reload();
+                this.clearState();
                 let location = this.$refs.design.contentWindow.location;
                 this.$refs.design.src = location.href.replace(location.search, '') + '?_=' + Date.now();
             },
@@ -616,6 +733,7 @@
             },
 
             create: function() {
+                this.clearState();
             	this.save();
             	this.$store.commit('setActiveTpl', {});
             },
@@ -638,7 +756,9 @@
                         support.setHighlightColor('rgba(24, 255, 255, 0.35)');
                         support.highlight(got, function() {
                             self.isResizingInstance = true;
-                            new Resizing(got, self.configStorage[support.getInstance(got).$location]).activate();
+                            new Resizing(got, self.configStorage[support.getInstance(got).$location], function() {
+                                self.$store.commit('setState', Enum.STATE.EDITING);
+                            }).activate();
                             support.unHighlight();
                         });
                     } 
@@ -649,6 +769,8 @@
                 let doc = this.$refs.design.contentWindow.document;
                 support.unHighlight();
                 support.unFixedNode();
+                this.saveResizeState();
+                Resizing.deactivateAll();
                 this.inspectedInstance = null;
                 doc.documentElement.onmousemove = null;
                 this.isSelectingResizeInstance = false;
@@ -659,12 +781,31 @@
                 let obj = Resizing.getTop();
                 if(obj) {
                     let instance = support.getInstance(obj.instance);
-                    let location = instance.$options.$global ? instance.$options.name : instance.$location;
-                    if(!this.configStorage[location]) {
-                        util.initConfig(this.configStorage, location);
+                    if(instance) {
+                        let location = instance.$options.$global ? instance.$options.name : instance.$location;
+                        if(!this.configStorage[location]) {
+                            util.initConfig(this.configStorage, location);
+                        }
+                        Vue.set(this.configStorage[location], 'staticStyle', Object.assign({}, this.configStorage[location]['staticStyle'], obj.posData));
                     }
-                    Vue.set(this.configStorage[location], 'staticStyle', obj.posData);
                     Resizing.deactivateAll();
+                }
+            },
+
+            clearState: function() {
+                this.clearResizeState();
+                this.clearInspectState();
+            },
+
+            showQRCode: function() {
+                let ips = util.getLocalIps();
+                if(ips.length) {
+                    this.qrcodeShowed = !this.qrcodeShowed;
+                    QRCode.toCanvas(this.$refs.qrcode, `http://${ips[0]}:${Config.INTERNAL_SERVER_PORT}/index.html`, function (error) {
+                        if (error) console.error(error)
+                    });
+                } else {
+                    this.$message.error('网络异常！请检查');
                 }
             }
 		},

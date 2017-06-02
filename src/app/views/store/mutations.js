@@ -16,5 +16,8 @@ export default {
 	},
 	setActiveTab(state, tab) {
 		state.activeTab = tab;
+	},
+	setState(state, newState) {
+		state.state = newState;
 	}
 }

@@ -161,6 +161,7 @@
 	import util from './common/util';
 	import config from '../config';
 	import Enum from '../components/common/enum';
+	import Enum2 from '../../common/enum';
 	const fs = nodeRequire('fs');
 	const path = nodeRequire('path');
 	const shortid = nodeRequire('shortid');
@@ -187,8 +188,8 @@
 			storage: {
 				type: Object
 			},
-			inspectedContext: {
-				type: Object
+			callback: {
+				type: Function
 			}
 		},
 		data: function() {
@@ -210,7 +211,8 @@
 							['link', 'image']
 						]
 					}
-				}
+				},
+				recordedUID: -1
 			}
 		},
 		computed: {
@@ -222,7 +224,7 @@
 				for(let key in $props) {
 					let p = $props[key];
 					let $rule = p.$rule = p.$rule || {};
-					if($props.hasOwnProperty(key) && (typeof $props[key].configurable == 'undefined' || $props[key].configurable)) {
+					if(typeof $props[key].configurable == 'undefined' || $props[key].configurable) {
 						if(!$rule.clazz && p.type) {
 							if(oToStr.call(p.type) == '[object Array]') {
 								$rule.clazz = p.type[0].name;
@@ -235,9 +237,21 @@
 						props.push({key: key, prop: p});
 					}
 				}
-				props = props.sort(function(a, b) {
-					return a.key > b.key;
+				let meta = [];
+				let normal = [];
+				props.forEach(function(item) {
+					if(/^\$/.test(item.key)) {
+						meta.push(item);
+					} else {
+						normal.push(item);
+					}
 				});
+				meta.sort((a, b)=> a.key > b.key);
+				normal.sort((a, b)=> a.key > b.key);
+				// props = props.sort(function(a, b) {
+				// 	return a.key > b.key;
+				// });
+				props = meta.concat(normal);
 				this.watchConfig(props);
 				return props;
 			},
@@ -256,23 +270,35 @@
 		},
 		methods: {
 			watchConfig: function(props) {
-				if(this.instance._recorded) return;
+				if(this.recordedUID == this.instance._uid) return;
 				let self = this;
 				//let location = util.locate(this.instance);
 				let location = this.instance.$options.$global ? this.instance.$options.name : this.instance.$location;
 				if(!this.storage[location]) {
 					util.initConfig(this.storage, location);
 				}
-				
+				let oToStr = Object.prototype.toString;
 				props.forEach(function(p) {
 					self.instance.$watch(p.key, function(newVal, oldVal) {
-						Vue.set(self.storage[location]['propsData'], p.key, newVal);
+						if(p.key == '$pos') {
+							let staticStyle = self.storage[location]['staticStyle'];
+							Vue.set(self.storage[location], 'staticStyle', Object.assign({}, staticStyle || {}, {position: !newVal　? 'absolute' : ''}));
+						}
+						if(oToStr.call(newVal) == '[object Array]') {
+							Vue.set(self.storage[location]['propsData'], p.key, [].concat(newVal));
+						} else if(oToStr.call(newVal) == '[object Array]') {
+							Vue.set(self.storage[location]['propsData'], p.key, Object.assign({}, newVal));
+						} else {
+							Vue.set(self.storage[location]['propsData'], p.key, newVal);
+						}
+						
+						self.$store.commit('setState', Enum2.STATE.EDITING);
 					});
 				});
-				this.instance._recorded = true;
+				//this.instance.$recorded = true;
+				this.recordedUID = this.instance._uid;
 			},
 			handleFileRequest: function(opts) {
-        console.log('xxxxxx=>',opts);
 				let p = new Promise(function(resolve, reject) {
 					let rs = fs.createReadStream(opts.file.path);
 					let newName = shortid.generate() + path.extname(opts.file.name);
@@ -303,30 +329,54 @@
 				return p;
 			},
 			handleFileSuccess: function(key) {
-        console.log('======>',this.instance)
+				//let flag = false;
 				function _handleFileSuccess(key, response, file, fileList) {
 					if(!Array.isArray(this.instance[key])) {
 						this.instance[key] = response;
 					} else {
-						this.instance[key].push(response);
-            this.instance.$forceUpdate();
+						//console.log(this.instance[key].__ob__);
+						
+						
+						// if(!this.instance[key].length) { //todo hack!!
+						// 	this.instance[key][0]
+						// } else {
+							this.instance[key].push(response);
+						// }
+						// if(!flag) {
+						// 	this.instance[key].push = function(val) {
+						// 		console.log(666);
+						// 		Array.prototype.push.call(this, val);
+						// 	}
+						// 	flag = true;
+						// }
+						let arr = this.storage[this.instance.$location]['propsData'][key] || [];
+						arr.push(response);
+						Vue.set(this.storage[this.instance.$location]['propsData'], key, [].concat(arr));
+						this.$store.commit('setState', Enum2.STATE.EDITING);
+						
+						this.instance.$forceUpdate();
 					}
 					this.$forceUpdate();
 				}
 				return _handleFileSuccess.bind(this, key);
 			},
 			handleFileRemove: function(key) {
-				let self = this;
 				function _handleFileRemove(key, file, fileList) {
 					if(!Array.isArray(this.instance[key])) {
-						self.instance[key] = {};
+						this.instance[key] = {};
 					} else {
-						let len = self.instance[key].length;
+						let len = this.instance[key].length;
 						while(len) {
 							len--;
-							if(path.basename(self.instance[key][len].url) == path.basename(file.url)) {
-								self.instance[key].splice(len, 1);
-                this.instance.$forceUpdate();
+							if(path.basename(this.instance[key][len].url) == path.basename(file.url)) {
+								this.instance[key].splice(len, 1);
+
+								let arr = [].concat(this.storage[this.instance.$location]['propsData'][key] || []);
+								arr.splice(len, 1);
+								Vue.set(this.storage[this.instance.$location]['propsData'], key, arr);
+								this.$store.commit('setState', Enum2.STATE.EDITING);
+								this.instance.$forceUpdate();
+								//this.instance[key] = [].concat(this.instance[key]);
 								break;
 							}
 						}

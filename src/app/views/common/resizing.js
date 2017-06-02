@@ -17,18 +17,19 @@ const DIMENSION = 'DIMENSION';
 const CANVAS_ID = 'resizing-canvas';
 class Resizing {
 
-    constructor(instance, config) {
+    constructor(instance, config, changeCallback) {
         this.instance = instance;
         this.el = this.instance.el;
         this.state = -1;
         this.disposed = false;
+        this.changeCallback = changeCallback || function() {};
         let values = util.parseTrasfromValue(window.getComputedStyle(this.el).transform);
         if(config && config.staticStyle) {
             //if(!usePos) {
                 this.posData = {
                     width: config.staticStyle.width,
                     height: config.staticStyle.height,
-                    transform: `translate(${~~values[4]}px,'${~~values[5]}px)`
+                    transform: `translate(${~~values[4]/360*10}rem, ${~~values[5]/360*10}rem)`
                 };
             // } else  {
             //    this.posData = {
@@ -44,7 +45,7 @@ class Resizing {
             //if(!usePos) {
                 
                 this.posData = {
-                    transform: `translate(${~~values[4]}px,'${~~values[5]}px)`
+                    transform: `translate(${~~values[4]/360*10}rem,${~~values[5]/360*10}rem)`
                 };
             // } else {
             //     this.posData = {
@@ -123,9 +124,12 @@ class Resizing {
         ctx.beginPath();
         
         let {left, top, right, bottom, width, height} = this.el.getBoundingClientRect();
-        width = parseInt(width);
-        height = parseInt(height);
-        //console.log(this._canvas.width, this._canvas.height, top);
+        left = ~~left;
+        top = ~~top;
+        right = ~~right;
+        bottom = ~~bottom;
+        width = ~~width;
+        height = ~~height;
         ctx.fillStyle = ctx.strokeStyle = '#FFA500';
         ctx.font = '12px serif';
         ctx.lineWidth = 1;
@@ -137,14 +141,14 @@ class Resizing {
         ctx.moveTo(left + width / 2, 0);
         ctx.lineTo(left + width / 2, top);
         ctx.stroke();
-        ctx.fillText(top, left + width / 2 + 2, top / 2);
+        ctx.fillText(top, left + width / 2 + 2, ~~(top / 2));
         ctx.restore();
 
         ctx.save();
         ctx.moveTo(0, top + height / 2);
         ctx.lineTo(left, top + height / 2);
         ctx.stroke();
-        ctx.fillText(left, left / 2 - ctx.measureText(left).width / 2, top + height / 2 - 2);
+        ctx.fillText(left, left / 2 - ctx.measureText(left).width / 2, ~~(top + height / 2 - 2));
         ctx.restore();
 
         ctx.save();
@@ -152,7 +156,7 @@ class Resizing {
         ctx.lineTo(this._canvas.width, top + height / 2);
         ctx.stroke();
         let rDistance = this._canvas.width - right;
-        ctx.fillText(rDistance, right + rDistance / 2 - ctx.measureText(rDistance).width / 2, top + height / 2 - 2);
+        ctx.fillText(rDistance, right + rDistance / 2 - ctx.measureText(rDistance).width / 2, ~~(top + height / 2 - 2));
         ctx.restore();
 
         ctx.save();
@@ -160,7 +164,7 @@ class Resizing {
         ctx.lineTo(left + width / 2, this._canvas.height);
         ctx.stroke();
         let bDistance = this._canvas.height - bottom;
-        ctx.fillText(bDistance, left + width / 2 + 2,  bottom + bDistance / 2);
+        ctx.fillText(bDistance, left + width / 2 + 2,  ~~(bottom + bDistance / 2));
         ctx.restore();
 
         ctx.restore();
@@ -174,11 +178,13 @@ class Resizing {
         let oldPosX = ~~event.clientX;
         let oldPosY = ~~event.clientY;
         if(this.el.dataset['x'] === undefined && this.posData['transform']) {
-            this.el.dataset['x'] = this.posData['transform'].match(/-?\d+/g)[0];
+            this.el.dataset['x'] = 
+                Number(this.posData['transform'].match(/-?[0-9\.]+/g)[0]) * 360 / 10;
             //this.el.dataset['x'] = values[4];
         }
         if(this.el.dataset['y'] === undefined && this.posData['transform']) {
-            this.el.dataset['y'] = this.posData['transform'].match(/-?\d+/g)[1];
+            this.el.dataset['y'] = 
+                Number(this.posData['transform'].match(/-?[0-9\.]+/g)[1]) * 360 / 10;
             //this.el.dataset['y'] = values[5];
         }
         let oldDeltaX = this.el.dataset['x'] ? Number(this.el.dataset['x']) : 0;
@@ -203,94 +209,95 @@ class Resizing {
                     self.el.style.webkitTransform 
                         = self.posData['transform'] 
                         = self.posData['webkitTransform'] 
-                        = 'translate(' + deltaX + 'px,' + deltaY + 'px)';
+                        = 'translate(' + self.pxTorem(deltaX) + ',' + self.pxTorem(deltaY) + ')';
                     self.el.dataset['x'] = deltaX;
                     self.el.dataset['y'] = deltaY;
                     break;
                 case LEFT_TOP:
                     var deltaX = ~~event.clientX - oldPosX;
                     var deltaY = ~~event.clientY - oldPosY;
-                    self.el.style.width = self.posData['width'] = offsetWidth - deltaX + 'px';
-                    self.el.style.height = self.posData['height'] = offsetHeight - deltaY + 'px';
+                    self.el.style.width = self.posData['width'] = self.pxTorem(offsetWidth - deltaX);
+                    self.el.style.height = self.posData['height'] = self.pxTorem(offsetHeight - deltaY);
                     self.el.style.webkitTransform 
                         = self.posData['transform'] 
                         = self.posData['webkitTransform'] 
-                        = 'translate(' + (oldDeltaX + deltaX) + 'px,' + (oldDeltaY + deltaY) + 'px)';
+                        = 'translate(' + self.pxTorem(oldDeltaX + deltaX) + ',' + self.pxTorem(oldDeltaY + deltaY) + ')';
                     self.el.dataset['x'] = oldDeltaX + deltaX;
                     self.el.dataset['y'] = oldDeltaY + deltaY;
                     break;
                 case LEFT:
                     var deltaX = ~~event.clientX - oldPosX;
-                    self.el.style.width = self.posData['width'] = offsetWidth - deltaX + 'px';
+                    self.el.style.width = self.posData['width'] = self.pxTorem(offsetWidth - deltaX);
                     self.el.style.webkitTransform 
                         = self.posData['transform'] 
                         = self.posData['webkitTransform'] 
-                        =  'translate(' + (oldDeltaX + deltaX) + 'px,' + (oldDeltaY) + 'px)';
+                        =  'translate(' + self.pxTorem(oldDeltaX + deltaX) + ',' + self.pxTorem(oldDeltaY) + ')';
                     self.el.dataset['x'] = oldDeltaX + deltaX;
                     break;
                 case LEFT_BOTTOM:
                     var deltaX = ~~event.clientX - oldPosX;
                     var deltaY = ~~event.clientY - oldPosY;
-                    self.el.style.width = self.posData['width'] = offsetWidth - deltaX + 'px';
-                    self.el.style.height = self.posData['height'] = offsetHeight + deltaY + 'px';
+                    self.el.style.width = self.posData['width'] = self.pxTorem(offsetWidth - deltaX);
+                    self.el.style.height = self.posData['height'] = self.pxTorem(offsetHeight + deltaY);
                     self.el.style.webkitTransform 
                         = self.posData['transform'] 
                         = self.posData['webkitTransform'] 
-                        = 'translate(' + (oldDeltaX + deltaX) + 'px,' + (oldDeltaY) + 'px)';
+                        = 'translate(' + self.pxTorem(oldDeltaX + deltaX) + ',' + self.pxTorem(oldDeltaY) + ')';
                     self.el.dataset['x'] = oldDeltaX + deltaX;
                     self.el.dataset['y'] = oldDeltaY;
                     break;
                 case TOP:
                     var deltaY = ~~event.clientY - oldPosY;
-                    self.el.style.height = self.posData['height'] = offsetHeight - deltaY + 'px';
+                    self.el.style.height = self.posData['height'] = self.pxTorem(offsetHeight - deltaY);
                     self.el.style.webkitTransform 
                         = self.posData['transform'] 
                         = self.posData['webkitTransform'] 
-                        = 'translate(' + (oldDeltaX) + 'px,' + (oldDeltaY + deltaY) + 'px)';
+                        = 'translate(' + self.pxTorem(oldDeltaX) + ',' + self.pxTorem(oldDeltaY + deltaY) + ')';
                     self.el.dataset['y'] = oldDeltaY + deltaY;
                     break;
                 case RIGHT_TOP:
                     var deltaX = ~~event.clientX - oldPosX;
                     var deltaY = ~~event.clientY - oldPosY;
-                    self.el.style.width = self.posData['width'] = offsetWidth + deltaX + 'px';
-                    self.el.style.height = self.posData['height'] = offsetHeight - deltaY + 'px';
+                    self.el.style.width = self.posData['width'] = self.pxTorem(offsetWidth + deltaX);
+                    self.el.style.height = self.posData['height'] = self.remTorem(offsetHeight - deltaY);
                     self.el.style.webkitTransform 
                         = self.posData['transform'] 
                         = self.posData['webkitTransform'] 
-                        = 'translate(' + (oldDeltaX) + 'px,' + (oldDeltaY + deltaY) + 'px)';
+                        = 'translate(' + self.pxTorem(oldDeltaX) + ',' + self.pxTorem(oldDeltaY + deltaY) + ')';
                     self.el.dataset['y'] = oldDeltaY + deltaY;
                     break;
                 case RIGHT:
                     var deltaX = ~~event.clientX - oldPosX;
-                    self.el.style.width = self.posData['width'] = offsetWidth + deltaX + 'px';
+                    self.el.style.width = self.posData['width'] = self.pxTorem(offsetWidth + deltaX);
                     self.el.style.webkitTransform 
                         = self.posData['transform'] 
                         = self.posData['webkitTransform'] 
-                        = 'translate(' + (oldDeltaX) + 'px,' + (oldDeltaY) + 'px)';
+                        = 'translate(' + self.pxTorem(oldDeltaX) + ',' + self.pxTorem(oldDeltaY) + ')';
                     break;
                 case RIGHT_BOTTOM:
                     var deltaX = ~~event.clientX - oldPosX;
                     var deltaY = ~~event.clientY - oldPosY;
-                    self.el.style.width = self.posData['width'] = offsetWidth + deltaX + 'px';
-                    self.el.style.height = self.posData['height'] = offsetHeight + deltaY + 'px';
+                    self.el.style.width = self.posData['width'] = self.pxTorem(offsetWidth + deltaX);
+                    self.el.style.height = self.posData['height'] = self.pxTorem(offsetHeight + deltaY);
                     self.el.style.webkitTransform 
                         = self.posData['transform'] 
                         = self.posData['webkitTransform'] 
-                        = 'translate(' + (oldDeltaX) + 'px,' + (oldDeltaY) + 'px)';
+                        = 'translate(' + self.pxTorem(oldDeltaX) + ',' + self.pxTorem(oldDeltaY) + ')';
                     break;
                 case BOTTOM:
                     var deltaY = ~~event.clientY - oldPosY;
-                    self.el.style.height = self.posData['height'] = offsetHeight + deltaY + 'px';
+                    self.el.style.height = self.posData['height'] = self.pxTorem(offsetHeight + deltaY);
                     self.el.style.webkitTransform 
                         = self.posData['transform'] 
                         = self.posData['webkitTransform'] 
-                        = 'translate(' + (oldDeltaX) + 'px,' + (oldDeltaY) + 'px)';
+                        = 'translate(' + self.pxTorem(oldDeltaX) + ',' + self.pxTorem(oldDeltaY) + ')';
                     break;
             }
             //self._drawCanvas();
         }
         ownerDocument.addEventListener('mousemove', onDocumentElMouseMove, true);
         ownerDocument.addEventListener('mouseup', onDocumentElMouseUp, true);
+        self.changeCallback();
         event.stopPropagation();
     }
 
@@ -377,7 +384,9 @@ class Resizing {
             this._dispose();
         }
     }
-
+    pxTorem(px) {
+      return (px/360*10).toFixed(6)+'rem';
+    }
     static deactivateAll() {
         activateObjs.forEach(function(obj) {
             obj._dispose();

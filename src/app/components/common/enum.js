@@ -19,7 +19,8 @@ export default {
         INSTALL_APP: 'INSTALL_APP', //下载app
         MY_AWARD: 'MY_AWARD', //我的奖品
         RULE_TXT: 'RULE_TEXT', //活动规则
-        WINNER_LIST: 'WINNER_LIST' //中奖名单
+        WINNER_LIST: 'WINNER_LIST', //中奖名单
+        ADDRESS: 'ADDRESS' //填写地址
     },
     INTERFACE_EVENT: {
         APP_PROGRESS: 'APP_PROGRESS',
@@ -31,6 +32,7 @@ export default {
         OAUTH_RESPONSE: 'OAUTH_RESPONSE',
         OAUTH_ERROR: 'OAUTH_ERROR',
         TOKEN_SUCCESS: 'TOKEN_SUCCESS',
-        TOKEN_ERROR: 'TOKEN_ERROR'
+        TOKEN_ERROR: 'TOKEN_ERROR',
+        UPDATE_TIMES: 'UPDATE_TIMES'
     }
 }

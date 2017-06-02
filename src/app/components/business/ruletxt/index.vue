@@ -1,7 +1,7 @@
 <style lang="less">
     .award-footer-sub {
         margin: 0 18px;
-        font-size: 16px;
+        font-size: 0.444rem;
         font-weight: 500;
         text-align: center;
     }

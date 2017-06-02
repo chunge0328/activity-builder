@@ -16,7 +16,7 @@ class DialogBuilder extends Builder {
 			opts = onConfirm;
 			onConfirm = undefined;
 		}
-		if(typeof content == 'function') {
+		if(typeof content == 'function' && !content.cid) {
 			onConfirm = content;
 			content = '';
 		}

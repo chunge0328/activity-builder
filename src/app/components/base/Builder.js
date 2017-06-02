@@ -1,5 +1,6 @@
 import util from '../common/util';
 import Vue from 'vue';
+import store from '../common/store';
 //const _instancePool = {};
 class Builder {
 	constructor(ctx, comp) {
@@ -27,7 +28,8 @@ class Builder {
 		document.body.appendChild(anchor);
 		var instance = new Vue({
 			el: anchor,
-			render: h => h(Proxy)
+			render: h => h(Proxy),
+      store
 		});
 		// if(key && useCache) {
 		// 	_instancePool[key].push({instance, opts});

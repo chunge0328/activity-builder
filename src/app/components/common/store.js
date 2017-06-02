@@ -4,16 +4,8 @@ import {state, mutations,actions} from './mutations'
 
 Vue.use(Vuex);
 
-// export default new Vuex.Store({
-// 	state,
-// 	mutations,
-//   actions
-// });
-
-export default function(){
-  return  new Vuex.Store({
+export default new Vuex.Store({
     state,
     mutations,
     actions
   });
-}

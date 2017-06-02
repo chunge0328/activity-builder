@@ -7,6 +7,10 @@ const ExtractTextPlugin = nodeRequire('extract-text-webpack-plugin');
 const HtmlWebpackPlugin = nodeRequire('html-webpack-plugin');
 const nodeExternals = nodeRequire('webpack-node-externals');
 const renderer = nodeRequire('vue-server-renderer').createRenderer();
+
+//const AssetsPlugin = require('assets-webpack-plugin');
+
+//const vendorConfig = require("/vendor-config.json");
 // const cacheLoderConfig = {
 //     loader: "cache-loader",
 //     options: {
@@ -46,7 +50,12 @@ const ssrCompiler = webpack({
             },
             {
                 test: /\.(png|jpg|gif|svg|jpeg)$/,
-                loader: ['ignore-loader']
+                loader: 'file-loader',
+                options: {
+                    limit: 2048,
+                    name: 'images/[name].[hash:8].[ext]'
+                },
+                exclude: /node_modules/
             }
         ]
     },
@@ -68,7 +77,7 @@ function _buildStandardCompiler(data) {
 	    context: path.join(process.cwd(), "/src"),
 	    entry: {
             index: ["./app/activity/entry-client"],
-            vendor: ["vue", "vuex"]
+            vendor: ["vue", "vuex", "vue-resource"]
         },
 	    output: {
 	        path: config.ACTIVITY_BUILD_DIR,

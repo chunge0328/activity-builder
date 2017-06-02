@@ -8,7 +8,7 @@
   }
 </style>
 <template>
-  <div class="banner" v-bind:style="{'background-image': realImg,'height':bgImg.height/2+'px'}">
+  <div class="banner" v-bind:style="{'background-image': realImg,'height':(bgImg.height/1080*10).toFixed(6)+'rem'}">
   </div>
 </template>
 <script>

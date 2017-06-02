@@ -65,10 +65,7 @@
 </style>
 <template>
   <div class="award-body" v-bind:style="{'background':bgColor}">
-    <div class="shake-container">
-      <img :class="shakeAnimate" ref="img" id="shake" :src="shakeImg.url" @click="shake">
-      <img class="shake-arc arc-1"  :src="shakeTopimg.url">
-      <img class="shake-arc arc-2"  :src="shakeDownimg.url">
+    <div class="shake-container"><img :class="shakeAnimate" ref="img" id="shake" :src="shakeImg.url" @click="shake"><img class="shake-arc arc-1"  :src="shakeTopimg.url"><img class="shake-arc arc-2"  :src="shakeDownimg.url">
     </div>
   </div>
 </template>

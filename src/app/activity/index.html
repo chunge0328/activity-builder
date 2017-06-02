@@ -45,14 +45,20 @@
 		    	list-style: none;
 		    }
 
-		    body {
+		    body, img {
 		    	font-weight: normal;
 		    	-webkit-user-select: none;
+				-webkit-user-drag: none;
 		    	overflow-x: hidden;
 		    }
+
 			a {
 				text-decoration: none;
 			}
+      ::-webkit-scrollbar {
+        width: 0;
+        height: 0;
+      }
 		</style>
 		<script type="text/javascript">
 			;(function(win, lib) {

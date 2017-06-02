@@ -12,6 +12,15 @@ function _broadcast(componentName, eventName, params) {
   });
 }
 export default {
+	props: {
+		$pos: {
+			type: Boolean,
+			default: true,
+			$rule: {
+				name: '占位'
+			}
+		}
+	},
 	beforeCreate() {
 		//let ufp = this._updateFromParent;
     this.$newChildren = [];   

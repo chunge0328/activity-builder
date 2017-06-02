@@ -31,6 +31,7 @@ function request(context, url, mutation) {
 export const state = {
   myaward: {},
   winnerList: {},
+  addressInfo: {},
   pendingRequests: []
 };
 export const mutations = {
@@ -42,7 +43,7 @@ export const mutations = {
   },
   setWinnerList(state,winnerlist) {
     state.winnerList = winnerlist
-  }
+  },
   tryAbortRequest(state, url) {
     var requests = state.pendingRequests;
     var len = requests.length;
@@ -53,6 +54,9 @@ export const mutations = {
       }
     }
   },
+  setAddressInfo(state,addressinfo) {
+     state.addressInfo = addressinfo
+  }
 };
 export const actions = {
   fetchMyAward({commit},context) {
@@ -60,5 +64,8 @@ export const actions = {
   },
   fetchWinnerList({commit},context) {
     //return request(context,'','setMyAward')
+  },
+  fetchAddressInfo({commit},content) {
+
   }
 }
