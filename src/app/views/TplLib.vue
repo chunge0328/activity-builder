@@ -78,7 +78,7 @@
 			background: #d9534f;
 			color: #fff;
 
-			:hover {
+			&:hover {
 				background: #c9302c;
 			}
 		}

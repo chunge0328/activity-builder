@@ -552,6 +552,7 @@
 
             save: function() {
                 var self = this;
+                this.clearState();
                 let data = {
                     title: self.tpl.title, 
                     createdTime: self.tpl.createdTime || Date.now(), 
@@ -561,7 +562,6 @@
                     snapshot: self.tpl.snapshot,
                     local: true
                 };
-                this.clearState();
                 //this.$store.replaceState({state: Enum.STATE.SYNCING});
                 this.$store.commit('setState', Enum.STATE.SYNCING);
                 if(!self.tpl._id) {

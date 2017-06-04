@@ -540,7 +540,7 @@ body {
   background: #d9534f;
   color: #fff;
 }
-.tpl-lib__del-btn :hover {
+.tpl-lib__del-btn:hover {
   background: #c9302c;
 }
 

@@ -8017,7 +8017,7 @@ var path = nodeRequire('path');
 var INTERNAL_SERVER_PORT = 8092;
 var ips = _util2.default.getLocalIps();
 var IP = ips.length ? ips[0] : '127.0.0.1';
-var INTERNAL_SERVER_HOST = 'http://' + IP + ':' + INTERNAL_SERVER_PORT + '/';
+var INTERNAL_SERVER_HOST = 'http://' + IP + ':' + INTERNAL_SERVER_PORT;
 var ACTIVITY_BUILD_DIR = path.join(process.cwd(), '/src/app/activity/build');
 var ACTIVITY_BASE_DIR = path.join(process.cwd(), '/src/app/activity');
 var DB_FILE = path.join(process.cwd(), '/src/data/data.db');
@@ -8107,6 +8107,20 @@ exports.default = {
 			}
 		}
 		return addresses;
+	},
+
+	hash: function hash(str) {
+		var hash = 5381,
+		    i = str.length;
+
+		while (i) {
+			hash = hash * 33 ^ str.charCodeAt(--i);
+		}
+
+		/* JavaScript does bitwise operations (like XOR, above) on 32-bit signed
+  * integers. Since we want the results to be always positive, convert the
+  * signed int to an unsigned by doing an unsigned bitshift. */
+		return hash >>> 0;
 	}
 };
 
@@ -50219,7 +50233,7 @@ var Component = __webpack_require__(16)(
   /* moduleIdentifier (server only) */
   null
 )
-Component.options.__file = "E:\\git\\game-open\\src\\app\\views\\App.vue"
+Component.options.__file = "/Users/paul/git-source/activity-builder/src/app/views/App.vue"
 if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key.substr(0, 2) !== "__"})) {console.error("named exports are not supported in *.vue files.")}
 if (Component.options.functional) {console.error("[vue-loader] App.vue: functional components are not supported with templates, they should use render functions.")}
 
@@ -50263,7 +50277,7 @@ var Component = __webpack_require__(16)(
   /* moduleIdentifier (server only) */
   null
 )
-Component.options.__file = "E:\\git\\game-open\\src\\app\\views\\TplLib.vue"
+Component.options.__file = "/Users/paul/git-source/activity-builder/src/app/views/TplLib.vue"
 if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key.substr(0, 2) !== "__"})) {console.error("named exports are not supported in *.vue files.")}
 if (Component.options.functional) {console.error("[vue-loader] TplLib.vue: functional components are not supported with templates, they should use render functions.")}
 
@@ -50307,7 +50321,7 @@ var Component = __webpack_require__(16)(
   /* moduleIdentifier (server only) */
   null
 )
-Component.options.__file = "E:\\git\\game-open\\src\\app\\views\\Workspace.vue"
+Component.options.__file = "/Users/paul/git-source/activity-builder/src/app/views/Workspace.vue"
 if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key.substr(0, 2) !== "__"})) {console.error("named exports are not supported in *.vue files.")}
 if (Component.options.functional) {console.error("[vue-loader] Workspace.vue: functional components are not supported with templates, they should use render functions.")}
 
@@ -54291,11 +54305,8 @@ var fs = nodeRequire('fs'); //
 //
 //
 //
-//
-//
 
 var path = nodeRequire('path');
-var shortid = nodeRequire('shortid');
 var mkdirp = nodeRequire('mkdirp');
 var sizeOf = nodeRequire('image-size');
 _vue2.default.component('fontsize-item', {
@@ -54331,8 +54342,7 @@ exports.default = {
 				modules: {
 					toolbar: [[{ 'size': ['small', false, 'large'] }], [{ 'header': [1, 2, 3, 4, 5, 6, false] }], [{ 'color': [] }, { 'background': [] }], [{ 'direction': 'rtl' }], [{ 'align': [] }], ['bold', 'italic', 'underline', 'strike'], [{ 'list': 'ordered' }, { 'list': 'bullet' }], ['link', 'image']]
 				}
-			},
-			recordedUID: -1
+			}
 		};
 	},
 	computed: {
@@ -54372,9 +54382,6 @@ exports.default = {
 			normal.sort(function (a, b) {
 				return a.key > b.key;
 			});
-			// props = props.sort(function(a, b) {
-			// 	return a.key > b.key;
-			// });
 			props = meta.concat(normal);
 			this.watchConfig(props);
 			return props;
@@ -54396,7 +54403,7 @@ exports.default = {
 	},
 	methods: {
 		watchConfig: function watchConfig(props) {
-			if (this.recordedUID == this.instance._uid) return;
+			if (this.instance.$recorded) return;
 			var self = this;
 			//let location = util.locate(this.instance);
 			var location = this.instance.$options.$global ? this.instance.$options.name : this.instance.$location;
@@ -54410,24 +54417,24 @@ exports.default = {
 						var staticStyle = self.storage[location]['staticStyle'];
 						_vue2.default.set(self.storage[location], 'staticStyle', (0, _assign2.default)({}, staticStyle || {}, { position: !newVal ? 'absolute' : '' }));
 					}
-					if (oToStr.call(newVal) == '[object Array]') {
+					var type = oToStr.call(newVal);
+					if (type == '[object Array]') {
 						_vue2.default.set(self.storage[location]['propsData'], p.key, [].concat(newVal));
-					} else if (oToStr.call(newVal) == '[object Array]') {
+					} else if (type == '[object Object]') {
 						_vue2.default.set(self.storage[location]['propsData'], p.key, (0, _assign2.default)({}, newVal));
 					} else {
 						_vue2.default.set(self.storage[location]['propsData'], p.key, newVal);
 					}
-
+					self.$forceUpdate();
 					self.$store.commit('setState', _enum4.default.STATE.EDITING);
 				});
 			});
-			//this.instance.$recorded = true;
-			this.recordedUID = this.instance._uid;
+			this.instance.$recorded = true;
 		},
 		handleFileRequest: function handleFileRequest(opts) {
 			var p = new _promise2.default(function (resolve, reject) {
 				var rs = fs.createReadStream(opts.file.path);
-				var newName = shortid.generate() + path.extname(opts.file.name);
+				var newName = Number(_util2.default.hash(opts.file.name)).toString(36).substring(0, 8) + path.extname(opts.file.name);
 				var dest = path.join(process.cwd(), 'src/app/activity/assets/images/' + newName);
 				var dimensions = sizeOf(opts.file.path);
 				mkdirp(path.dirname(dest), function (err) {
@@ -54460,14 +54467,8 @@ exports.default = {
 				if (!Array.isArray(this.instance[key])) {
 					this.instance[key] = response;
 				} else {
-					//console.log(this.instance[key].__ob__);
 
-
-					// if(!this.instance[key].length) { //todo hack!!
-					// 	this.instance[key][0]
-					// } else {
 					this.instance[key].push(response);
-					// }
 					// if(!flag) {
 					// 	this.instance[key].push = function(val) {
 					// 		console.log(666);
@@ -54482,7 +54483,7 @@ exports.default = {
 
 					this.instance.$forceUpdate();
 				}
-				this.$forceUpdate();
+				this.$forceUpdate(); //必须的
 			}
 			return _handleFileSuccess.bind(this, key);
 		},
@@ -54534,7 +54535,6 @@ exports.default = {
 				prop.motion = value;
 				prop.params = [];
 				self.instance[key] = (0, _assign2.default)({}, prop);
-				self.$forceUpdate();
 			}
 			return _handleMotionUpdate.bind(this, key);
 		},
@@ -54545,7 +54545,6 @@ exports.default = {
 				var prop = self.instance[key];
 				prop.params[index] = value;
 				self.instance[key] = (0, _assign2.default)({}, prop);
-				self.$forceUpdate();
 			}
 			return _handleMotionParamsUpdate.bind(this, key, index);
 		}
@@ -55297,6 +55296,7 @@ exports.default = {
 
         save: function save() {
             var self = this;
+            this.clearState();
             var data = {
                 title: self.tpl.title,
                 createdTime: self.tpl.createdTime || Date.now(),
@@ -55306,7 +55306,6 @@ exports.default = {
                 snapshot: self.tpl.snapshot,
                 local: true
             };
-            this.clearState();
             //this.$store.replaceState({state: Enum.STATE.SYNCING});
             this.$store.commit('setState', _enum2.default.STATE.SYNCING);
             if (!self.tpl._id) {
@@ -64976,7 +64975,7 @@ var Component = __webpack_require__(16)(
   /* moduleIdentifier (server only) */
   null
 )
-Component.options.__file = "E:\\git\\game-open\\node_modules\\vue-quill-editor\\src\\editor.vue"
+Component.options.__file = "/Users/paul/git-source/activity-builder/node_modules/vue-quill-editor/src/editor.vue"
 if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key.substr(0, 2) !== "__"})) {console.error("named exports are not supported in *.vue files.")}
 if (Component.options.functional) {console.error("[vue-loader] editor.vue: functional components are not supported with templates, they should use render functions.")}
 
@@ -65020,7 +65019,7 @@ var Component = __webpack_require__(16)(
   /* moduleIdentifier (server only) */
   null
 )
-Component.options.__file = "E:\\git\\game-open\\src\\app\\views\\ButtonGroup.vue"
+Component.options.__file = "/Users/paul/git-source/activity-builder/src/app/views/ButtonGroup.vue"
 if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key.substr(0, 2) !== "__"})) {console.error("named exports are not supported in *.vue files.")}
 if (Component.options.functional) {console.error("[vue-loader] ButtonGroup.vue: functional components are not supported with templates, they should use render functions.")}
 
@@ -65064,7 +65063,7 @@ var Component = __webpack_require__(16)(
   /* moduleIdentifier (server only) */
   null
 )
-Component.options.__file = "E:\\git\\game-open\\src\\app\\views\\CompsBar.vue"
+Component.options.__file = "/Users/paul/git-source/activity-builder/src/app/views/CompsBar.vue"
 if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key.substr(0, 2) !== "__"})) {console.error("named exports are not supported in *.vue files.")}
 if (Component.options.functional) {console.error("[vue-loader] CompsBar.vue: functional components are not supported with templates, they should use render functions.")}
 
@@ -65108,7 +65107,7 @@ var Component = __webpack_require__(16)(
   /* moduleIdentifier (server only) */
   null
 )
-Component.options.__file = "E:\\git\\game-open\\src\\app\\views\\EditBar.vue"
+Component.options.__file = "/Users/paul/git-source/activity-builder/src/app/views/EditBar.vue"
 if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key.substr(0, 2) !== "__"})) {console.error("named exports are not supported in *.vue files.")}
 if (Component.options.functional) {console.error("[vue-loader] EditBar.vue: functional components are not supported with templates, they should use render functions.")}
 
@@ -65225,11 +65224,6 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       attrs: {
         "placeholder": "请选择"
       },
-      on: {
-        "handleOptionClick": function($event) {
-          _vm.$forceUpdate()
-        }
-      },
       model: {
         value: (_vm.instance[p.key]),
         callback: function($$v) {
@@ -65259,11 +65253,6 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       attrs: {
         "placeholder": p.prop.$rule.placeholder || '请输入内容'
       },
-      on: {
-        "input": function($event) {
-          _vm.$forceUpdate()
-        }
-      },
       model: {
         value: (_vm.instance[p.key]),
         callback: function($$v) {
@@ -65285,11 +65274,6 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
       attrs: {
         "on-text": "是",
         "off-text": "否"
-      },
-      on: {
-        "input": function($event) {
-          _vm.$forceUpdate()
-        }
       },
       model: {
         value: (_vm.instance[p.key]),
@@ -65318,11 +65302,6 @@ module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c
     }, [_c('el-input', {
       attrs: {
         "placeholder": p.prop.$rule.placeholder || 'eg: #e5e5e5'
-      },
-      on: {
-        "input": function($event) {
-          _vm.$forceUpdate()
-        }
       },
       model: {
         value: (_vm.instance[p.key]),

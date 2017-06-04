@@ -27,133 +27,131 @@
 </style>
 <template>
 	<div class="edit-bar">
-		<!--<div class="edit-bar-inner">-->
-			<el-form label-width="80px" label-position="top">
-				<template v-for="(p, index) in props">
-					<el-form-item v-if="p.prop.$rule.clazz === Enum.CLAZZ.SELECT" :label="p.prop.$rule.name + '：'">
-						<el-select style="width:100%" v-model="instance[p.key]" placeholder="请选择" @handleOptionClick="$forceUpdate()">
-							<el-option
-								v-for="item in p.prop.$rule.options"
-								:key="item.value"
-								:label="item.label"
-								:value="item.value">
-							</el-option>
-						</el-select>
-					</el-form-item>
-					<el-form-item v-else-if="p.prop.$rule.clazz === 'String' || p.prop.$rule.clazz === 'Number'" :label="p.prop.$rule.name + '：'">
-						<el-input :placeholder="p.prop.$rule.placeholder || '请输入内容'"  v-model="instance[p.key]"  @input="$forceUpdate()"></el-input>
-					</el-form-item>
-					<el-form-item v-else-if="p.prop.$rule.clazz === 'Boolean'" :label="p.prop.$rule.name + '：'">
-						<el-switch on-text="是" off-text="否" v-model="instance[p.key]" @input="$forceUpdate()"></el-switch>
-					</el-form-item>
-					<el-form-item style="line-height: 0" v-else-if="p.prop.$rule.clazz === Enum.CLAZZ.COLOR" :label="p.prop.$rule.name + '：'">
-						<el-col :span="19">
-							<el-input :placeholder="p.prop.$rule.placeholder || 'eg: #e5e5e5'"  v-model="instance[p.key]"  @input="$forceUpdate()"></el-input>
-						</el-col>
-						<el-col :span="1">&nbsp;</el-col>
-						<el-col :span="4">
-							<el-color-picker v-model="instance[p.key]" show-alpha @change="$forceUpdate()"></el-color-picker>
-						</el-col>					
-					</el-form-item>
-					<el-form-item v-else-if="p.prop.$rule.clazz === Enum.CLAZZ.IMAGE" :label="p.prop.$rule.name + '：'">
-						<el-upload
-							list-type="picture"
-							:http-request="handleFileRequest"
-							:multiple="false"
-							:ref="p.key"
-							:disabled="instance[p.key] && instance[p.key].url"
-							:on-success="handleFileSuccess(p.key)"
-							:on-remove="handleFileRemove(p.key)"
-							:file-list="instance[p.key].url ? [{url: path.join(config.INTERNAL_SERVER_HOST, instance[p.key].url)}] : []"
-							>
-							<el-button>添加图片</el-button>
-						</el-upload>
-					</el-form-item>
-					<el-form-item v-else-if="p.prop.$rule.clazz === Enum.CLAZZ.IMAGE_ARRAY" :label="p.prop.$rule.name + '：'">
-						<el-upload
-							list-type="picture"
-							:http-request="handleFileRequest"
-							:multiple="true"
-							:ref="p.key"
-							:disabled="instance[p.key].length >= (p.prop.$rule.max || 99)"
-							:on-success="handleFileSuccess(p.key)"
-							:on-remove="handleFileRemove(p.key)"
-							:file-list="instance[p.key].map((img)=>({url: path.join(config.INTERNAL_SERVER_HOST, img.url)}))"
-							>
-							<el-button>添加图片</el-button>
-						</el-upload>
-					</el-form-item>
-					<el-form-item v-else-if="p.prop.$rule.clazz === Enum.CLAZZ.FONT_SIZE" :label="p.prop.$rule.name + '：'">
-						<el-autocomplete
-							popper-class="my-autocomplete"
-							v-model="instance[p.key]"
-							:fetch-suggestions="loadFontSizeSuggestions"
-							custom-item="fontsize-item"
-							@select="$forceUpdate()"
-							:placeholder="p.prop.$rule.placeholder || 'eg: 16px'"
-							style="width: 100%"
-							></el-autocomplete>
-					</el-form-item>
-					<el-form-item v-else-if="p.prop.$rule.clazz === Enum.CLAZZ.DATE" :label="p.prop.$rule.name + '：'">
-						<el-date-picker
-							v-model="instance[p.key]"
-							type="date"
-							:placeholder="p.prop.$rule.placeholder || '选择日期'"
-							@input="$forceUpdate()"
-							:editable="false"
-							format="yyyy-MM-dd"
-							style="width: 100%">
-						</el-date-picker>
-					</el-form-item>
-					<el-form-item v-else-if="p.prop.$rule.clazz === Enum.CLAZZ.DATE_TIME" :label="p.prop.$rule.name + '：'">
-						<el-date-picker
-							v-model="instance[p.key]"
-							type="datetime"
-							:editable="false"
-							@input="$forceUpdate()"
-							format="yyyy-MM-dd HH:mm:ss"
-							:placeholder="p.prop.$rule.placeholder || '选择日期时间'"
-							style="width: 100%">
-						</el-date-picker>
-					</el-form-item>
-					<el-form-item v-else-if="p.prop.$rule.clazz === Enum.CLAZZ.RITCH_TEXT" :label="p.prop.$rule.name + '：'">
-						<quill-editor :options="editorOption" v-model="instance[p.key]"></quill-editor>
-					</el-form-item>
-					<el-form-item v-else-if="p.prop.$rule.clazz === Enum.CLAZZ.MOTION" :label="p.prop.$rule.name + '：'">
-						<el-select style="width:100%" v-model="instance[p.key].motion" placeholder="请选择" @input="handleMotionUpdate(p.key)($event)">
-							<el-option
-								v-for="item in motions"
-								:key="item.value"
-								:label="item.label"
-								:value="item.value">
-							</el-option>
-						</el-select>
-						<template v-if="instance.__MOTIONS__[instance[p.key].motion] && instance.__MOTIONS__[instance[p.key].motion].params.length">
-							<el-form>
-								<template v-for="(param, index) in instance.__MOTIONS__[instance[p.key].motion].params">
+		<el-form label-width="80px" label-position="top">
+			<template v-for="(p, index) in props">
+				<el-form-item v-if="p.prop.$rule.clazz === Enum.CLAZZ.SELECT" :label="p.prop.$rule.name + '：'">
+					<el-select style="width:100%" v-model="instance[p.key]" placeholder="请选择">
+						<el-option
+							v-for="item in p.prop.$rule.options"
+							:key="item.value"
+							:label="item.label"
+							:value="item.value">
+						</el-option>
+					</el-select>
+				</el-form-item>
+				<el-form-item v-else-if="p.prop.$rule.clazz === 'String' || p.prop.$rule.clazz === 'Number'" :label="p.prop.$rule.name + '：'">
+					<el-input :placeholder="p.prop.$rule.placeholder || '请输入内容'"  v-model="instance[p.key]"></el-input>
+				</el-form-item>
+				<el-form-item v-else-if="p.prop.$rule.clazz === 'Boolean'" :label="p.prop.$rule.name + '：'">
+					<el-switch on-text="是" off-text="否" v-model="instance[p.key]"></el-switch>
+				</el-form-item>
+				<el-form-item style="line-height: 0" v-else-if="p.prop.$rule.clazz === Enum.CLAZZ.COLOR" :label="p.prop.$rule.name + '：'">
+					<el-col :span="19">
+						<el-input :placeholder="p.prop.$rule.placeholder || 'eg: #e5e5e5'"  v-model="instance[p.key]"></el-input>
+					</el-col>
+					<el-col :span="1">&nbsp;</el-col>
+					<el-col :span="4">
+						<el-color-picker v-model="instance[p.key]" show-alpha @change="$forceUpdate()"></el-color-picker>
+					</el-col>					
+				</el-form-item>
+				<el-form-item v-else-if="p.prop.$rule.clazz === Enum.CLAZZ.IMAGE" :label="p.prop.$rule.name + '：'">
+					<el-upload
+						list-type="picture"
+						:http-request="handleFileRequest"
+						:multiple="false"
+						:ref="p.key"
+						:disabled="instance[p.key] && instance[p.key].url"
+						:on-success="handleFileSuccess(p.key)"
+						:on-remove="handleFileRemove(p.key)"
+						:file-list="instance[p.key].url ? [{url: path.join(config.INTERNAL_SERVER_HOST, instance[p.key].url)}] : []"
+						>
+						<el-button>添加图片</el-button>
+					</el-upload>
+				</el-form-item>
+				<el-form-item v-else-if="p.prop.$rule.clazz === Enum.CLAZZ.IMAGE_ARRAY" :label="p.prop.$rule.name + '：'">
+					<el-upload
+						list-type="picture"
+						:http-request="handleFileRequest"
+						:multiple="true"
+						:ref="p.key"
+						:disabled="instance[p.key].length >= (p.prop.$rule.max || 99)"
+						:on-success="handleFileSuccess(p.key)"
+						:on-remove="handleFileRemove(p.key)"
+						:file-list="instance[p.key].map((img)=>({url: path.join(config.INTERNAL_SERVER_HOST, img.url)}))"
+						>
+						<el-button>添加图片</el-button>
+					</el-upload>
+				</el-form-item>
+				<el-form-item v-else-if="p.prop.$rule.clazz === Enum.CLAZZ.FONT_SIZE" :label="p.prop.$rule.name + '：'">
+					<el-autocomplete
+						popper-class="my-autocomplete"
+						v-model="instance[p.key]"
+						:fetch-suggestions="loadFontSizeSuggestions"
+						custom-item="fontsize-item"
+						@select="$forceUpdate()"
+						:placeholder="p.prop.$rule.placeholder || 'eg: 16px'"
+						style="width: 100%"
+						></el-autocomplete>
+				</el-form-item>
+				<el-form-item v-else-if="p.prop.$rule.clazz === Enum.CLAZZ.DATE" :label="p.prop.$rule.name + '：'">
+					<el-date-picker
+						v-model="instance[p.key]"
+						type="date"
+						:placeholder="p.prop.$rule.placeholder || '选择日期'"
+						@input="$forceUpdate()"
+						:editable="false"
+						format="yyyy-MM-dd"
+						style="width: 100%">
+					</el-date-picker>
+				</el-form-item>
+				<el-form-item v-else-if="p.prop.$rule.clazz === Enum.CLAZZ.DATE_TIME" :label="p.prop.$rule.name + '：'">
+					<el-date-picker
+						v-model="instance[p.key]"
+						type="datetime"
+						:editable="false"
+						@input="$forceUpdate()"
+						format="yyyy-MM-dd HH:mm:ss"
+						:placeholder="p.prop.$rule.placeholder || '选择日期时间'"
+						style="width: 100%">
+					</el-date-picker>
+				</el-form-item>
+				<el-form-item v-else-if="p.prop.$rule.clazz === Enum.CLAZZ.RITCH_TEXT" :label="p.prop.$rule.name + '：'">
+					<quill-editor :options="editorOption" v-model="instance[p.key]"></quill-editor>
+				</el-form-item>
+				<el-form-item v-else-if="p.prop.$rule.clazz === Enum.CLAZZ.MOTION" :label="p.prop.$rule.name + '：'">
+					<el-select style="width:100%" v-model="instance[p.key].motion" placeholder="请选择" @input="handleMotionUpdate(p.key)($event)">
+						<el-option
+							v-for="item in motions"
+							:key="item.value"
+							:label="item.label"
+							:value="item.value">
+						</el-option>
+					</el-select>
+					<template v-if="instance.__MOTIONS__[instance[p.key].motion] && instance.__MOTIONS__[instance[p.key].motion].params.length">
+						<el-form>
+							<template v-for="(param, index) in instance.__MOTIONS__[instance[p.key].motion].params">
 
-									<el-form-item v-if="param.$rule.istextarea">
-										<el-input type="textarea" autosize :placeholder="param.$rule.name || param.$rule.placeholder" v-model="instance[p.key].params[index]"  @input="handleMotionParamsUpdate(p.key, paramIndex)($event)"></el-input>
-									</el-form-item>
-                  
-                  <el-form-item v-else>
-                    <el-input :placeholder="param.$rule.name || param.$rule.placeholder" v-model="instance[p.key].params[index]"  @input="handleMotionParamsUpdate(p.key, paramIndex)($event)"></el-input>
-                  </el-form-item>
+								<el-form-item v-if="param.$rule.istextarea">
+									<el-input type="textarea" autosize :placeholder="param.$rule.name || param.$rule.placeholder" v-model="instance[p.key].params[index]"  @input="handleMotionParamsUpdate(p.key, paramIndex)($event)"></el-input>
+								</el-form-item>
+				
+								<el-form-item v-else>
+									<el-input :placeholder="param.$rule.name || param.$rule.placeholder" v-model="instance[p.key].params[index]"  @input="handleMotionParamsUpdate(p.key, paramIndex)($event)"></el-input>
+								</el-form-item>
 
-								</template>
-							</el-form>
-						</template>
-					</el-form-item>
-          <el-form-item v-else-if="p.prop.$rule.clazz === Enum.CLAZZ.CHECKBOX">
-            <el-checkbox-group 
-              v-model="instance[p.key]"
-              :min="1" @change="$forceUpdate()">
-              <el-checkbox v-for="item in p.prop.$rule.options" :label="item.name" :key="item.value">{{item.name}}</el-checkbox>
-            </el-checkbox-group>
-          </el-form-item>     
-				</template>
-			</el-form>
-		<!--</div>	-->
+							</template>
+						</el-form>
+					</template>
+				</el-form-item>
+				<el-form-item v-else-if="p.prop.$rule.clazz === Enum.CLAZZ.CHECKBOX">
+					<el-checkbox-group 
+					v-model="instance[p.key]"
+					:min="1" @change="$forceUpdate()">
+					<el-checkbox v-for="item in p.prop.$rule.options" :label="item.name" :key="item.value">{{item.name}}</el-checkbox>
+					</el-checkbox-group>
+				</el-form-item>     
+			</template>
+		</el-form>
 	</div>
 </template>
 <script>
@@ -164,7 +162,6 @@
 	import Enum2 from '../../common/enum';
 	const fs = nodeRequire('fs');
 	const path = nodeRequire('path');
-	const shortid = nodeRequire('shortid');
 	const mkdirp = nodeRequire('mkdirp');
 	const sizeOf = nodeRequire('image-size');
 	Vue.component('fontsize-item', {
@@ -211,8 +208,7 @@
 							['link', 'image']
 						]
 					}
-				},
-				recordedUID: -1
+				}
 			}
 		},
 		computed: {
@@ -248,9 +244,6 @@
 				});
 				meta.sort((a, b)=> a.key > b.key);
 				normal.sort((a, b)=> a.key > b.key);
-				// props = props.sort(function(a, b) {
-				// 	return a.key > b.key;
-				// });
 				props = meta.concat(normal);
 				this.watchConfig(props);
 				return props;
@@ -270,7 +263,7 @@
 		},
 		methods: {
 			watchConfig: function(props) {
-				if(this.recordedUID == this.instance._uid) return;
+				if(this.instance.$recorded) return;
 				let self = this;
 				//let location = util.locate(this.instance);
 				let location = this.instance.$options.$global ? this.instance.$options.name : this.instance.$location;
@@ -284,24 +277,24 @@
 							let staticStyle = self.storage[location]['staticStyle'];
 							Vue.set(self.storage[location], 'staticStyle', Object.assign({}, staticStyle || {}, {position: !newVal　? 'absolute' : ''}));
 						}
-						if(oToStr.call(newVal) == '[object Array]') {
+						let type = oToStr.call(newVal);
+						if(type == '[object Array]') {
 							Vue.set(self.storage[location]['propsData'], p.key, [].concat(newVal));
-						} else if(oToStr.call(newVal) == '[object Array]') {
+						} else if(type == '[object Object]') {
 							Vue.set(self.storage[location]['propsData'], p.key, Object.assign({}, newVal));
 						} else {
 							Vue.set(self.storage[location]['propsData'], p.key, newVal);
 						}
-						
+						self.$forceUpdate();
 						self.$store.commit('setState', Enum2.STATE.EDITING);
 					});
 				});
-				//this.instance.$recorded = true;
-				this.recordedUID = this.instance._uid;
+				this.instance.$recorded = true;
 			},
 			handleFileRequest: function(opts) {
 				let p = new Promise(function(resolve, reject) {
 					let rs = fs.createReadStream(opts.file.path);
-					let newName = shortid.generate() + path.extname(opts.file.name);
+					let newName = Number(util.hash(opts.file.name)).toString(36).substring(0, 8) + path.extname(opts.file.name);
 					let dest = path.join(process.cwd(), `src/app/activity/assets/images/${newName}`);
 					let dimensions = sizeOf(opts.file.path);
 					mkdirp(path.dirname(dest), (err)=> {
@@ -334,14 +327,8 @@
 					if(!Array.isArray(this.instance[key])) {
 						this.instance[key] = response;
 					} else {
-						//console.log(this.instance[key].__ob__);
 						
-						
-						// if(!this.instance[key].length) { //todo hack!!
-						// 	this.instance[key][0]
-						// } else {
-							this.instance[key].push(response);
-						// }
+						this.instance[key].push(response);
 						// if(!flag) {
 						// 	this.instance[key].push = function(val) {
 						// 		console.log(666);
@@ -356,7 +343,7 @@
 						
 						this.instance.$forceUpdate();
 					}
-					this.$forceUpdate();
+					this.$forceUpdate(); //必须的
 				}
 				return _handleFileSuccess.bind(this, key);
 			},
@@ -416,7 +403,6 @@
 					prop.motion = value;
 					prop.params = [];
 					self.instance[key] = Object.assign({}, prop);
-					self.$forceUpdate();
 				}
 				return _handleMotionUpdate.bind(this, key);
 			},
@@ -427,7 +413,6 @@
 					let prop = self.instance[key];
 					prop.params[index] = value;
 					self.instance[key] = Object.assign({}, prop);
-					self.$forceUpdate();
 				}
 				return _handleMotionParamsUpdate.bind(this, key, index)
 			}
