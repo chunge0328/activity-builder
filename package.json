@@ -4,8 +4,9 @@
   "description": "Meizu GameCenter Activity Builder",
   "main": "index.js",
   "scripts": {
-    "dev": "electron .",
-    "build": "set NODE_ENV=production&&electron ."
+    "dev": "set NODE_ENV=dev&&electron .",
+    "build": "electron .",
+    "build-pack": "electron-packager . activity-builder  --ignore=node_modules/.bin --ignore=.gitignore --ignore=.git --platform=win32 --arch=x64 --electron-version=1.6.6 --no-prune --overwrite"
   },
   "author": "Meizu GameCenter FrontEnd Team",
   "keywords": [],
@@ -40,6 +41,7 @@
     "webpack-node-externals": "^1.6.0"
   },
   "dependencies": {
+    "app-module-path": "^2.2.0",
     "electron": "1.6.6",
     "element-ui": "1.3.0",
     "es6-promise": "3.2.1",
@@ -50,6 +52,7 @@
     "mkdirp": "0.5.1",
     "nedb": "1.8.0",
     "qrcode": "0.8.2",
+    "shortid": "2.2.8",
     "vue": "2.3.3",
     "vue-cookie": "1.1.3",
     "vue-quill-editor": "^2.1.6",

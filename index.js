@@ -1,7 +1,7 @@
 const electron = require('electron');
 const path = require('path');
 const url = require('url');
-const IS_PRODUCTION = process.env.NODE_ENV == 'production';
+const IS_PRODUCTION = process.env.NODE_ENV != 'dev';
 let mainWindow;
 
 function createApp() {
@@ -10,7 +10,7 @@ function createApp() {
   // Module to create native browser window.
   const BrowserWindow = electron.BrowserWindow;
 
-  const service = require('./src/service');
+  const service = require('./service');
   service.setup();
 
   // Keep a global reference of the window object, if you don't, the window will
@@ -47,7 +47,7 @@ function createApp() {
     }
     // and load the index.html of the app.
     mainWindow.loadURL(url.format({
-      pathname: path.join(process.cwd(), 'src/dist/index.html'),
+      pathname: path.join(app.getAppPath(), 'dist/index.html'),
       protocol: 'file:',
       slashes: true
     }));
@@ -85,8 +85,8 @@ function createApp() {
 function compileResource() {
   const ExtractTextPlugin = require('extract-text-webpack-plugin');
   const HtmlWebpackPlugin = require('html-webpack-plugin');
-  const RELEEASE_PATH = path.join(process.cwd(), "/src/dist");
-  const CONTEXT_PATH = path.join(process.cwd(), '/src/app/views');
+  const RELEEASE_PATH = path.join(process.cwd(), "dist");
+  const CONTEXT_PATH = path.join(process.cwd(), 'app/views');
   const webpack = require('webpack');
   const compiler = webpack({
       context: CONTEXT_PATH,

@@ -5,5 +5,5 @@
 	    ["transform-es2015-for-of", {
 	      "loose": true
 	    }]
-	]
+		]
 }
